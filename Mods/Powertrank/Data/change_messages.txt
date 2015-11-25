@@ -1,0 +1,14 @@
+$start
+$before
+## "Bier"
+$put
+## "Bier_"
+en "Powerdrink"
+de "Powertrank"
+fr "Powerdrink"
+it "Powerdrink"
+nl "Powerdrink"
+es "Powerdrink"
+
+
+$end
