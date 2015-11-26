@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace DigglesManager
+namespace DigglesModManager
 {
     static class Program
     {
@@ -16,7 +13,7 @@ namespace DigglesManager
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new DigglesManager());
+            Application.Run(new DigglesModManager());
         }
     }
 }

@@ -1,6 +1,6 @@
-﻿namespace DigglesManager
+﻿namespace DigglesModManager
 {
-    partial class DigglesManager
+    partial class DigglesModManager
     {
         /// <summary>
         /// Erforderliche Designervariable.
@@ -28,9 +28,9 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DigglesManager));
-            this.listBox1 = new System.Windows.Forms.ListBox();
-            this.listBox2 = new System.Windows.Forms.ListBox();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DigglesModManager));
+            this.listBox1 = new ToolTipListBox();
+            this.listBox2 = new ToolTipListBox();
             this.button_right = new System.Windows.Forms.Button();
             this.button_left = new System.Windows.Forms.Button();
             this.button_mod = new System.Windows.Forms.Button();
@@ -178,7 +178,7 @@
             this.Controls.Add(this.listBox1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "DigglesManager";
-            this.Text = "DigglesManager v0.1.1";
+            this.Text = "DigglesManager v0.2.0";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -187,8 +187,8 @@
 
         #endregion
 
-        private System.Windows.Forms.ListBox listBox1;
-        private System.Windows.Forms.ListBox listBox2;
+        private ToolTipListBox listBox1;
+        private ToolTipListBox listBox2;
         private System.Windows.Forms.Button button_right;
         private System.Windows.Forms.Button button_left;
         private System.Windows.Forms.Button button_mod;

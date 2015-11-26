@@ -1,17 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
 
-namespace DigglesManager
+namespace DigglesModManager
 {
-    public partial class DigglesManager : Form
+
+
+    public partial class DigglesModManager : Form
     {
         string exePath = @"."; //TODO D:\programme\Wiggles
         string modDirectoryName = "Mods";
@@ -23,10 +22,10 @@ namespace DigglesManager
 
         bool warning = false;
 
-        List<string> inactiveMods = new List<string>();
-        List<string> activeMods = new List<string>();
+        List<ListBoxItem> inactiveMods = new List<ListBoxItem>();
+        List<ListBoxItem> activeMods = new List<ListBoxItem>();
 
-        public DigglesManager()
+        public DigglesModManager()
         {
             InitializeComponent();
 
@@ -76,7 +75,8 @@ namespace DigglesManager
             {
                 if (Directory.Exists(exePath + "\\" + modDirectoryName + "\\" + mod))
                 {
-                    activeMods.Add(mod);
+                    string desc = ""; //TODO
+                    activeMods.Add(new ListBoxItem(mod, desc));
                 }
             }
 
@@ -84,16 +84,17 @@ namespace DigglesManager
             DirectoryInfo[] modDirectories = (new DirectoryInfo(exePath + "\\" + modDirectoryName)).GetDirectories();
             foreach (DirectoryInfo modInfo in modDirectories)
             {
-                if (!activeMods.Contains(modInfo.Name))
+                if (!activeMods.Contains(new ListBoxItem(modInfo.Name, "")))
                 {
-                    inactiveMods.Add(modInfo.Name);
+                    string desc = ""; //TODO
+                    inactiveMods.Add(new ListBoxItem(modInfo.Name, desc));
                 }
             }
             inactiveMods.Sort();
 
             changeDataSource();
         }
-        
+
         private void changeDataSource()
         {
             // Change the DataSource.
@@ -116,14 +117,34 @@ namespace DigglesManager
         private void listBox2_SelectedIndexChanged(object sender, EventArgs e)
         {
             setMessage("", Color.Black);
+
+            //find settings file
+            int selectedIndex = listBox2.SelectedIndex;
+            ListBoxItem mod = activeMods.ElementAt<ListBoxItem>(selectedIndex);
+
+            DirectoryInfo modDir = new DirectoryInfo(exePath + "\\" + modDirectoryName + "\\" + mod);
+            FileInfo[] modFiles = modDir.GetFiles();
+
+            bool hasSettings = false;
+            foreach (FileInfo gameFile in modFiles)
+            {
+                if (gameFile.Name == "settings.dm")
+                {
+                    hasSettings = true;
+                }
+            }
+            //set settings button enabled
+            button_mod_settings.Enabled = hasSettings;
+
         }
 
         private void button_right_Click(object sender, EventArgs e)
         {
             setMessage("", Color.Black);
             int selectedIndex = listBox1.SelectedIndex;
-            if (selectedIndex >= 0 && selectedIndex < inactiveMods.Count) {
-                activeMods.Insert(0, inactiveMods.ElementAt<string>(selectedIndex)); //add element right at first position
+            if (selectedIndex >= 0 && selectedIndex < inactiveMods.Count)
+            {
+                activeMods.Insert(0, inactiveMods.ElementAt<ListBoxItem>(selectedIndex)); //add element right at first position
                 inactiveMods.RemoveAt(selectedIndex); //remove element left
 
                 changeDataSource();
@@ -136,7 +157,7 @@ namespace DigglesManager
             int selectedIndex = listBox2.SelectedIndex;
             if (selectedIndex >= 0 && selectedIndex < activeMods.Count)
             {
-                inactiveMods.Add(activeMods.ElementAt<string>(selectedIndex)); //add element left
+                inactiveMods.Add(activeMods.ElementAt<ListBoxItem>(selectedIndex)); //add element left
                 activeMods.RemoveAt(selectedIndex); //remove element right
                 inactiveMods.Sort();
 
@@ -150,7 +171,7 @@ namespace DigglesManager
             int selectedIndex = listBox2.SelectedIndex;
             if (selectedIndex > 0 && selectedIndex < activeMods.Count)
             {
-                string mod = activeMods.ElementAt<string>(selectedIndex); //get mod
+                ListBoxItem mod = activeMods.ElementAt<ListBoxItem>(selectedIndex); //get mod
                 activeMods.RemoveAt(selectedIndex); //remove mod
                 selectedIndex--;
                 activeMods.Insert(selectedIndex, mod); //add at new position
@@ -166,7 +187,7 @@ namespace DigglesManager
             int selectedIndex = listBox2.SelectedIndex;
             if (selectedIndex >= 0 && selectedIndex < activeMods.Count - 1)
             {
-                string mod = activeMods.ElementAt<string>(selectedIndex); //get mod
+                ListBoxItem mod = activeMods.ElementAt<ListBoxItem>(selectedIndex); //get mod
                 activeMods.RemoveAt(selectedIndex); //remove mod
                 selectedIndex++;
                 activeMods.Insert(selectedIndex, mod); //add at new position
@@ -188,9 +209,9 @@ namespace DigglesManager
             setMessage("...", Color.Black);
 
             restore();
-            foreach (string mod in activeMods)
+            foreach (ListBoxItem mod in activeMods)
             {
-                DirectoryInfo modDir = new DirectoryInfo(exePath + "\\" + modDirectoryName + "\\" + mod);
+                DirectoryInfo modDir = new DirectoryInfo(exePath + "\\" + modDirectoryName + "\\" + mod.DisplayText);
                 letsMod(modDir, new DirectoryInfo(exePath));
             }
             saveActiveMods();
@@ -281,43 +302,45 @@ namespace DigglesManager
                     string line;
                     bool started = false;
                     int commandCount = -1;
-                    string[] command = {"", ""};
-                    string[] commandText = {"", ""};
+                    string[] command = { "", "" };
+                    string[] commandText = { "", "" };
 
                     int i = 0;
                     while ((line = reader.ReadLine()) != null)
                     {
                         i++;
                         //start tag
-                        if (line.StartsWith("$start")) {
-                            if (!started) {
+                        if (line.StartsWith("$start"))
+                        {
+                            if (!started)
+                            {
                                 started = true;
                                 commandCount = -1;
-                            } 
+                            }
                             else
                             {
                                 MessageBox.Show("$start an der falschen Stelle\nZeile: " + i + "\nDatei: " + modFile.FullName);
                                 warning = true;
                                 break;
                             }
-                        //end tag
-                        } 
-                        else if (line.StartsWith("$before")) 
+                            //end tag
+                        }
+                        else if (line.StartsWith("$before"))
                         {
                             commandCount++;
                             if (started && commandCount < 2)
                             {
                                 command[commandCount] = "before";
                                 commandText[commandCount] = "";
-                            } 
+                            }
                             else
                             {
                                 MessageBox.Show("$before an der falschen Stelle\nZeile: " + i + "\nDatei: " + modFile.FullName);
                                 warning = true;
                                 break;
                             }
-                        } 
-                        else if (line.StartsWith("$after")) 
+                        }
+                        else if (line.StartsWith("$after"))
                         {
                             commandCount++;
                             if (started && commandCount < 2)
@@ -325,14 +348,14 @@ namespace DigglesManager
                                 command[commandCount] = "after";
                                 commandText[commandCount] = "";
                             }
-                            else 
+                            else
                             {
                                 MessageBox.Show("$after an der falschen Stelle\nZeile: " + i + "\nDatei: " + modFile.FullName);
                                 warning = true;
                                 break;
                             }
-                        } 
-                        else if (line.StartsWith("$put")) 
+                        }
+                        else if (line.StartsWith("$put"))
                         {
                             commandCount++;
                             if (started && commandCount < 2)
@@ -438,7 +461,7 @@ namespace DigglesManager
                                 }
                             }
                             //other commands
-                        } 
+                        }
                         else if (commandCount == 0 || commandCount == 1)
                         {
                             //add text 
@@ -489,7 +512,7 @@ namespace DigglesManager
 
         }
 
-        private void rememberForRestore(FileInfo file, string type) 
+        private void rememberForRestore(FileInfo file, string type)
         {
             //remember
             StreamWriter writer = new StreamWriter(exePath + "\\" + restoreFileName, true, Encoding.Default);
@@ -518,7 +541,7 @@ namespace DigglesManager
                         {
                             File.Delete(filename);
                         }
-                        catch {}
+                        catch { }
                     }
 
                     //delete copy if two mods added the same NEW file
@@ -529,7 +552,7 @@ namespace DigglesManager
                         {
                             File.Delete(filename + copyFileEnding);
                         }
-                        catch {}
+                        catch { }
                     }
 
                     //restore file if type is res
@@ -540,7 +563,7 @@ namespace DigglesManager
                         {
                             File.Move(filename + copyFileEnding, filename);
                         }
-                        catch {}
+                        catch { }
                     }
                 }
                 reader.Close();
@@ -562,9 +585,9 @@ namespace DigglesManager
             {
                 //save
                 StreamWriter writer = new StreamWriter(exePath + "\\" + activeModsFileName, true, Encoding.Default);
-                foreach (string mod in activeMods)
+                foreach (ListBoxItem mod in activeMods)
                 {
-                    writer.WriteLine(mod);
+                    writer.WriteLine(mod.DisplayText);
                 }
                 writer.Flush();
                 writer.Close();
