@@ -596,7 +596,7 @@ namespace DigglesModManager
 
         private void button_mod_settings_Click(object sender, EventArgs e)
         {
-            //TODO
+            //TODO!
         }
     }
 }
