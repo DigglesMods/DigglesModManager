@@ -122,8 +122,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Icon1.ico" />
-    <None Include="Resources\%24this.Icon.ico" />
     <Content Include="wiggles.ico" />
   </ItemGroup>
   <ItemGroup>
@@ -138,6 +136,7 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
