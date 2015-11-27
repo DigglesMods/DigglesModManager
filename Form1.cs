@@ -224,7 +224,7 @@ namespace DigglesModManager
             foreach (Mod mod in activeMods)
             {
                 DirectoryInfo modDir = new DirectoryInfo(exePath + "\\" + modDirectoryName + "\\" + mod.ModDirectoryName);
-                letsMod(modDir, new DirectoryInfo(exePath));
+                letsMod(mod, modDir, new DirectoryInfo(exePath));
             }
             saveActiveMods();
             if (warning)
@@ -237,7 +237,7 @@ namespace DigglesModManager
             }
         }
 
-        private void letsMod(DirectoryInfo modDirectory, DirectoryInfo gameDirectory)
+        private void letsMod(Mod mod, DirectoryInfo modDirectory, DirectoryInfo gameDirectory)
         {
             FileInfo[] modFiles = modDirectory.GetFiles();
             FileInfo[] gameFiles = gameDirectory.GetFiles();
@@ -318,6 +318,7 @@ namespace DigglesModManager
                     StreamReader reader = new StreamReader(modFile.FullName, Encoding.Default);
                     string line;
                     bool started = false;
+                    Stack<bool> ifStack = new Stack<bool>();
                     int commandCount = -1;
                     string[] command = { "", "" };
                     string[] commandText = { "", "" };
@@ -326,6 +327,61 @@ namespace DigglesModManager
                     while ((line = reader.ReadLine()) != null)
                     {
                         i++;
+                        //check for if ending
+                        if (line.StartsWith("$ifend") && ifStack.Count > 0)
+                        {
+                            ifStack.Pop();
+                        }
+                        //if clause
+                        if (line.StartsWith("$if:"))
+                        {
+                            if (ifStack.Count > 0 && ifStack.Contains(false))
+                            {
+                                //skip check, because it is already false
+                                ifStack.Push(false);
+                            }
+                            else
+                            {
+                                //check if statement
+                                //get var name
+                                string varName = line.Substring(4).TrimEnd();
+                                bool not = false;
+                                if (varName.StartsWith("!"))
+                                {
+                                    not = true;
+                                    varName = varName.Substring(1);
+                                }
+                                //look for vaviable
+                                bool modVarFound = false;
+                                foreach(ModVar modVar in mod.Vars)
+                                {
+                                    if (modVar.VarName.Equals(varName))
+                                    {
+                                        modVarFound = true;
+                                        //supports only bool variables
+                                        if (modVar.Type.Equals("bool"))
+                                        {
+                                            ifStack.Push(((ModVar<bool>)modVar).Value == !not);
+                                        }
+                                        else
+                                        {
+                                            MessageBox.Show("$if unterstuetzt nur boolsche Variablen: " + i + "\nDatei: " + modFile.FullName);
+                                        }
+                                        break;
+                                    }
+                                }
+                                if (!modVarFound)
+                                {
+                                    MessageBox.Show("$if boolsche Variable '" + varName + "' nicht gefunden: " + i + "\nDatei: " + modFile.FullName);
+                                }
+                            }
+                        }
+                        //skip when if clause was false
+                        if (ifStack.Count > 0 && ifStack.Contains(false))
+                        {
+                            continue;
+                        }
+
                         //start tag
                         if (line.StartsWith("$start"))
                         {
@@ -471,8 +527,19 @@ namespace DigglesModManager
                                     warning = true;
                                 }
 
+                                //replace old value with new value
                                 if (oldValue != "")
                                 {
+                                    //before: replace variables
+                                    if (mod.Vars.Count > 0)
+                                    {
+                                        foreach (ModVar var in mod.Vars)
+                                        {
+                                            newValue = newValue.Replace("$print:" + var.VarName, var.getValueAsString());
+                                        }
+                                    }
+
+                                    //replace old value with new value
                                     origFileContent = origFileContent.Replace(oldValue, newValue);
 
                                 }
@@ -524,7 +591,7 @@ namespace DigglesModManager
                     //TODO merke neues verzeichnis fuer wiederherstellung
                 }
                 //same procedure for subdirectrory
-                letsMod(modDir, rightGameDir);
+                letsMod(mod, modDir, rightGameDir);
             }
         }
 
@@ -620,7 +687,13 @@ namespace DigglesModManager
 
         private void button_mod_settings_Click(object sender, EventArgs e)
         {
-            //TODO!
+            int selectedIndex = listBox2.SelectedIndex;
+            if (selectedIndex >= 0 && selectedIndex < activeMods.Count - 1)
+            {
+                Mod mod = activeMods.ElementAt(selectedIndex); //get mod
+                FormModSettings form = new FormModSettings(mod);
+                form.Show();
+            }
         }
     }
 }
