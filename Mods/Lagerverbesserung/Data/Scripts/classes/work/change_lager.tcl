@@ -2,12 +2,12 @@ $start
 $replace 
 set slot_size 3
 $with
-set slot_size 9
+set slot_size $print:ITEMS_PER_SLOT
 $end
 
 
 
-
+$if:ADD_STORE_ROW
 
 $start
 $replace 
@@ -54,7 +54,7 @@ $put
 
 $end
 
-
+$ifend
 
 
 
