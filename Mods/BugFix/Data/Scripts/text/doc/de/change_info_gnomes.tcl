@@ -1,47 +1,32 @@
 $start
-$before
-
-proc compare_by_name {a b} {
-$put
-proc compare_by_age {a b} {
-	if {$a == -1} {return -1}
-	if {$b == -1} {return 1}
-	
-	return [expr  [call_method $a getbirthtime] > [call_method $b getbirthtime]]
+$replace
+proc gnomeinfo_inventory {gid} {
+	layout print "/(fn1)"
+	set x 10
+	set xi 60
+	layout print "/(ta$x)[gnomename $gid]"; set x [expr $x + 90]
+	layout print "/(fn0)"
 }
-
+$with
+proc gnomeinfo_inventory2 {gid} {
+	layout print "/(fn1)"
+	set x 10
+	set xi 60
+	layout print "/(ta$x)[gnomename $gid]"; set x [expr $x + 90]
+	layout print "/(fn0)"
+}
 $end
 
 $start
 $replace
- if {$infowin_gnomeOrderMode == "name" || $infowin_gnomeOrderMode == "" } {
-	set gnomelist [lsort -command compare_by_name $gnomelist]
-} else {
-	set gnomelist [lsort -command compare_by_attribute $gnomelist]
-}
+weapoiID
 $with
- if {$infowin_gnomeOrderMode == "name" || $infowin_gnomeOrderMode == "" } {
-	set gnomelist [lsort -command compare_by_name $gnomelist]
-} else {
-	if {$infowin_gnomeOrderMode == "age"} {
-		set gnomelist [lsort -command compare_by_age $gnomelist]
-	} else {
-		set gnomelist [lsort -command compare_by_attribute $gnomelist]
-	}
-}
+weaponID
 $end
-
 
 $start
 $replace
 set age [expr  int(([gettime] - [get_attrib $gid GnomeAge]) / 1800.0) ]
 $with
 set age [expr  int(([gettime] - [call_method $gid getbirthtime]) / 1800.0) ]
-$end
-
-$start
-$replace
-layout print "/(ta$x)[gnomeinfo_switch_sorting GnomeAge Age]"; set x [expr $x + $xi]
-$with
-layout print "/(ta$x)[gnomeinfo_switch_sorting age Age]"; set x [expr $x + $xi]
 $end

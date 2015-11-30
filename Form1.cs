@@ -12,7 +12,8 @@ namespace DigglesModManager
 
     public partial class DigglesModManager : Form
     {
-        public static string exePath = @"."; //TODO D:\programme\Wiggles
+        public static string exePath = @"."; //dyn: @"." | local: D:\Programme\Wiggles
+        public static string modPath = exePath; //dyn: exePath | local: @"D:\Projekte\DigglesModManager"
         public static string modDirectoryName = "Mods";
         public static string activeModsFileName = "mods.dm";
         public static string restoreFileName = "restore.dm";
@@ -54,9 +55,9 @@ namespace DigglesModManager
             activeMods.Clear();
 
             //check if mod directory exists
-            if (!Directory.Exists(exePath + "\\" + modDirectoryName))
+            if (!Directory.Exists(modPath + "\\" + modDirectoryName))
             {
-                Directory.CreateDirectory(exePath + "\\" + modDirectoryName);
+                Directory.CreateDirectory(modPath + "\\" + modDirectoryName);
             }
 
             //read last active mods
@@ -86,14 +87,14 @@ namespace DigglesModManager
                 }
 
                 //add active mod
-                if (Directory.Exists(exePath + "\\" + modDirectoryName + "\\" + mod))
+                if (Directory.Exists(modPath + "\\" + modDirectoryName + "\\" + mod))
                 {
                     activeMods.Add(new Mod(mod, settings));
                 }
             }
 
             //read mods
-            DirectoryInfo[] modDirectories = (new DirectoryInfo(exePath + "\\" + modDirectoryName)).GetDirectories();
+            DirectoryInfo[] modDirectories = (new DirectoryInfo(modPath + "\\" + modDirectoryName)).GetDirectories();
             foreach (DirectoryInfo modInfo in modDirectories)
             {
                 if (!activeMods.Contains(new Mod(modInfo.Name, null)))
@@ -134,7 +135,7 @@ namespace DigglesModManager
             if (selectedIndex >= 0 && selectedIndex < activeMods.Count) {
                 Mod mod = activeMods.ElementAt(selectedIndex);
 
-                DirectoryInfo modDir = new DirectoryInfo(exePath + "\\" + modDirectoryName + "\\" + mod.ModDirectoryName);
+                DirectoryInfo modDir = new DirectoryInfo(modPath + "\\" + modDirectoryName + "\\" + mod.ModDirectoryName);
                 FileInfo[] modFiles = modDir.GetFiles();
 
                 bool hasSettings = false;
@@ -223,7 +224,7 @@ namespace DigglesModManager
             restore();
             foreach (Mod mod in activeMods)
             {
-                DirectoryInfo modDir = new DirectoryInfo(exePath + "\\" + modDirectoryName + "\\" + mod.ModDirectoryName);
+                DirectoryInfo modDir = new DirectoryInfo(modPath + "\\" + modDirectoryName + "\\" + mod.ModDirectoryName);
                 letsMod(mod, modDir, new DirectoryInfo(exePath));
             }
             saveActiveMods();
@@ -343,36 +344,57 @@ namespace DigglesModManager
                             else
                             {
                                 //check if statement
-                                //get var name
-                                string varName = line.Substring(4).TrimEnd();
+                                string ifStatement = line.Substring(4).TrimEnd();
                                 bool not = false;
-                                if (varName.StartsWith("!"))
+                                if (ifStatement.StartsWith("!"))
                                 {
                                     not = true;
-                                    varName = varName.Substring(1);
+                                    ifStatement = ifStatement.Substring(1);
                                 }
-                                //look for vaviable
-                                bool modVarFound = false;
-                                foreach(ModVar modVar in mod.Vars)
+
+                                //check if-type
+                                if (ifStatement.StartsWith("mod:"))
                                 {
-                                    if (modVar.VarName.Equals(varName))
+                                    //$if:mod:
+                                    ifStatement = ifStatement.Substring(4);
+                                    //search mod
+                                    bool modFound = false;
+                                    foreach (Mod m in activeMods)
                                     {
-                                        modVarFound = true;
-                                        //supports only bool variables
-                                        if (modVar.Type.Equals("bool"))
+                                        if (m.ModDirectoryName.Equals(ifStatement))
                                         {
-                                            ifStack.Push(((ModVar<bool>)modVar).Value == !not);
+                                            modFound = true;
+                                            break;
                                         }
-                                        else
-                                        {
-                                            MessageBox.Show("$if unterstuetzt nur boolsche Variablen: " + i + "\nDatei: " + modFile.FullName);
-                                        }
-                                        break;
                                     }
+                                    ifStack.Push(modFound != not);
                                 }
-                                if (!modVarFound)
+                                else
                                 {
-                                    MessageBox.Show("$if boolsche Variable '" + varName + "' nicht gefunden: " + i + "\nDatei: " + modFile.FullName);
+                                    //$if:varname
+                                    //look for vaviable
+                                    bool modVarFound = false;
+                                    foreach(ModVar modVar in mod.Vars)
+                                    {
+                                        if (modVar.VarName.Equals(ifStatement))
+                                        {
+                                            modVarFound = true;
+                                            //supports only bool variables
+                                            if (modVar.Type.Equals("bool"))
+                                            {
+                                                ifStack.Push(((ModVar<bool>)modVar).Value != not);
+                                            }
+                                            else
+                                            {
+                                                MessageBox.Show("$if unterstuetzt nur boolsche Variablen: " + i + "\nDatei: " + modFile.FullName);
+                                            }
+                                            break;
+                                        }
+                                    }
+                                    if (!modVarFound)
+                                    {
+                                        MessageBox.Show("$if boolsche Variable '" + ifStatement + "' nicht gefunden: " + i + "\nDatei: " + modFile.FullName);
+                                    }
                                 }
                             }
                         }
