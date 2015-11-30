@@ -1,0 +1,49 @@
+$start
+$before
+
+## "Golderz"
+$put
+## "Golderz_"
+en "Gold ore"
+de "Golderz"
+fr "Minerai d'or"
+it "Minerale d'oro"
+nl "Gouderts"
+es "Mineral de oro"
+
+
+$end
+
+
+$start
+$before
+
+## "Eisenerz"
+$put
+## "Eisenerz_"
+en "Iron ore"
+de "Eisenerz"
+fr "Minerai de fer"
+it "Minerale di ferro"
+nl "IJzererts"
+es "Mineral de hierro"
+
+
+$end
+
+
+$start
+$before
+
+## "Kohle"
+$put
+## "Kohle_"
+en "Coal"
+de "Kohle"
+fr "Charbon"
+it "Carbone"
+nl "Kolen"
+es "Carbón"
+
+
+$end
