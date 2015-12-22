@@ -1,3 +1,3 @@
 name:Zwergenstatistik
-tooltip:Diese Mod ändert die GUI im Menü "Zwerge" (BugFix bitte nach/unter dieser Mod ausführen)
+tooltip:Diese Mod ändert die GUI im Menü "Zwerge"
 author:zed2000

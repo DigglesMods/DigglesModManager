@@ -10,18 +10,38 @@ $end
 
 
 $start
+$after
+proc centerandselect {gid} {
+
+$put
+	global infowin_gnomemode infowin_gnomeOrderMode
+
+$end
+
+
+
+
+$start
 $before
 
 proc gnomeinfo_switchto {mode} {
 $put
 
 proc gnomeinfo_order_by {mode} {
-	global infowin_gnomeOrderMode
+	global infowin_gnomemode infowin_gnomeOrderMode
 	set infowin_gnomeOrderMode $mode
 	layout reload
 }
 
 
+$end
+
+$start 
+$after
+proc gnomeinfo_switchto {mode} {
+	global infowin_gnomemode
+$put
+ infowin_gnomeOrderMode
 $end
 
 
@@ -209,6 +229,35 @@ proc compare_by_attribute {a b} {
 $end
 
 
+$start
+$after
+proc gnomeinfo_inventory {gid} {
+	layout print "/(fn1)"
+	layout print "/(ta10)[gnomename $gid]"
+	layout print "/(fn0)/(ta80)/(bo-10)"
+	set olst [inv_list $gid]
+	set x 90
+	set cnt 0
+
+$put
+	set lineCnt 0
+
+$end
+
+
+$start
+$after
+		set x [expr $x + 31]
+
+$put
+		incr lineCnt
+		if {$lineCnt > 14} {
+			set lineCnt 0
+			set x 90
+			layout print "/p"
+		}
+
+$end
 
 
 
@@ -259,7 +308,7 @@ proc compare_by_age {a b} {
 	if {$a == -1} {return -1}
 	if {$b == -1} {return 1}
 	
-	return [expr  [call_method $a getbirthtime] < [call_method $b getbirthtime]]
+	return [expr  [call_method $a getbirthtime] > [call_method $b getbirthtime]]
 }
 
 
