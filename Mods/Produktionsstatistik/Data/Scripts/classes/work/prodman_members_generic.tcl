@@ -53,5 +53,10 @@ if {[ref_checkvar this equipmentTaskList] == 0 } {
 	ref_set this equipmentTaskList 0
 }
 
+if {[ref_checkvar this pickupDwarfPoint] == 0 } {
+	#version 4
+	ref_set this pickupDwarfPoint 0
+}
+
 
 
