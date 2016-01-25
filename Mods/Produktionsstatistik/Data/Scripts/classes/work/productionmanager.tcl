@@ -11,7 +11,7 @@ def_class ProductionManager none none 0 {} {
 	member mode
 	
 	#increase the version number with each release to be downward compatible
-	set versionNumber 4
+	set versionNumber 5
 	member versionNumber 
 	
 	handle_event evt_timer {
@@ -25,14 +25,14 @@ def_class ProductionManager none none 0 {} {
 		# uncomment the line here:
 		# set mode "dev"
 		
-		if {$mode == "dev" || $versionNumber < 4} {
+		if {$mode == "dev" || $versionNumber < 5} {
 			# check if all member variables are defined, if not create them.
 			# This is needed so we can update earlier versions of the class ProductionManager
 			# Now we do not have to start a new game
 			callnc scripts/classes/work/prodman_members_generic.tcl
 			
 			# set version number to current minus 1
-			set versionNumber 3
+			set versionNumber 4
 		}
 		
 		# same procedure as explained above.

@@ -6,7 +6,7 @@ if {[ref_checkvar this ticks] == 0} {
 }
 
 #version 1
-ref_set this mode "prod"
+ref_set this mode "dev"
 
 if {[ref_checkvar this pickupGnomeStates] == 0} {
 	#version 1

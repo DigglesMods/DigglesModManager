@@ -348,6 +348,10 @@ proc print_equipment {prodMan} {
 	
 	if {[llength $exchangePlaces] > 0} {
 		foreach via $exchangePlaces {
+			if {$via == 0} {
+				#FIXED: if no transfer locations available
+				continue
+			}
 			set xLength [expr {$xLength + 42}]
 			print_icon_link $xLength "set_equipment_via $via" $via
 			

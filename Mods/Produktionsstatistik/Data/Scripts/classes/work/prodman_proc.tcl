@@ -16,8 +16,6 @@ proc get_inv_class_list {gid} {
 }
 
 proc handle_pickup_tasks {} {
-	global mode
-	 
 	global pickupGnomeStates pickupTaskGnomesList pickupTaskActionList pickupDwarfPoint
 	global ticks
 	
@@ -144,7 +142,14 @@ proc handle_pickup_tasks {} {
 }
 
 proc handle_experience_tasks {} {
-		global experienceGainGnomeList experienceGainAttrib experienceProdEnabled
+		global mode
+	
+	if {$mode == "dev"} {
+		set proc_name "handle_experience_tasks"
+		callnc scripts/classes/work/prodman_proc_generic.tcl
+		return
+	}
+	  global experienceGainGnomeList experienceGainAttrib experienceProdEnabled
 
 		set lengthList [llength $experienceGainGnomeList]
 		set prodEnabled [list]
@@ -175,6 +180,15 @@ proc handle_experience_tasks {} {
 				set bestClass ""
 				set expGain [lindex $experienceGainAttrib $i]
 				
+				#FIXED invalid gnomes. E.g. gnome died
+				if {[obj_valid $gnomeID] == 0} {
+					lrem experienceGainGnomeList $i
+					lrem experienceGainAttrib $i
+					set lengthList [llength $experienceGainGnomeList]
+					incr i -1
+					continue
+				}
+				
 				foreach prodSite $prodEnabled {
 					set exp_incrs [lindex $prodSite 2]
 					set result [prod_exp $exp_incrs $gnomeID $expGain]
@@ -195,6 +209,9 @@ proc handle_experience_tasks {} {
 }
 
 proc handle_equipment_tasks {} {
+	global mode
+	 
+	
 	global equipmentTaskList
 		
 		set busyGnomes [list]
@@ -505,7 +522,6 @@ proc compare_by_distance_from_point {a b} {
 
 #returns the value for the experience gain for expGain if it is in the list exp_incr
 proc prod_exp {exp_incrs gnomeID expGain} {
-	global mode
 	set result ""
 	
 		#parameter: exp_incrs gnomeID expGain

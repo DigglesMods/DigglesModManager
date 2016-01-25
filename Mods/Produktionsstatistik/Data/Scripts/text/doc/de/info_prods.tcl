@@ -35,7 +35,6 @@ if {! [info exists infowin_prodmode] } {
 set infowin_prodResourceTask {0 0}
 if {$modEnabled} {
 	set infowin_prodResourceTask [call_method $prodMan load_pick_up_task]
-	print "loaded infowin_prodResourceTask  $infowin_prodResourceTask"
 }
 
 # load localisation scripts
@@ -175,11 +174,11 @@ if {$infowin_prodmode == "resource"} {
 	}
 	
 			
-	layout print "/(fn0)"
 	
 	# print a resource list
 	set allResources {Pilzstamm Pilzhut Stein Kohle Eisenerz Eisen Kristallerz Kristall Golderz Gold Grillhamster Grillpilz Pilzbrot Raupensuppe Raupenschleimkuchen Hamstershake}
 	foreach resource $allResources {
+		layout print "/(fn0)"
 		# boxed, visible, locked, storable, male, female, contained, hoverable, selectable, build, instore
 		set resList [obj_query 0 -class $resource -flagneg {contained locked} -visibility playervisible  -alloc -1]
 		set resList [lor $resList [obj_query 0 -class $resource -flagpos {instore} -flagneg {locked} -visibility playervisible  -alloc -1]]
@@ -197,33 +196,37 @@ if {$infowin_prodmode == "resource"} {
 		
 		set resList [lsort -command compare_by_get_instore $resList]
 		
-		#set icon "data/gui/icons/$resource.tga"
-		#layout print "/(ii$icon)"
-		layout print "[lmsg $resource]"
+		hyperlink "layout reload"  [lmsg $resource]
 		
 		set xLength 40
 		set xSize 470
 		
 		foreach item $resList {
 			if {$item == 0} {
-				continue;
+				continue
 			}
+			
+			layout print "/(fn0)"
 			
 			if {$xLength >= $xSize} {
 				layout print "/p"
-				set xLength -2
+				set xLength -12
 				set xSize 480
 			}
 			
-			set objName "[get_objname $item]"
+			set objName [get_objname $item]
 			set matchTuples [regexp -all -inline "\[0-9\]" $objName]
-			#set xLength [expr {$xLength + 2 + [string length $objName]}]
-			set xLength [expr {$xLength + 42}]
+			
+			set xLength [expr {$xLength + 53}]
 			
 			set icon "data/gui/icons/$resource.tga"
 			layout print "/(ta$xLength)"
 			hyperlink "addPickupTask_Material $item"  "/(ii$icon)" 
 			layout print "/(ta$xLength)" $matchTuples
+			
+			set posX [expr {$xLength + 41}]
+			layout print "/(ta$posX,fn1)" 
+			hyperlink "centerCamera $item"  "C"
 		}
 		layout print "/p"
 	}
