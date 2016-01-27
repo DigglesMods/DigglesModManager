@@ -11,7 +11,7 @@ def_class ProductionManager none none 0 {} {
 	member mode
 	
 	#increase the version number with each release to be downward compatible
-	set versionNumber 3
+	set versionNumber 5
 	member versionNumber 
 	
 	handle_event evt_timer {
@@ -20,12 +20,19 @@ def_class ProductionManager none none 0 {} {
 			ref_set this versionNumber 0
 		}
 		
-		if {$mode == "dev" || $versionNumber < 2} {
+		#HOWTO: starting the script in development mode:
+		# set the mode in prodman_members_generic.tcl
+		# uncomment the line here:
+		# set mode "dev"
+		
+		if {$mode == "dev" || $versionNumber < 5} {
 			# check if all member variables are defined, if not create them.
 			# This is needed so we can update earlier versions of the class ProductionManager
 			# Now we do not have to start a new game
 			callnc scripts/classes/work/prodman_members_generic.tcl
-			set versionNumber 2
+			
+			# set version number to current minus 1
+			set versionNumber 4
 		}
 		
 		# same procedure as explained above.
@@ -76,6 +83,10 @@ def_class ProductionManager none none 0 {} {
 			}
 			
 			if {[llength $materialIDs] > 0} {
+				#sort by distance from the dwarf
+				set pickupDwarfPoint $gnomeID
+				set materialIDs [lsort -command compare_by_distance_from_point $materialIDs]
+				
 				set_event $gnomeID evt_change_muetze -target $gnomeID -text1 transport
 				
 				print "ProductionManager evt_change_muetze -target $gnomeID -text1 transport"
@@ -150,6 +161,7 @@ def_class ProductionManager none none 0 {} {
 		if {$mode == "dev"} {
 			set method_name "add_equipment_task"
 			callnc scripts/classes/work/prodman_methods_generic.tcl
+			return
 		}
 		
 		#parameter: task
@@ -161,12 +173,6 @@ def_class ProductionManager none none 0 {} {
 	}
 	
 	method force_equipment_task {task} {
-		if {$mode == "dev"} {
-			set method_name "force_equipment_task"
-			callnc scripts/classes/work/prodman_methods_generic.tcl
-			return
-		}
-		
 		global equipmentTaskList
 		
 		for {set i 0} {$i < [llength $equipmentTaskList]} {incr i 1} {
@@ -184,12 +190,6 @@ def_class ProductionManager none none 0 {} {
 	}
 	
 	method remove_equipment_task {task} {
-		if {$mode == "dev"} {
-			set method_name "remove_equipment_task"
-			callnc scripts/classes/work/prodman_methods_generic.tcl
-			return
-		}
-		
 		global equipmentTaskList
 		
 		for {set i 0} {$i < [llength $equipmentTaskList]} {incr i 1} {
@@ -204,22 +204,13 @@ def_class ProductionManager none none 0 {} {
 	}
 	
 	method get_all_equipment_tasks {} {
-		set result ""
-		
-		if {$mode == "dev"} {
-			set method_name "get_all_equipment_tasks"
-			callnc scripts/classes/work/prodman_methods_generic.tcl
-			return $result
-		} else {
-			global equipmentTaskList
-			set result $equipmentTaskList
-			return $result
-		}
+		global equipmentTaskList
+		return $equipmentTaskList
 	}
 	
 	obj_init {
 		#all the variables will be stored in the game save file
-		#add a variable and modify prodman_members_generic.tcl !
+		#add a variable then modify prodman_members_generic.tcl !
 		set pickupUserInput {0 0}
 		set pickupGnomeStates [list]
 		set pickupTaskGnomesList [list]

@@ -48,9 +48,8 @@ proc prodinfo_stats {gid} {
 		}
 	}
 	
-	layout print "/(ls5)/(fn0)/(bo0)"
-	layout print "/(ta20)[prodname centerandselect $gid]/p"
-	layout print "/(fn0)/(ta80)/(bo-10)"
+	layout print "/(ls-5,ta20)[prodname centerandselect $gid]/p"
+	layout print "/(ls0,ta80)"
 	
 	set x 50
 	set show 1
@@ -74,6 +73,7 @@ proc prodinfo_stats {gid} {
 		set show 0
 	}
 	
+	
 	if {([llength $prodlist] != 0) && $show} {
 		foreach class $prodlist {
 			set count [get_prod_slot_cnt $gid $class]
@@ -95,6 +95,11 @@ proc prodinfo_stats {gid} {
 			set x [expr $x + 38]
 		}
 		
+		if {[get_attrib $gid atr_Hitpoints] < 1} {
+			set icon "data/gui/icons/repair.tga"
+			layout print "/(ta$x)/(ii$icon)"
+		}
+		
 		#prints the inventory of the production facility
 		set inventory_list [inv_list $gid]
 		
@@ -104,8 +109,6 @@ proc prodinfo_stats {gid} {
 			foreach class $inventory_list {
 				#get class names
 				lappend sortedInventory [get_objclass $class]
-				
-				
 			}
 			
 			set printableList [standard_create_printable_string $sortedInventory]
@@ -145,20 +148,16 @@ proc prodinfo_stats {gid} {
 			}
 			
 			if {$itemneedlist != ""} {
+				
 				set itemneedlist [lsort  $itemneedlist]
 				
 				set printableList [standard_create_printable_string $itemneedlist]
 				
-				layout print "/p/(tx    )[localize neededMaterial]"
+				layout print "/(ls0)/p/(tx    )[localize neededMaterial]"
 				layout print "/(tx   )$printableList/p"
 			}
-		}
+		} 
 	}
 	
-	if {[get_attrib $gid atr_Hitpoints] < 1} {
-		set icon "data/gui/icons/repair.tga"
-		layout print "/(ta$x)/(ii$icon)"
-	}
-
-	layout print "/(ls15)/(fn0)/p/(bo0)"
+	layout print "/p"
 }

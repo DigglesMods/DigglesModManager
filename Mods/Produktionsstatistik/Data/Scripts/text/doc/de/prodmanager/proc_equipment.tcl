@@ -114,7 +114,8 @@ proc print_equipment_task {task} {
 		set whom [localize "niemanden"]
 		set ort ""
 		
-		set whoimage ""
+		#FIXED: GUI does not jump if an image is printed
+		set whoimage "/(iidata/gui/icons/S_Freizeit.tga)"
 		set whomimage ""
 		
 		if {$from != 0} {
@@ -256,17 +257,26 @@ proc print_equipment {prodMan} {
 	
 	print_equipment_new_task $userInput
 	
+	## current task list ################################
 	layout print "/p"
 	layout print [localize "currentTaskList"] ":/p"
+	set elementCounter 0
 	foreach task $taskList {
 		if {$task != 0} {
 			print_equipment_task $task
 			hyperlink "remove_equipment_task \{$task\}" [lmsg Undo]
 			hyperlink "force_equipment_task \{$task\}" [localize sofort]
 			layout print "/p"
+			incr elementCounter 1
 		}
 	}
 	
+	while {$elementCounter < 5} {
+		layout print " - /(iidata/gui/icons/S_Freizeit.tga) - /p"
+		incr elementCounter 1
+	}
+	
+	## items in the world ####################################
 	layout print "/p[localize ItemsInWorld]:/p"
 	set xLength -10
 	set secondLine [list]
@@ -276,6 +286,11 @@ proc print_equipment {prodMan} {
 	
 	if {[llength $inWorld] > 0} {
 		foreach item $inWorld {
+			if {$item == 0 || ![obj_valid $item]} {
+				#FIXED: wrong object references
+				continue
+			}
+			
 			set xLength [expr {$xLength + $addition}]
 			print_icon_link $xLength "set_equipment_item 0 $item" $item
 			
@@ -333,6 +348,10 @@ proc print_equipment {prodMan} {
 	
 	if {[llength $exchangePlaces] > 0} {
 		foreach via $exchangePlaces {
+			if {$via == 0} {
+				#FIXED: if no transfer locations available
+				continue
+			}
 			set xLength [expr {$xLength + 42}]
 			print_icon_link $xLength "set_equipment_via $via" $via
 			

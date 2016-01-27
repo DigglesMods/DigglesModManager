@@ -29,8 +29,8 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DigglesModManager));
-            this.listBox1 = new ToolTipListBox();
-            this.listBox2 = new ToolTipListBox();
+            this.listBox1 = new DigglesModManager.ToolTipListBox();
+            this.listBox2 = new DigglesModManager.ToolTipListBox();
             this.button_right = new System.Windows.Forms.Button();
             this.button_left = new System.Windows.Forms.Button();
             this.button_mod = new System.Windows.Forms.Button();
@@ -159,7 +159,7 @@
             this.button_mod_settings.UseVisualStyleBackColor = true;
             this.button_mod_settings.Click += new System.EventHandler(this.button_mod_settings_Click);
             // 
-            // DigglesManager
+            // DigglesModManager
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -177,8 +177,8 @@
             this.Controls.Add(this.listBox2);
             this.Controls.Add(this.listBox1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Name = "DigglesManager";
-            this.Text = "DigglesManager v0.2.0";
+            this.Name = "DigglesModManager";
+            this.Text = "DigglesModManager v0.2.2";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.ResumeLayout(false);
             this.PerformLayout();

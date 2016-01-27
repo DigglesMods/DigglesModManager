@@ -6,7 +6,7 @@ if {[ref_checkvar this ticks] == 0} {
 }
 
 #version 1
-ref_set this mode "prod"
+ref_set this mode "dev"
 
 if {[ref_checkvar this pickupGnomeStates] == 0} {
 	#version 1
@@ -51,6 +51,11 @@ if {[ref_checkvar this equipmentUserInput] == 0 } {
 if {[ref_checkvar this equipmentTaskList] == 0 } {
 	#version 3
 	ref_set this equipmentTaskList 0
+}
+
+if {[ref_checkvar this pickupDwarfPoint] == 0 } {
+	#version 4
+	ref_set this pickupDwarfPoint 0
 }
 
 

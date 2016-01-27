@@ -16,7 +16,7 @@ proc get_inv_class_list {gid} {
 }
 
 proc handle_pickup_tasks {} {
-	global pickupGnomeStates pickupTaskGnomesList pickupTaskActionList
+	global pickupGnomeStates pickupTaskGnomesList pickupTaskActionList pickupDwarfPoint
 	global ticks
 	
 		#check if the have pick up tasks
@@ -86,8 +86,15 @@ proc handle_pickup_tasks {} {
 				set state "transport $eventTime"
 			}
 			
+			
+			set pickupDwarfPoint $gnomeID
+			
 			set itemTransported 0
 			set mid [lindex $materialIDs 0]
+			lrem materialIDs 0
+			
+			set materialIDs [lsort -command compare_by_distance_from_point $materialIDs]
+			set materialIDs "$mid $materialIDs"
 			
 			if {[inv_find_obj $gnomeID $mid] != -1} {
 				#item picked up
@@ -95,7 +102,10 @@ proc handle_pickup_tasks {} {
 				set itemTransported 1
 			}
 			
-			if {$itemTransported || ([is_contained $mid] && ![get_instore $mid])} {	
+			#FIXED: checking class type to remove invalid items in the pick up list, e.g. misc_lights
+			set classType [get_class_type [get_objclass $mid]]
+			
+			if {$itemTransported || ([is_contained $mid] && ![get_instore $mid]) || [string equal $classType "dummy"] || [string equal $classType "info"]} {	
 				lrem materialIDs 0
 				
 				if {[llength $materialIDs] <= 0} {
@@ -128,12 +138,18 @@ proc handle_pickup_tasks {} {
 			lrem pickupTaskGnomesList $removeIndex
 			lrem pickupTaskActionList $removeIndex
 		}
-		
+	
 }
 
 proc handle_experience_tasks {} {
-
-		global experienceGainGnomeList experienceGainAttrib experienceProdEnabled
+		global mode
+	
+	if {$mode == "dev"} {
+		set proc_name "handle_experience_tasks"
+		callnc scripts/classes/work/prodman_proc_generic.tcl
+		return
+	}
+	  global experienceGainGnomeList experienceGainAttrib experienceProdEnabled
 
 		set lengthList [llength $experienceGainGnomeList]
 		set prodEnabled [list]
@@ -164,6 +180,15 @@ proc handle_experience_tasks {} {
 				set bestClass ""
 				set expGain [lindex $experienceGainAttrib $i]
 				
+				#FIXED invalid gnomes. E.g. gnome died
+				if {[obj_valid $gnomeID] == 0} {
+					lrem experienceGainGnomeList $i
+					lrem experienceGainAttrib $i
+					set lengthList [llength $experienceGainGnomeList]
+					incr i -1
+					continue
+				}
+				
 				foreach prodSite $prodEnabled {
 					set exp_incrs [lindex $prodSite 2]
 					set result [prod_exp $exp_incrs $gnomeID $expGain]
@@ -185,18 +210,15 @@ proc handle_experience_tasks {} {
 
 proc handle_equipment_tasks {} {
 	global mode
-	
-	if {$mode == "dev"} {
-		set proc_name "handle_equipment_tasks"
-		callnc scripts/classes/work/prodman_proc_generic.tcl
-		return
-	}
+	 
 	
 	global equipmentTaskList
 		
 		set busyGnomes [list]
 		set gnomeHasATask [list]
 		set equipmentSecondTasks [list]
+		
+		#print $equipmentTaskList
 		
 		for {set i 0} {$i <[llength $equipmentTaskList]} {incr i 1} {
 			set task [lindex $equipmentTaskList $i]
@@ -277,6 +299,13 @@ proc handle_equipment_tasks {} {
 						continue
 					}
 					
+					if {[inv_find_obj $from $item] == -1} {
+						#item layed down
+						#convert task to pick up task
+						lrep equipmentTaskList $i "transfer 0 $item 0 $dest \{start [gettime] step\}"
+						continue
+					}
+					
 					if {(![check_free_gnome $from] || ![get_prodautoschedule $from]) 
 							&& [string first [lindex $timing 0] "instantprogress"] == -1} {
 						# gnome not out of work
@@ -291,14 +320,7 @@ proc handle_equipment_tasks {} {
 						continue
 					}
 					
-					if {[inv_find_obj $from $item] == -1} {
-						#item layed down
-						#convert task to pick up task
-						lrep equipmentTaskList $i "transfer 0 $item 0 $dest \{forcestart [gettime] step\}"
-						continue
-					}
-					
-					if {[get_remaining_sparetime $from] < 5 && [get_remaining_sparetime $from] > 0 && [lindex $timing 0] != "instant"} {
+					if {[get_remaining_sparetime $from] < 5 && [get_remaining_sparetime $from] > 0 && [string first [lindex $timing 0] "instantprogress"] == -1} {
 						# force start of the task after sparetime finished
 						set timing "forcestart [gettime] step"
 						lrep task 5 $timing
@@ -381,8 +403,6 @@ proc handle_equipment_tasks {} {
 						continue
 					}
 					
-					
-					
 					if {[is_contained $item] && ![get_instore $item]} {
 						lrem equipmentTaskList $i
 						incr i -1
@@ -447,7 +467,7 @@ proc handle_equipment_tasks {} {
 						continue
 					}
 					
-					print "lbadfh" [lindex $timing 0]
+					#print "lbadfh" [lindex $timing 0]
 					
 					if {([lindex $timing 0] == "start" && [string equal $occupation "idle"]) || [lindex $timing 0] == "forcestart"|| [lindex $timing 0] == "instant"} {
 						set_event $dest evt_autoprod_pickup -target $dest -subject1 $item -text1 [get_objclass $item]
@@ -480,9 +500,28 @@ proc handle_equipment_tasks {} {
 		}
 }
 
+proc compare_by_distance_from_point {a b} {
+	global mode
+	
+		global pickupDwarfPoint
+		
+		if {$a == -1} {
+			print "ProductionManager ERROR sorting"
+			return -1
+		}
+		if {$b == -1} {
+			print "ProductionManager ERROR sorting"
+			return 1
+		}
+		
+		set distanceA [expr {abs([get_posx $a] - [get_posx $pickupDwarfPoint]) + abs([get_posy $a] - [get_posy $pickupDwarfPoint])}]
+		set distanceB [expr {abs([get_posx $b] - [get_posx $pickupDwarfPoint]) + abs([get_posy $b] - [get_posy $pickupDwarfPoint])}]
+		
+		return [expr {$distanceA > $distanceB}]
+}
+
 #returns the value for the experience gain for expGain if it is in the list exp_incr
 proc prod_exp {exp_incrs gnomeID expGain} {
-	global mode
 	set result ""
 	
 		#parameter: exp_incrs gnomeID expGain

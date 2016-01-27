@@ -1,3 +1,3 @@
-name:Produktionsstatistik
-tooltip:Diese Mod ändert die GUI im Menü "Produktion" (BugFix bitte nach/unter dieser Mod ausführen)
+name:Produktionsstatistik v05
+tooltip:Diese Mod ändert die GUI im Menü "Produktion"
 author:zed2000

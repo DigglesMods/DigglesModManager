@@ -1,9 +1,11 @@
 layout clear
 
-layout print "/(fn2)"
-layout print "/(ac)[lmsg Produktion]"
+layout print "/(fn2,ac)"
+layout print [lmsg Produktion]
 layout print "/p"
-layout print "/(fn1,ls2,ml5,mr5,al)"
+
+#default layout
+layout print "/(fn1,ls0,ml5,mr5,al)"
 
 #always set to zero. If we find a ProductionManager then we set it to 1
 set modEnabled 0
@@ -35,64 +37,11 @@ if {$modEnabled} {
 	set infowin_prodResourceTask [call_method $prodMan load_pick_up_task]
 }
 
+# load localisation scripts
 call "scripts/text/doc/[locale]/prodmanager/proc_localisation.tcl"
 
-# prints a link on the display
-# param: - target callback handler
-#				 - text visible text
-proc hyperlink {target text} {
-	layout print [layout autoxlink $target "$text"]
-}
-
-proc print_icon_link {taabsolut target id} {
-	set class [get_objclass $id]
-	set icon "data/gui/icons/$class.tga"
-	set matchTuples [regexp -all -inline "\[0-9\]" [get_objname $id]]
-					
-	layout print "/(ta$taabsolut)"
-	hyperlink "$target" "/(ii$icon)"
-	layout print "/(ta$taabsolut)" $matchTuples
-}
-
-proc compare_by_age {a b} {
-	if {$a == -1} {return -1}
-	if {$b == -1} {return 1}
-	
-	return [expr  [get_attrib $a GnomeAge] > [get_attrib $b GnomeAge]]
-}
-
-proc compare_by_name {a b} {
-	if {$a == -1} {return -1}
-	if {$b == -1} {return 1}
-    return [string compare [get_objname $a] [get_objname $b]]
-}
-
-proc prodname {target pid} {
-	if { [selection check $pid] || [is_contained $pid] } {
-		return "[get_objname $pid]"
-	} else {
-		return "[layout autoxlink "$target $pid" "[get_objname $pid]"]"
-	}
-}
-
-proc centerandselect {gid} {
-	global infowin_prodmode modEnabled
-	set view [get_view]
-	set pos [get_pos $gid]
-	set_view [vector_unpackx $pos] [vector_unpacky $pos] [vector_unpackz $view]
-	selection clear
-	selection include $gid
-	layout reload
-}
-
-proc gnomename {gid} {
-	if {$gid == -1} {return [lmsg {dead!}]}
-	if { [selection check $gid] } {
-		return "[get_objname $gid]"
-	} else {
-		return "[layout autoxlink "centerandselect $gid" "[get_objname $gid]"]"
-	}
-}
+# load some misc procedures
+call "scripts/text/doc/[locale]/prodmanager/proc_utils.tcl"
 
 # load procedures for the submenu "resources"
 call "scripts/text/doc/[locale]/prodmanager/proc_resources.tcl"
@@ -159,7 +108,7 @@ layout print "/p"
 
 if {$infowin_prodmode == "resource"} {
 	#Ressource finder
-	layout print "/(ls0)"
+	layout print "/(ls-1)"
 	
 	#find free gnomes
 	set freeGnomes [call_method $prodMan get_free_gnomes [get_local_player]]
@@ -168,10 +117,24 @@ if {$infowin_prodmode == "resource"} {
 	if {[llength $freeGnomes] > 0} {
 
 		layout print "/(tx   ) [lmsg BitteeinenZwerganwaehlen]:"
-		foreach gid $freeGnomes {
 		
+		#count elements for a beautiful user interface
+		set elementCounter 0 
+		foreach gid $freeGnomes {
 			hyperlink "addPickupTask_Gnome $gid" "[get_objname $gid]"
 			layout print "/(tx )"
+			
+			incr elementCounter 1
+			if {$elementCounter == 4 || $elementCounter == 11} {
+				layout print "/p"
+			}
+		}
+		
+		if {$elementCounter < 4} {
+			layout print "/p"
+		}
+		if {$elementCounter < 11} {
+			layout print "/p"
 		}
 		
 		layout print "/p/(tx   )"
@@ -183,27 +146,39 @@ if {$infowin_prodmode == "resource"} {
 			set gnomeID 0
 		}
 		
+		set ret 0
 		if {$gnomeID != 0} {
 			hyperlink "removePickupTask_Gnome $gnomeID" [get_objname $gnomeID]
 			layout print "[lmsg pickup]"
 			
-			set ret gui_printPickupString
+			set ret [gui_printPickupString $infowin_prodResourceTask]
 			#layout print $ret
-			if { [$ret] == 1} {
+			if { $ret > 0} {
 				hyperlink "executePickupTask" "[lmsg ausfuehren]"
 			}
-			
-			layout print "/p"
 		} else {
 			layout print "[lmsg Zwerg] [lmsg pickup]"
-			gui_printPickupString
+			set ret [gui_printPickupString $infowin_prodResourceTask]
+		}
+		
+		if {$ret < 3} {
 			layout print "/p"
 		}
+		if {$ret < 7} {
+			layout print "/p"
+		}
+		if {$ret < 11} {
+			layout print "/p"
+		}
+		layout print "/p"
 	}
 	
+			
+	
 	# print a resource list
-	set allResources {Pilzstamm Pilzhut Stein Kohle Eisenerz Eisen Kristallerz Kristall Golderz Gold}
+	set allResources {Pilzstamm Pilzhut Stein Kohle Eisenerz Eisen Kristallerz Kristall Golderz Gold Grillhamster Grillpilz Pilzbrot Raupensuppe Raupenschleimkuchen Hamstershake}
 	foreach resource $allResources {
+		layout print "/(fn0)"
 		# boxed, visible, locked, storable, male, female, contained, hoverable, selectable, build, instore
 		set resList [obj_query 0 -class $resource -flagneg {contained locked} -visibility playervisible  -alloc -1]
 		set resList [lor $resList [obj_query 0 -class $resource -flagpos {instore} -flagneg {locked} -visibility playervisible  -alloc -1]]
@@ -212,40 +187,51 @@ if {$infowin_prodmode == "resource"} {
 			continue
 		}
 		
-		layout print "/(fn1)"
+		foreach item $infowin_prodResourceTask {
+			set idx [lsearch $resList $item]
+			if {$idx != -1} {
+				lrem resList $idx
+			}
+		}
 		
-		#set icon "data/gui/icons/$resource.tga"
-		#layout print "/(ii$icon)"
-		layout print "[lmsg $resource]"
+		set resList [lsort -command compare_by_get_instore $resList]
+		
+		hyperlink "layout reload"  [lmsg $resource]
 		
 		set xLength 40
 		set xSize 470
 		
 		foreach item $resList {
 			if {$item == 0} {
-				continue;
+				continue
 			}
+			
+			layout print "/(fn0)"
 			
 			if {$xLength >= $xSize} {
 				layout print "/p"
-				set xLength -2
+				set xLength -12
 				set xSize 480
 			}
 			
-			set objName "[get_objname $item]"
+			set objName [get_objname $item]
 			set matchTuples [regexp -all -inline "\[0-9\]" $objName]
-			#set xLength [expr {$xLength + 2 + [string length $objName]}]
-			set xLength [expr {$xLength + 42}]
+			
+			set xLength [expr {$xLength + 53}]
 			
 			set icon "data/gui/icons/$resource.tga"
 			layout print "/(ta$xLength)"
 			hyperlink "addPickupTask_Material $item"  "/(ii$icon)" 
 			layout print "/(ta$xLength)" $matchTuples
+			
+			set posX [expr {$xLength + 41}]
+			layout print "/(ta$posX,fn1)" 
+			hyperlink "centerCamera $item"  "C"
 		}
 		layout print "/p"
 	}
 	
-	call_method $prodMan save_pick_up_task $infowin_prodResourceTask
+	saveRes
 }
 
 if {$infowin_prodmode == "standard"} {
@@ -262,6 +248,8 @@ if {$infowin_prodmode == "standard"} {
 			incr i -1
 		}
 	}
+	
+	layout print "/(fn0)"
 	
 	foreach prodID $prodlist {
 		prodinfo_stats $prodID

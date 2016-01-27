@@ -13,6 +13,11 @@ proc addPickupTask_Material {mid} {
 		print "adding [get_objname $mid]"
 	}
 	
+	set gnomeID [lindex $infowin_prodResourceTask 0]
+	if {[obj_valid $gnomeID] == 0 || [get_objclass $gnomeID] != "Zwerg"} {
+		set infowin_prodResourceTask {0 0}
+	}
+	
 	saveRes
 	centerandselect $mid
 }
@@ -32,10 +37,9 @@ proc removePickupTask_Material {mid} {
 }
 
 # print material hyperlinks, returns true if sth was printed
-proc gui_printPickupString {} {
-	global infowin_prodResourceTask
-	
-	set result 0
+# returns printed elements
+proc gui_printPickupString {infowin_prodResourceTask} {
+	set elementCounter 0
 	
 	for {set idx 1} {[llength $infowin_prodResourceTask] > $idx} {incr idx} {
 		set mid [lindex $infowin_prodResourceTask $idx]
@@ -47,8 +51,12 @@ proc gui_printPickupString {} {
 		} 
 		
 		if {$mid != 0 && [obj_valid $mid] && [string first [get_objtype $mid] "materialtooltransport"] != -1} {
-			set result 1
 			hyperlink "removePickupTask_Material $mid" [get_objname $mid]
+			incr elementCounter 1
+		}
+		
+		if {$elementCounter == 3 || $elementCounter == 7 || $elementCounter == 11} {
+			layout print "/p"
 		}
 	}
 	
@@ -57,7 +65,7 @@ proc gui_printPickupString {} {
 	}
 	
 	saveRes
-	return $result
+	return $elementCounter 
 }
 
 proc addPickupTask_Gnome {gid} {
