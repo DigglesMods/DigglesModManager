@@ -29,8 +29,8 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DigglesModManager));
-            this.listBox1 = new DigglesModManager.ToolTipListBox();
-            this.listBox2 = new DigglesModManager.ToolTipListBox();
+            this.listBox1 = new ToolTipListBox();
+            this.listBox2 = new ToolTipListBox();
             this.button_right = new System.Windows.Forms.Button();
             this.button_left = new System.Windows.Forms.Button();
             this.button_mod = new System.Windows.Forms.Button();
