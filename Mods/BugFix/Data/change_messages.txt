@@ -1,0 +1,620 @@
+$start
+$replace
+en "Amulett Issnichschick"
+$with
+en "Amulet Isnotnice"
+$end
+
+$start
+$replace
+en "Drachentränenamulett"
+$with
+en "Dragontear's Amulet"
+$end
+
+$start
+$replace
+en "Flammenamulett"
+$with
+en "Flameamulet"
+$end
+
+$start
+$replace
+en "Henkerschreck"
+$with
+en "Executioner's Axe"
+$end
+
+$start
+$replace
+en "Tutnichweh"
+$with
+en "Doesnothurt"
+$end
+
+$start
+$replace
+-nom du clan-
+$with
+-clanname-
+$end
+
+$start
+$replace
+## "Dolch_2"
+en "Stichling"
+de "Stichling"
+fr "Epinoche"
+it "Pugnaletto"
+nl "Stichling"
+es "Espinoso"
+
+## "Drache"
+en "Dragon"
+de "Drache"
+fr "Dragon"
+it "Drago"
+nl "Draak"
+es "Dragón"
+$with
+## "Dolch_2"
+en "Stichling"
+de "Stichling"
+fr "Epinoche"
+it "Pugnaletto"
+nl "Stichling"
+es "Espinoso"
+
+## "Drachenbaby"
+en "Dragon whelp"
+de "Drachenbaby"
+fr "Dragon (Bébé)"
+it "Drago (Neonato)"
+nl "Draak (Baby)"
+es "bebé dragón"
+
+## "Drache"
+en "Dragon"
+de "Drache"
+fr "Dragon"
+it "Drago"
+nl "Draak"
+es "Dragón"
+
+## "drache"
+en "Dragon"
+de "Drache"
+fr "Dragon"
+it "Drago"
+nl "Draak"
+es "Dragón"
+
+## "Drachenschuppe"
+en "Dragonscale"
+de "Drachenschuppe"
+fr "écaille de dragon"
+it "Drago???"
+nl "Draak???"
+es "Dragón???"
+
+## "drachenschuppe"
+en "Dragonscale"
+de "Drachenschuppe"
+fr "écaille de dragon"
+it "Drago???"
+nl "Draak???"
+es "Dragón???"
+$end
+
+$start
+$replace
+de "Fenris Fuss"
+it "Zampa di Fenris"
+$with
+de "Fenris Fuss"
+fr "Pied de Fenris"
+it "Zampa di Fenris"
+$end
+
+$start
+$replace
+es "Lucha"
+
+## "Fightinit done"
+$with
+es "Lucha"
+
+## "fight"
+en "fight"
+de "kampf"
+fr "combat"
+it "combattimento"
+nl "strijd"
+es "lucha"
+
+## "Fightinit done"
+$end
+
+$start
+$replace
+es "Correción de gama"
+
+## "GehirngroessePos0"
+$with
+es "Correción de gama"
+
+## "Gehirngroesse"
+en "Knowledge"
+de "Gehirngroesse"
+fr "Taille du cerveau"
+it "Sapienza"
+nl "Kennis"
+es "talla del cerebro"
+
+## "GehirngroessePos0"
+$end
+
+$start
+$replace
+es "Cuévano de madera"
+
+## "Holztuer"
+$with
+es "Cuévano de madera"
+
+## "Holzschild"
+en "Wooden shield"
+de "Holzschild"
+fr "Bouclier en bois"
+it "Scudo di legno"
+nl "Houten schild"
+es "Escudo de madera"
+
+## "Holztuer"
+$end
+
+$start
+$replace
+## "Krake"
+en "Octopus"
+de "Krake"
+fr "Pieuvre"
+it "Polipo"
+nl "Inktvis"
+es "Pulpo"
+
+## "Krankenhaus"
+$with
+## "Krake"
+en "Octopus"
+de "Krake"
+fr "Pieuvre"
+it "Polipo"
+nl "Inktvis"
+es "Pulpo"
+
+## "krake"
+en "Octopus"
+de "Krake"
+fr "Pieuvre"
+it "Polipo"
+nl "Inktvis"
+es "Pulpo"
+
+## "Krankenhaus"
+$end
+
+$start
+$replace
+fr "Bord de la main gauche et droite"
+$with
+fr "Tranchant de la main gauche et droite"
+$end
+
+$start
+$replace
+fr "Metallleiter"
+$with
+fr "Échelle métallique"
+$end
+
+$start
+$replace
+it "Partner"
+$with
+it "compagno"
+$end
+
+$start
+$replace
+de "Sandksaten"
+$with
+de "Sandkasten"
+$end
+
+$start
+$replace
+## "Schalter_knopf_stein"
+en "button"
+de "Schalter"
+fr "Bouton"
+it "Pulsante"
+nl "Schakelaar"
+es "Interruptor"
+
+## "Schalter_knopf_lava_1"
+$with
+## "Schalter_knopf_stein"
+en "button"
+de "Schalter"
+fr "Bouton"
+it "Pulsante"
+nl "Schakelaar"
+es "Interruptor"
+
+## "Schalter_knopf_metall"
+en "button"
+de "Schalter"
+fr "Bouton"
+it "Pulsante"
+nl "Schakelaar"
+es "Interruptor"
+
+## "Schalter_knopf_lava_1"
+$end
+
+$start
+$replace
+en "Holzschild"
+$with
+en "Wooden shield"
+$end
+
+$start
+$replace
+en "Beschlagener Holzschild"
+$with
+en "Improved wooden shield"
+$end
+
+$start
+$replace
+en "Blechschild"
+$with
+en "Tin shield"
+$end
+
+$start
+$replace
+en "Verzierter Metallschild"
+$with
+en "Metal shield"
+$end
+
+$start
+$replace
+en "Smaragdshield"
+$with
+en "Smaragd shield"
+$end
+
+$start
+$replace
+es "Pistón"
+
+## "Titanic_abpumpen"
+$with
+es "Pistón"
+
+## "TitanicPumpe"
+en "Titanic"
+de "TitanicPumpe"
+fr "Pompe du titanic"
+it "Titanic"
+nl "Titanic"
+es "Titanic"
+
+## "Titanic_abpumpen"
+$end
+
+$start
+$replace
+fr "Porte troll"
+
+## "Tuer_LavaK"
+$with
+fr "Porte troll"
+
+## "Trolltor_links"
+en "Troll door"
+de "Trolltor"
+it "Porta troll"
+nl "Trollendeur"
+es "Puerta de trol"
+fr "Porte troll"
+
+## "Trolltor_rechts"
+en "Troll door"
+de "Trolltor"
+it "Porta troll"
+nl "Trollendeur"
+es "Puerta de trol"
+fr "Porte troll"
+
+
+## "Tuer_LavaK"
+$end
+
+$start
+$replace
+fr "Potion d'invisibilité"
+$with
+fr "Potion d'invisibi"
+$end
+
+$start
+$replace
+## "Zwerg"
+en "Dwarf"
+de "Zwerg"
+fr "Nain"
+it "Nano"
+nl "Dwerg"
+es "Gnomo"
+
+## "Zwerge"
+$with
+## "Zwerg"
+en "Dwarf"
+de "Zwerg"
+fr "Nain"
+it "Nano"
+nl "Dwerg"
+es "Gnomo"
+
+## "Koenig"
+en "Dwarf king"
+de "Zwergenkönig"
+fr "Roi des Nains"
+it "Nano"
+nl "Dwerg"
+es "Gnomo"
+
+## "Zwergenkönig"
+en "Dwarf king"
+de "Zwergenkönig"
+fr "Roi des Nains"
+it "Nano"
+nl "Dwerg"
+es "Gnomo"
+
+## "Zwergenkoenig"
+en "Dwarf king"
+de "Zwergenkönig"
+fr "Roi des Nains"
+it "Nano"
+nl "Dwerg"
+es "Gnomo"
+
+## "Zwerge"
+$end
+
+$start
+$replace
+nl "Je dwergen worden aangevallen"
+es "Sus gnomos están siendo atacados"
+
+## "_Auflegen"
+$with
+nl "Je gebouwen worden aangevallen"
+es "Sus gnomos están siendo atacados"
+
+## "wirdangegriffen"
+en "is under attack"
+de "wird angegriffen"
+fr "sont attaqués"
+it "vengono assaliti "
+nl "worden aangevallen"
+es "están siendo atacados"
+
+## "_Auflegen"
+$end
+
+$start
+$replace
+de "Reparieren"
+
+## "poison"
+$with
+de "Reparieren"
+fr "Réparer"
+
+## "poison"
+$end
+
+$start
+$replace
+## "switch"
+en "switch"
+de "schalten"
+fr "brancher"
+$with
+## "switch"
+en "switch"
+de "schalten"
+fr "appuyer"
+$end
+
+$start
+$replace
+es "We strongly recommend to shut ICQ and WinAmp before playing Diggles."
+
+## "Holzpuppe"
+$with
+es "We strongly recommend to shut ICQ and WinAmp before playing Diggles."
+
+## "CObj_World"
+en ""
+de ""
+fr ""
+it ""
+nl ""
+es ""
+
+## "CObj World"
+en ""
+de ""
+fr ""
+it ""
+nl ""
+es ""
+
+## "Holzpuppe"
+$end
+
+$start
+$replace
+nl "Houten pop"
+
+## "Trainingspuppe"
+$with
+nl "Houten pop"
+
+## "player_lost_1"
+de "Spieler 1 ist ausgeschieden"
+fr "1 de joueur détruit"
+en "Player 1 lost"
+it "1 del giocatore perso"
+es "1 del jugador perdido"
+nl "Player 1 lost"
+
+## "player_won_1"
+de "Spieler 1 hat gewonnen"
+fr "1 de joueur gagné"
+en "Player 1 won"
+it "1 del giocatore vinto"
+es "1 del jugador ganado"
+nl "Player 1 won"
+
+
+## "player_lost_2"
+de "Spieler 2 ist ausgeschieden"
+fr "2 de joueur détruit"
+en "Player 2 lost"
+it "2 del giocatore perso"
+es "2 del jugador perdido"
+nl "Player 2 lost"
+
+## "player_won_2"
+de "Spieler 2 hat gewonnen"
+fr "2 de joueur gagné"
+en "Player 2 won"
+it "2 del giocatore vinto"
+es "2 del jugador ganado"
+nl "Player 2 won"
+
+
+## "player_lost_3"
+de "Spieler 3 ist ausgeschieden"
+fr "3 de joueur détruit"
+en "Player 3 lost"
+it "3 del giocatore perso"
+es "3 del jugador perdido"
+nl "Player 3 lost"
+
+## "player_won_3"
+de "Spieler 3 hat gewonnen"
+fr "3 de joueur gagné"
+en "Player 3 won"
+it "3 del giocatore vinto"
+es "3 del jugador ganado"
+nl "Player 3 won"
+
+
+## "player_lost_4"
+de "Spieler 4 ist ausgeschieden"
+fr "4 de joueur détruit"
+en "Player 4 lost"
+it "4 del giocatore perso"
+es "4 del jugador perdido"
+nl "Player 4 lost"
+
+## "player_won_4"
+de "Spieler 4 hat gewonnen"
+fr "4 de joueur gagné"
+en "Player 4 won"
+it "4 del giocatore vinto"
+es "4 del jugador ganado"
+nl "Player 4 won"
+
+
+## "player_lost_5"
+de "Spieler 5 ist ausgeschieden"
+fr "5 de joueur détruit"
+en "Player 5 lost"
+it "5 del giocatore perso"
+es "5 del jugador perdido"
+nl "Player 5 lost"
+
+## "player_won_5"
+de "Spieler 5 hat gewonnen"
+fr "5 de joueur gagné"
+en "Player 5 won"
+it "5 del giocatore vinto"
+es "5 del jugador ganado"
+nl "Player 5 won"
+
+
+## "player_lost_6"
+de "Spieler 6 ist ausgeschieden"
+fr "6 de joueur détruit"
+en "Player 6 lost"
+it "6 del giocatore perso"
+es "6 del jugador perdido"
+nl "Player 6 lost"
+
+## "player_won_6"
+de "Spieler 6 hat gewonnen"
+fr "6 de joueur gagné"
+en "Player 6 won"
+it "6 del giocatore vinto"
+es "6 del jugador ganado"
+nl "Player 6 won"
+
+
+## "player_lost_7"
+de "Spieler 7 ist ausgeschieden"
+fr "7 de joueur détruit"
+en "Player 7 lost"
+it "7 del giocatore perso"
+es "7 del jugador perdido"
+nl "Player 7 lost"
+
+## "player_won_7"
+de "Spieler 7 hat gewonnen"
+fr "7 de joueur gagné"
+en "Player 7 won"
+it "7 del giocatore vinto"
+es "7 del jugador ganado"
+nl "Player 7 won"
+
+
+## "player_lost_8"
+de "Spieler 8 ist ausgeschieden"
+fr "8 de joueur détruit"
+en "Player 8 lost"
+it "8 del giocatore perso"
+es "8 del jugador perdido"
+nl "Player 8 lost"
+
+## "player_won_8"
+de "Spieler 8 hat gewonnen"
+fr "8 de joueur gagné"
+en "Player 8 won"
+it "8 del giocatore vinto"
+es "8 del jugador ganado"
+nl "Player 8 won"
+
+## "Trainingspuppe"
+$end
