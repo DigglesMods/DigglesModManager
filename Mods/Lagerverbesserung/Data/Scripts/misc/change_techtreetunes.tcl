@@ -3,8 +3,8 @@ $replace
 		set tttitems_Lager					{_Kisten_einlagern _Nahrung_einlagern _Pilze_einlagern _Rohmineralien_einlagern _Mineralien_einlagern}
 		set tttpreinv_Lager					{_Kisten_einlagern _Nahrung_einlagern _Pilze_einlagern _Rohmineralien_einlagern _Mineralien_einlagern}
 $with
-		set tttitems_Lager					{_Kisten_einlagern _Nahrung_einlagern _Pilzhut_einlagern _Pilzstamm_einlagern _Rohmineralien_einlagern _Stein_einlagern _Kohle_einlagern _Eisen_einlagern _Gold_einlagern _Kristall_einlagern _Waffen_einlagern _Werkzeuge_einlagern _Traenke_einlagern}
-		set tttpreinv_Lager					{_Kisten_einlagern _Nahrung_einlagern _Pilzhut_einlagern _Pilzstamm_einlagern _Rohmineralien_einlagern _Stein_einlagern _Kohle_einlagern _Eisen_einlagern _Gold_einlagern _Kristall_einlagern _Waffen_einlagern _Werkzeuge_einlagern _Traenke_einlagern}
+		set tttitems_Lager					{_Kisten_einlagern _Nahrung_einlagern _Pilzhut_einlagern _Pilzstamm_einlagern _Rohmineralien_einlagern _Stein_einlagern _Kohle_einlagern _Eisen_einlagern _Gold_einlagern _Kristall_einlagern _Waffen_einlagern _Werkzeuge_einlagern _Traenke_einlagern _Ringe_einlagern}
+		set tttpreinv_Lager					{_Kisten_einlagern _Nahrung_einlagern _Pilzhut_einlagern _Pilzstamm_einlagern _Rohmineralien_einlagern _Stein_einlagern _Kohle_einlagern _Eisen_einlagern _Gold_einlagern _Kristall_einlagern _Waffen_einlagern _Werkzeuge_einlagern _Traenke_einlagern _Ringe_einlagern}
 $end
 
 
@@ -80,6 +80,12 @@ $put
 		set tttinvent__Traenke_einlagern			{}
 		set tttgain__Traenke_einlagern			{{exp_Transport 0.001}}
 		set tttinfluence__Traenke_einlagern		{{exp_Transport 1.0}}
+	}
+	"_Ringe_einlagern" {
+		set tttmaterial__Ringe_einlagern		{}
+		set tttinvent__Ringe_einlagern			{}
+		set tttgain__Ringe_einlagern			{{exp_Transport 0.001}}
+		set tttinfluence__Ringe_einlagern		{{exp_Transport 1.0}}
 	}
 
 $end
