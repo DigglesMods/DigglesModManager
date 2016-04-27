@@ -1,0 +1,38 @@
+$start
+$before
+## " %d seconds idle"
+$put
+## "Enable_1"
+en "On"
+de "On"
+fr "On"
+it "On"
+nl "On"
+es "On"
+
+## "Enable_0"
+en "Off"
+de "Off"
+fr "Off"
+it "Off"
+nl "Off"
+es "Off"
+
+## "Generation_Temp"
+en "Generator dungeon"
+de "Generator dungeon"
+fr "Generator dungeon"
+it "Generator dungeon"
+nl "Generator dungeon"
+es "Generator dungeon"
+
+## "Game_Manager"
+en "Game Manager"
+de "Game Manager"
+fr "Game Manager"
+it "Game Manager"
+nl "Game Manager"
+es "Game Manager"
+
+
+$end
