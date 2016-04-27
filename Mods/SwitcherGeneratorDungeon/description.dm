@@ -1,3 +1,3 @@
 name:SwitcherGenerationCaves
-tooltip: on\off Generation Caves
+tooltip:Switch cave generation on/off (F1)
 author:Abys
