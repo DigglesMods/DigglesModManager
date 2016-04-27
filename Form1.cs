@@ -710,7 +710,7 @@ namespace DigglesModManager
         private void button_mod_settings_Click(object sender, EventArgs e)
         {
             int selectedIndex = listBox2.SelectedIndex;
-            if (selectedIndex >= 0 && selectedIndex < activeMods.Count - 1)
+            if (selectedIndex >= 0 && selectedIndex < activeMods.Count)
             {
                 Mod mod = activeMods.ElementAt(selectedIndex); //get mod
                 FormModSettings form = new FormModSettings(mod);
