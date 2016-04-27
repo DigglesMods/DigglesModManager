@@ -1,0 +1,38 @@
+$start
+$before
+## " %d seconds idle"
+$put
+## "Enable_1"
+en "On"
+de "On"
+fr "On"
+it "On"
+nl "On"
+es "On"
+
+## "Enable_0"
+en "Off"
+de "Off"
+fr "Off"
+it "Off"
+nl "Off"
+es "Off"
+
+## "Generation_Temp"
+en "Generate Caves"
+de "Höhlen generieren"
+fr "Generate Caves"
+it "Generate Caves"
+nl "Generate Caves"
+es "Generate Caves"
+
+## "Game_Manager"
+en "Game Manager"
+de "Game Manager"
+fr "Game Manager"
+it "Game Manager"
+nl "Game Manager"
+es "Game Manager"
+
+
+$end
