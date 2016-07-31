@@ -35,4 +35,37 @@ nl "Game Manager"
 es "Game Manager"
 
 
+## "Generation_Urwald"
+en "Generate Forest Caves"
+de "Urwaldhöhlen generieren"
+fr "Generate Forest Caves"
+it "Generate Forest Caves"
+nl "Generate Forest Caves"
+es "Generate Forest Caves"
+
+## "Generation_Metall"
+en "Generate Sulphur Caves"
+de "Schwefelhöhlen generieren"
+fr "Generate Sulphur Caves"
+it "Generate Sulphur Caves"
+nl "Generate Sulphur Caves"
+es "Generate Sulphur Caves"
+
+## "Generation_Kristall"
+en "Generate Crystal Caves"
+de "Kristallhöhlen generieren"
+fr "Generate Crystal Caves"
+it "Generate Crystal Caves"
+nl "Generate Crystal Caves"
+es "Generate Crystal Caves"
+
+## "Generation_Lava"
+en "Generate Lava Caves"
+de "Lavahöhlen generieren"
+fr "Generate Lava Caves"
+it "Generate Lava Caves"
+nl "Generate Lava Caves"
+es "Generate Lava Caves"
+
+
 $end

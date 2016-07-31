@@ -178,7 +178,7 @@
             this.Controls.Add(this.listBox1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "DigglesModManager";
-            this.Text = "DigglesModManager v0.2.5";
+            this.Text = "DigglesModManager v0.2.6";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
