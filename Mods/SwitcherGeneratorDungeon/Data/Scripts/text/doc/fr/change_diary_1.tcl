@@ -3,7 +3,7 @@ $after
 call /scripts/misc/onlinehelputils.tcl
 
 $put
-call /scripts/text/doc/en/info_gamemanager.tcl
+call /scripts/text/doc/info_gamemanager.tcl
 
 $end
 
