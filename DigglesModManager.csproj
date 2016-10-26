@@ -65,11 +65,11 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Form1.cs">
+    <Compile Include="FormMain.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Form1.Designer.cs">
-      <DependentUpon>Form1.cs</DependentUpon>
+    <Compile Include="FormMain.Designer.cs">
+      <DependentUpon>FormMain.cs</DependentUpon>
     </Compile>
     <Compile Include="FormModSettings.cs">
       <SubType>Form</SubType>
@@ -87,8 +87,8 @@
     <Compile Include="ToolTipListBox.Designer.cs">
       <DependentUpon>ToolTipListBox.cs</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="Form1.resx">
-      <DependentUpon>Form1.cs</DependentUpon>
+    <EmbeddedResource Include="FormMain.resx">
+      <DependentUpon>FormMain.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FormModSettings.resx">
       <DependentUpon>FormModSettings.cs</DependentUpon>
@@ -106,7 +106,6 @@
     <EmbeddedResource Include="ToolTipListBox.resx">
       <DependentUpon>ToolTipListBox.cs</DependentUpon>
     </EmbeddedResource>
-    <None Include="ClassDiagram1.cd" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -123,6 +122,8 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Resources\Icons\reload.png" />
+    <Content Include="Resources\Icons\settings.png" />
     <Content Include="wiggles.ico" />
   </ItemGroup>
   <ItemGroup>

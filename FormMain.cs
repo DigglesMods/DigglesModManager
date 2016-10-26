@@ -5,12 +5,13 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.IO;
+using System.Diagnostics;
 
 namespace DigglesModManager
 {
 
 
-    public partial class DigglesModManager : Form
+    public partial class FormMain : Form
     {
         public static string exePath = @"."; //dyn: @"." | local: D:\Programme\Wiggles
         public static string modPath = exePath; //dyn: exePath | local: @"D:\Projekte\DigglesModManager"
@@ -28,13 +29,15 @@ namespace DigglesModManager
         List<Mod> inactiveMods = new List<Mod>();
         List<Mod> activeMods = new List<Mod>();
 
-        public DigglesModManager()
+        public FormMain()
         {
             InitializeComponent();
 
+            this.FormBorderStyle = FormBorderStyle.FixedSingle;
+
             if (!File.Exists(exePath + "\\" + "Wiggles.exe"))
             {
-                MessageBox.Show("Legen Sie die Datei ins Wiggles Verzeichnis!");
+                MessageBox.Show("Legen Sie die Datei ins Wiggles-Verzeichnis!", "Error");
             }
             else
             {
@@ -47,6 +50,8 @@ namespace DigglesModManager
         {
             label_message.Text = text;
             label_message.ForeColor = color;
+            statusBarLabelRight.Text = text;
+            statusBarLabelRight.ForeColor = color;
         }
 
         private void readMods()
@@ -110,10 +115,10 @@ namespace DigglesModManager
         private void changeDataSource()
         {
             // Change the DataSource.
-            listBox1.DataSource = null;
-            listBox1.DataSource = inactiveMods;
-            listBox2.DataSource = null;
-            listBox2.DataSource = activeMods;
+            availableModsListBox.DataSource = null;
+            availableModsListBox.DataSource = inactiveMods;
+            installesModsListBox.DataSource = null;
+            installesModsListBox.DataSource = activeMods;
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -131,7 +136,7 @@ namespace DigglesModManager
             setMessage("", Color.Black);
 
             //find settings file
-            int selectedIndex = listBox2.SelectedIndex;
+            int selectedIndex = installesModsListBox.SelectedIndex;
             if (selectedIndex >= 0 && selectedIndex < activeMods.Count) {
                 Mod mod = activeMods.ElementAt(selectedIndex);
 
@@ -147,14 +152,15 @@ namespace DigglesModManager
                     }
                 }
                 //set settings button enabled
-                button_mod_settings.Enabled = hasSettings;
+                modSettingsButton.Enabled = hasSettings;
+                modSettingsMenuButton.Enabled = hasSettings;
             }
         }
 
         private void button_right_Click(object sender, EventArgs e)
         {
             setMessage("", Color.Black);
-            int selectedIndex = listBox1.SelectedIndex;
+            int selectedIndex = availableModsListBox.SelectedIndex;
             if (selectedIndex >= 0 && selectedIndex < inactiveMods.Count)
             {
                 activeMods.Insert(0, inactiveMods.ElementAt(selectedIndex)); //add element right at first position
@@ -167,7 +173,7 @@ namespace DigglesModManager
         private void button_left_Click(object sender, EventArgs e)
         {
             setMessage("", Color.Black);
-            int selectedIndex = listBox2.SelectedIndex;
+            int selectedIndex = installesModsListBox.SelectedIndex;
             if (selectedIndex >= 0 && selectedIndex < activeMods.Count)
             {
                 inactiveMods.Add(activeMods.ElementAt(selectedIndex)); //add element left
@@ -181,7 +187,7 @@ namespace DigglesModManager
         private void button_up_Click(object sender, EventArgs e)
         {
             setMessage("", Color.Black);
-            int selectedIndex = listBox2.SelectedIndex;
+            int selectedIndex = installesModsListBox.SelectedIndex;
             if (selectedIndex > 0 && selectedIndex < activeMods.Count)
             {
                 Mod mod = activeMods.ElementAt(selectedIndex); //get mod
@@ -190,14 +196,14 @@ namespace DigglesModManager
                 activeMods.Insert(selectedIndex, mod); //add at new position
 
                 changeDataSource();
-                listBox2.SetSelected(selectedIndex, true);
+                installesModsListBox.SetSelected(selectedIndex, true);
             }
         }
 
         private void button_down_Click(object sender, EventArgs e)
         {
             setMessage("", Color.Black);
-            int selectedIndex = listBox2.SelectedIndex;
+            int selectedIndex = installesModsListBox.SelectedIndex;
             if (selectedIndex >= 0 && selectedIndex < activeMods.Count - 1)
             {
                 Mod mod = activeMods.ElementAt(selectedIndex); //get mod
@@ -206,7 +212,7 @@ namespace DigglesModManager
                 activeMods.Insert(selectedIndex, mod); //add at new position
 
                 changeDataSource();
-                listBox2.SetSelected(selectedIndex, true);
+                installesModsListBox.SetSelected(selectedIndex, true);
             }
         }
 
@@ -234,8 +240,13 @@ namespace DigglesModManager
             }
             else
             {
-                setMessage("Success", Color.Green);
+                setMessage("Modding was successful", Color.Green);
             }
+        }
+
+        private void letsModToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            button_mod_Click(sender, e);
         }
 
         private void letsMod(Mod mod, DirectoryInfo modDirectory, DirectoryInfo gameDirectory)
@@ -709,13 +720,49 @@ namespace DigglesModManager
 
         private void button_mod_settings_Click(object sender, EventArgs e)
         {
-            int selectedIndex = listBox2.SelectedIndex;
+            int selectedIndex = installesModsListBox.SelectedIndex;
             if (selectedIndex >= 0 && selectedIndex < activeMods.Count)
             {
                 Mod mod = activeMods.ElementAt(selectedIndex); //get mod
-                FormModSettings form = new FormModSettings(mod);
-                form.Show();
+                FormModSettings form = new FormModSettings(mod);                
+                form.ShowDialog(this); //'this' is necessary for relative aligning
             }
+        }
+
+        private void modSettingsMenuButton_Click(object sender, EventArgs e)
+        {
+            button_mod_settings_Click(sender, e);
+        }
+
+        private void quitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
+        }
+
+        private void wikiToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OpenWebPage("https://github.com/cech12/DigglesModManager/wiki");
+        }
+
+        private void deutschToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OpenWebPage("https://github.com/cech12/DigglesModManager/wiki/Mods-(de)");
+        }
+
+        private void englishToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OpenWebPage("https://github.com/cech12/DigglesModManager/wiki/Mods-(en)");
+        }
+
+        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OpenWebPage("https://github.com/cech12/DigglesModManager/blob/master/README.md");
+        }
+
+        private void OpenWebPage(String uri)
+        {
+            ProcessStartInfo sInfo = new ProcessStartInfo(uri);
+            Process.Start(sInfo);
         }
     }
 }

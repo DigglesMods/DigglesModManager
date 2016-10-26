@@ -22,7 +22,7 @@ namespace DigglesModManager
             ModDirectoryName = modDirectory;
 
             //get description
-            ModDirectory = new DirectoryInfo(DigglesModManager.exePath + "\\" + DigglesModManager.modDirectoryName + "\\" + ModDirectoryName);
+            ModDirectory = new DirectoryInfo(FormMain.exePath + "\\" + FormMain.modDirectoryName + "\\" + ModDirectoryName);
             DisplayText = modDirectory;
             ToolTipText = "";
             Author = "";
@@ -34,7 +34,7 @@ namespace DigglesModManager
             foreach (FileInfo modFile in modFiles)
             {
                 string filename = modFile.Name;
-                if (filename.Equals(DigglesModManager.modDescriptionFileName))
+                if (filename.Equals(FormMain.modDescriptionFileName))
                 {
                     //read mod description
                     StreamReader reader = new StreamReader(modFile.FullName, Encoding.Default);
@@ -55,7 +55,7 @@ namespace DigglesModManager
                         }
                     }
                 }
-                else if (filename.Equals(DigglesModManager.modSettingsFileName))
+                else if (filename.Equals(FormMain.modSettingsFileName))
                 {
                     //reading mod settings
                     StreamReader reader = new StreamReader(modFile.FullName, Encoding.Default);

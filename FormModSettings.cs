@@ -15,10 +15,11 @@ namespace DigglesModManager
             inputControls = new List<Control>();
 
             InitializeComponent();
+            FormBorderStyle = FormBorderStyle.FixedSingle;
 
             Name = this.mod.DisplayText + ": Settings";
             Text = Name;
-            
+
             //add for each ModVar control row
             int i = 0;
             foreach (ModVar modVar in mod.Vars)
@@ -39,7 +40,7 @@ namespace DigglesModManager
                     CheckBox value = new CheckBox();
                     value.Location = new System.Drawing.Point(162, height - 3);
                     value.Name = modVar.VarName;
-                    value.Checked = ((ModVar<bool>) modVar).Value;
+                    value.Checked = ((ModVar<bool>)modVar).Value;
                     value.Size = new System.Drawing.Size(20, 20);
                     value.TabIndex = i + 3;
                     Controls.Add(value);
@@ -48,7 +49,7 @@ namespace DigglesModManager
                 else
                 {
                     TextBox value = new TextBox();
-                    value.Location = new System.Drawing.Point(162, height-3);
+                    value.Location = new System.Drawing.Point(162, height - 3);
                     value.Name = modVar.VarName;
                     value.Text = modVar.getValueAsString();
                     value.Size = new System.Drawing.Size(50, 20);
@@ -61,8 +62,16 @@ namespace DigglesModManager
                 Label description = new Label();
                 description.AutoSize = true;
                 description.Location = new System.Drawing.Point(252, height);
+                description.Size = new System.Drawing.Size(290, description.Size.Height);           //limit size
+                description.Anchor = AnchorStyles.Top | AnchorStyles.Left |  AnchorStyles.Right;    //make label grow automatically on window resize
+                description.AutoEllipsis = true;                                                    //add '...' if text does not fit into label bounds
+                description.AutoSize = false;                                                       //stop autosizing
                 description.Name = modVar.VarName + "_desc";
                 description.Text = modVar.Description;
+                description.Cursor = Cursors.Help;
+                ToolTip tooltip = new ToolTip();
+                tooltip.SetToolTip(description, description.Text);
+
                 Controls.Add(description);
                 i++;
             }
@@ -110,7 +119,7 @@ namespace DigglesModManager
                         {
                             ((CheckBox)control).Checked = ((ModVar<bool>)modVar).Value;
                         }
-                        else 
+                        else
                         {
                             control.Text = modVar.getValueAsString();
                         }
@@ -145,6 +154,11 @@ namespace DigglesModManager
                     }
                 }
             }
+        }
+
+        private void closeButton_Click(object sender, EventArgs e)
+        {
+            this.Close();
         }
     }
 }

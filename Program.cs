@@ -13,7 +13,7 @@ namespace DigglesModManager
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new DigglesModManager());
+            Application.Run(new FormMain());
         }
     }
 }
