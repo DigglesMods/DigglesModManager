@@ -29,42 +29,43 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormModSettings));
-            this.button_save = new System.Windows.Forms.Button();
-            this.button_reset = new System.Windows.Forms.Button();
-            this.button_default = new System.Windows.Forms.Button();
+            this.okButton = new System.Windows.Forms.Button();
+            this.resetButton = new System.Windows.Forms.Button();
+            this.setDefaultButton = new System.Windows.Forms.Button();
             this.process1 = new System.Diagnostics.Process();
+            this.closeButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
-            // button_save
+            // okButton
             // 
-            this.button_save.Cursor = System.Windows.Forms.Cursors.Default;
-            this.button_save.Location = new System.Drawing.Point(12, 180);
-            this.button_save.Name = "button_save";
-            this.button_save.Size = new System.Drawing.Size(75, 23);
-            this.button_save.TabIndex = 0;
-            this.button_save.Text = "Apply";
-            this.button_save.UseVisualStyleBackColor = true;
-            this.button_save.Click += new System.EventHandler(this.button_apply_Click);
+            this.okButton.Cursor = System.Windows.Forms.Cursors.Default;
+            this.okButton.Location = new System.Drawing.Point(352, 180);
+            this.okButton.Name = "okButton";
+            this.okButton.Size = new System.Drawing.Size(88, 23);
+            this.okButton.TabIndex = 0;
+            this.okButton.Text = "OK";
+            this.okButton.UseVisualStyleBackColor = true;
+            this.okButton.Click += new System.EventHandler(this.button_apply_Click);
             // 
-            // button_reset
+            // resetButton
             // 
-            this.button_reset.Location = new System.Drawing.Point(94, 180);
-            this.button_reset.Name = "button_reset";
-            this.button_reset.Size = new System.Drawing.Size(75, 23);
-            this.button_reset.TabIndex = 1;
-            this.button_reset.Text = "Reset";
-            this.button_reset.UseVisualStyleBackColor = true;
-            this.button_reset.Click += new System.EventHandler(this.button_reset_Click);
+            this.resetButton.Location = new System.Drawing.Point(98, 180);
+            this.resetButton.Name = "resetButton";
+            this.resetButton.Size = new System.Drawing.Size(75, 23);
+            this.resetButton.TabIndex = 1;
+            this.resetButton.Text = "Reset";
+            this.resetButton.UseVisualStyleBackColor = true;
+            this.resetButton.Click += new System.EventHandler(this.button_reset_Click);
             // 
-            // button_default
+            // setDefaultButton
             // 
-            this.button_default.Location = new System.Drawing.Point(437, 180);
-            this.button_default.Name = "button_default";
-            this.button_default.Size = new System.Drawing.Size(96, 23);
-            this.button_default.TabIndex = 2;
-            this.button_default.Text = "Set Default";
-            this.button_default.UseVisualStyleBackColor = true;
-            this.button_default.Click += new System.EventHandler(this.button_default_Click);
+            this.setDefaultButton.Location = new System.Drawing.Point(12, 180);
+            this.setDefaultButton.Name = "setDefaultButton";
+            this.setDefaultButton.Size = new System.Drawing.Size(80, 23);
+            this.setDefaultButton.TabIndex = 2;
+            this.setDefaultButton.Text = "Set Default";
+            this.setDefaultButton.UseVisualStyleBackColor = true;
+            this.setDefaultButton.Click += new System.EventHandler(this.button_default_Click);
             // 
             // process1
             // 
@@ -76,16 +77,29 @@
             this.process1.StartInfo.UserName = "";
             this.process1.SynchronizingObject = this;
             // 
+            // closeButton
+            // 
+            this.closeButton.Cursor = System.Windows.Forms.Cursors.Default;
+            this.closeButton.Location = new System.Drawing.Point(446, 180);
+            this.closeButton.Name = "closeButton";
+            this.closeButton.Size = new System.Drawing.Size(88, 23);
+            this.closeButton.TabIndex = 3;
+            this.closeButton.Text = "Cancel";
+            this.closeButton.UseVisualStyleBackColor = true;
+            this.closeButton.Click += new System.EventHandler(this.closeButton_Click);
+            // 
             // FormModSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(545, 215);
-            this.Controls.Add(this.button_default);
-            this.Controls.Add(this.button_reset);
-            this.Controls.Add(this.button_save);
+            this.Controls.Add(this.closeButton);
+            this.Controls.Add(this.setDefaultButton);
+            this.Controls.Add(this.resetButton);
+            this.Controls.Add(this.okButton);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "FormModSettings";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "FormModSettings";
             this.ResumeLayout(false);
 
@@ -93,9 +107,10 @@
 
         #endregion
 
-        private System.Windows.Forms.Button button_save;
-        private System.Windows.Forms.Button button_reset;
-        private System.Windows.Forms.Button button_default;
+        private System.Windows.Forms.Button okButton;
+        private System.Windows.Forms.Button resetButton;
+        private System.Windows.Forms.Button setDefaultButton;
         private System.Diagnostics.Process process1;
+        private System.Windows.Forms.Button closeButton;
     }
 }

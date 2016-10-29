@@ -22,22 +22,22 @@ namespace DigglesModManager
             ModDirectoryName = modDirectory;
 
             //get description
-            ModDirectory = new DirectoryInfo(DigglesModManager.exePath + "\\" + DigglesModManager.modDirectoryName + "\\" + ModDirectoryName);
+            ModDirectory = new DirectoryInfo(Paths.ExePath + "\\" + Paths.ModDirectoryName + "\\" + ModDirectoryName);
             DisplayText = modDirectory;
             ToolTipText = "";
             Author = "";
             Vars = new List<ModVar>();
 
             //test for description file and settings file and read it
-            FileInfo[] modFiles = ModDirectory.GetFiles();
+            var modFiles = ModDirectory.GetFiles();
 
-            foreach (FileInfo modFile in modFiles)
+            foreach (var modFile in modFiles)
             {
-                string filename = modFile.Name;
-                if (filename.Equals(DigglesModManager.modDescriptionFileName))
+                var filename = modFile.Name;
+                if (filename.Equals(Paths.ModDescriptionFileName))
                 {
                     //read mod description
-                    StreamReader reader = new StreamReader(modFile.FullName, Encoding.Default);
+                    var reader = new StreamReader(modFile.FullName, Encoding.Default);
                     string line;
                     while ((line = reader.ReadLine()) != null)
                     {
@@ -55,26 +55,26 @@ namespace DigglesModManager
                         }
                     }
                 }
-                else if (filename.Equals(DigglesModManager.modSettingsFileName))
+                else if (filename.Equals(Paths.ModSettingsFileName))
                 {
                     //reading mod settings
-                    StreamReader reader = new StreamReader(modFile.FullName, Encoding.Default);
+                    var reader = new StreamReader(modFile.FullName, Encoding.Default);
                     string line;
                     while ((line = reader.ReadLine()) != null)
                     {
                         //read var
-                        string varName = getVarElement(line, "Var:");
-                        string type = getVarElement(line, "Type:");
-                        string description = getVarElement(line, "Description:");
-                        string gameValue = getVarElement(line, "GameValue:");
-                        string stdValue = getVarElement(line, "StdValue:");
-                        string minValue = getVarElement(line, "MinValue:");
-                        string maxValue = getVarElement(line, "MaxValue:");
+                        var varName = getVarElement(line, "Var:");
+                        var type = getVarElement(line, "Type:");
+                        var description = getVarElement(line, "Description:");
+                        var gameValue = getVarElement(line, "GameValue:");
+                        var stdValue = getVarElement(line, "StdValue:");
+                        var minValue = getVarElement(line, "MinValue:");
+                        var maxValue = getVarElement(line, "MaxValue:");
 
                         if (varName != null && type != null && gameValue != null && stdValue != null) 
                         {
                             //read old settings
-                            string value = stdValue;
+                            var value = stdValue;
                             if (oldSettings != null)
                             {
                                 value = getVarElement(oldSettings, varName + ":");
@@ -117,12 +117,12 @@ namespace DigglesModManager
 
         private string getVarElement(string line, string identifier)
         {
-            int startIndex = line.IndexOf(identifier);
+            var startIndex = line.IndexOf(identifier);
             if (startIndex >= 0)
             {
                 startIndex += identifier.Length;
-                string tmp = line.Substring(startIndex);
-                int endIndex = tmp.IndexOf(';');
+                var tmp = line.Substring(startIndex);
+                var endIndex = tmp.IndexOf(';');
                 if (endIndex > 0)
                 {
                     return tmp.Substring(0, endIndex);
@@ -144,7 +144,7 @@ namespace DigglesModManager
         // Returns the tooltip text of this item.
         public string GetToolTipText()
         {
-            string toolTip = ToolTipText;
+            var toolTip = ToolTipText;
             if (!toolTip.Equals("") && !Author.Equals(""))
             {
                 toolTip += "\n";
@@ -162,7 +162,7 @@ namespace DigglesModManager
             if (obj == null || GetType() != obj.GetType())
                 return false;
 
-            Mod element = (Mod)obj;
+            var element = (Mod)obj;
             return DisplayText.Equals(element.DisplayText);
         }
 
@@ -176,7 +176,7 @@ namespace DigglesModManager
             if (obj == null || GetType() != obj.GetType())
                 return 1;
 
-            Mod element = (Mod)obj;
+            var element = (Mod)obj;
             return DisplayText.CompareTo(element.DisplayText);
         }
     }

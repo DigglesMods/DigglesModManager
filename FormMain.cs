@@ -5,21 +5,13 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.IO;
+using System.Diagnostics;
+using DigglesModManager.Properties;
 
 namespace DigglesModManager
 {
-
-
-    public partial class DigglesModManager : Form
+    public partial class FormMain : Form
     {
-        public static string exePath = @"."; //dyn: @"." | local: D:\Programme\Wiggles
-        public static string modPath = exePath; //dyn: exePath | local: @"D:\Projekte\DigglesModManager"
-        public static string modDirectoryName = "Mods";
-        public static string activeModsFileName = "mods.dm";
-        public static string restoreFileName = "restore.dm";
-        public static string modSettingsFileName = "settings.dm";
-        public static string modDescriptionFileName = "description.dm";
-
         public static string changeFileStarting = "change_";
         public static string copyFileEnding = "_copy";
 
@@ -28,43 +20,76 @@ namespace DigglesModManager
         List<Mod> inactiveMods = new List<Mod>();
         List<Mod> activeMods = new List<Mod>();
 
-        public DigglesModManager()
+        public FormMain()
         {
             InitializeComponent();
 
-            if (!File.Exists(exePath + "\\" + "Wiggles.exe"))
+            this.FormBorderStyle = FormBorderStyle.FixedSingle;
+
+            if (!File.Exists($"{Paths.ExePath}\\{Paths.WigglesExecutableName}"))
             {
-                MessageBox.Show("Legen Sie die Datei ins Wiggles Verzeichnis!");
+                MessageBox.Show(Resources.FormMain_CouldNotFindWigglesExeErrorText, Resources.FormMain_Error);
             }
             else
             {
-                setMessage("", Color.Black);
+                ResetStatusNote();
                 readMods();
             }
+        }
+
+        private void ResetStatusNote()
+        {
+            setMessage("", Color.Black);
         }
 
         private void setMessage(string text, Color color)
         {
             label_message.Text = text;
             label_message.ForeColor = color;
+            statusBarLabelRight.Text = text;
+            statusBarLabelRight.ForeColor = color;
+        }
+
+        private void resetProgressBar(int max = 1)
+        {
+            modProgressStatusBar.Value = 0;
+            modProgressStatusBar.Maximum = max;
+            modProgressStatusBar.Visible = true;
+        }
+
+        private void incrementProgressBar(int increment = 1)
+        {
+            if (modProgressStatusBar.Maximum > modProgressStatusBar.Value)
+                modProgressStatusBar.Value += increment;
+        }
+
+        private void finalizeProgressBar()
+        {
+            modProgressStatusBar.Value = modProgressStatusBar.Maximum;
+            //modProgressStatusBar.Visible = false;
         }
 
         private void readMods()
         {
+            resetProgressBar(7);
+            incrementProgressBar();
+
             inactiveMods.Clear();
             activeMods.Clear();
 
+            incrementProgressBar();
             //check if mod directory exists
-            if (!Directory.Exists(modPath + "\\" + modDirectoryName))
+            if (!Directory.Exists(Paths.ModPath + "\\" + Paths.ModDirectoryName))
             {
-                Directory.CreateDirectory(modPath + "\\" + modDirectoryName);
+                Directory.CreateDirectory(Paths.ModPath + "\\" + Paths.ModDirectoryName);
             }
+            incrementProgressBar();
 
             //read last active mods
             List<string> lastActiveMods = new List<string>();
-            if (File.Exists(exePath + "\\" + activeModsFileName))
+            if (File.Exists(Paths.ExePath + "\\" + Paths.ActiveModsFileName))
             {
-                StreamReader reader = new StreamReader(exePath + "\\" + activeModsFileName);
+                StreamReader reader = new StreamReader(Paths.ExePath + "\\" + Paths.ActiveModsFileName);
                 string mod;
                 while ((mod = reader.ReadLine()) != null)
                 {
@@ -72,6 +97,7 @@ namespace DigglesModManager
                 }
                 reader.Close();
             }
+            incrementProgressBar();
 
             //add to active mods 
             foreach (string modAndSettings in lastActiveMods)
@@ -87,14 +113,15 @@ namespace DigglesModManager
                 }
 
                 //add active mod
-                if (Directory.Exists(modPath + "\\" + modDirectoryName + "\\" + mod))
+                if (Directory.Exists(Paths.ModPath + "\\" + Paths.ModDirectoryName + "\\" + mod))
                 {
                     activeMods.Add(new Mod(mod, settings));
                 }
             }
+            incrementProgressBar();
 
             //read mods
-            DirectoryInfo[] modDirectories = (new DirectoryInfo(modPath + "\\" + modDirectoryName)).GetDirectories();
+            DirectoryInfo[] modDirectories = (new DirectoryInfo(Paths.ModPath + "\\" + Paths.ModDirectoryName)).GetDirectories();
             foreach (DirectoryInfo modInfo in modDirectories)
             {
                 if (!activeMods.Contains(new Mod(modInfo.Name, null)))
@@ -103,17 +130,21 @@ namespace DigglesModManager
                 }
             }
             inactiveMods.Sort();
+            incrementProgressBar();
 
             changeDataSource();
+
+            incrementProgressBar();
+            finalizeProgressBar();
         }
 
         private void changeDataSource()
         {
             // Change the DataSource.
-            listBox1.DataSource = null;
-            listBox1.DataSource = inactiveMods;
-            listBox2.DataSource = null;
-            listBox2.DataSource = activeMods;
+            availableModsListBox.DataSource = null;
+            availableModsListBox.DataSource = inactiveMods;
+            installesModsListBox.DataSource = null;
+            installesModsListBox.DataSource = activeMods;
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -123,38 +154,40 @@ namespace DigglesModManager
 
         private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            setMessage("", Color.Black);
+            ResetStatusNote();
         }
 
         private void listBox2_SelectedIndexChanged(object sender, EventArgs e)
         {
-            setMessage("", Color.Black);
+            ResetStatusNote();
 
             //find settings file
-            int selectedIndex = listBox2.SelectedIndex;
-            if (selectedIndex >= 0 && selectedIndex < activeMods.Count) {
+            int selectedIndex = installesModsListBox.SelectedIndex;
+            if (selectedIndex >= 0 && selectedIndex < activeMods.Count)
+            {
                 Mod mod = activeMods.ElementAt(selectedIndex);
 
-                DirectoryInfo modDir = new DirectoryInfo(modPath + "\\" + modDirectoryName + "\\" + mod.ModDirectoryName);
+                DirectoryInfo modDir = new DirectoryInfo(Paths.ModPath + "\\" + Paths.ModDirectoryName + "\\" + mod.ModDirectoryName);
                 FileInfo[] modFiles = modDir.GetFiles();
 
                 bool hasSettings = false;
                 foreach (FileInfo gameFile in modFiles)
                 {
-                    if (gameFile.Name.Equals(modSettingsFileName))
+                    if (gameFile.Name.Equals(Paths.ModSettingsFileName))
                     {
                         hasSettings = true;
                     }
                 }
                 //set settings button enabled
-                button_mod_settings.Enabled = hasSettings;
+                modSettingsButton.Enabled = hasSettings;
+                modSettingsMenuButton.Enabled = hasSettings;
             }
         }
 
         private void button_right_Click(object sender, EventArgs e)
         {
-            setMessage("", Color.Black);
-            int selectedIndex = listBox1.SelectedIndex;
+            ResetStatusNote();
+            int selectedIndex = availableModsListBox.SelectedIndex;
             if (selectedIndex >= 0 && selectedIndex < inactiveMods.Count)
             {
                 activeMods.Insert(0, inactiveMods.ElementAt(selectedIndex)); //add element right at first position
@@ -166,8 +199,8 @@ namespace DigglesModManager
 
         private void button_left_Click(object sender, EventArgs e)
         {
-            setMessage("", Color.Black);
-            int selectedIndex = listBox2.SelectedIndex;
+            ResetStatusNote();
+            int selectedIndex = installesModsListBox.SelectedIndex;
             if (selectedIndex >= 0 && selectedIndex < activeMods.Count)
             {
                 inactiveMods.Add(activeMods.ElementAt(selectedIndex)); //add element left
@@ -180,8 +213,8 @@ namespace DigglesModManager
 
         private void button_up_Click(object sender, EventArgs e)
         {
-            setMessage("", Color.Black);
-            int selectedIndex = listBox2.SelectedIndex;
+            ResetStatusNote();
+            int selectedIndex = installesModsListBox.SelectedIndex;
             if (selectedIndex > 0 && selectedIndex < activeMods.Count)
             {
                 Mod mod = activeMods.ElementAt(selectedIndex); //get mod
@@ -190,14 +223,14 @@ namespace DigglesModManager
                 activeMods.Insert(selectedIndex, mod); //add at new position
 
                 changeDataSource();
-                listBox2.SetSelected(selectedIndex, true);
+                installesModsListBox.SetSelected(selectedIndex, true);
             }
         }
 
         private void button_down_Click(object sender, EventArgs e)
         {
-            setMessage("", Color.Black);
-            int selectedIndex = listBox2.SelectedIndex;
+            ResetStatusNote();
+            int selectedIndex = installesModsListBox.SelectedIndex;
             if (selectedIndex >= 0 && selectedIndex < activeMods.Count - 1)
             {
                 Mod mod = activeMods.ElementAt(selectedIndex); //get mod
@@ -206,13 +239,13 @@ namespace DigglesModManager
                 activeMods.Insert(selectedIndex, mod); //add at new position
 
                 changeDataSource();
-                listBox2.SetSelected(selectedIndex, true);
+                installesModsListBox.SetSelected(selectedIndex, true);
             }
         }
 
         private void button_refresh_Click(object sender, EventArgs e)
         {
-            setMessage("", Color.Black);
+            ResetStatusNote();
             readMods();
         }
 
@@ -220,22 +253,35 @@ namespace DigglesModManager
         {
             warning = false;
             setMessage("...", Color.Black);
+            resetProgressBar(3 + activeMods.Count);
+            incrementProgressBar();
 
             restore();
+            incrementProgressBar();
             foreach (Mod mod in activeMods)
             {
-                DirectoryInfo modDir = new DirectoryInfo(modPath + "\\" + modDirectoryName + "\\" + mod.ModDirectoryName);
-                letsMod(mod, modDir, new DirectoryInfo(exePath));
+                DirectoryInfo modDir = new DirectoryInfo(Paths.ModPath + "\\" + Paths.ModDirectoryName + "\\" + mod.ModDirectoryName);
+                letsMod(mod, modDir, new DirectoryInfo(Paths.ExePath));
+                incrementProgressBar();
             }
+
             saveActiveMods();
+            incrementProgressBar();
+
             if (warning)
             {
                 setMessage("Warning", Color.Orange);
             }
             else
             {
-                setMessage("Success", Color.Green);
+                setMessage("Modding was successful", Color.Green);
             }
+            finalizeProgressBar();
+        }
+
+        private void letsModToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            button_mod_Click(sender, e);
         }
 
         private void letsMod(Mod mod, DirectoryInfo modDirectory, DirectoryInfo gameDirectory)
@@ -265,7 +311,7 @@ namespace DigglesModManager
                 string filename = modFile.Name;
 
                 //skip modmanager files
-                if (filename.Equals(modSettingsFileName) || filename.Equals(modDescriptionFileName))
+                if (filename.Equals(Paths.ModSettingsFileName) || filename.Equals(Paths.ModDescriptionFileName))
                 {
                     continue;
                 }
@@ -374,7 +420,7 @@ namespace DigglesModManager
                                     //$if:varname
                                     //look for vaviable
                                     bool modVarFound = false;
-                                    foreach(ModVar modVar in mod.Vars)
+                                    foreach (ModVar modVar in mod.Vars)
                                     {
                                         if (modVar.VarName.Equals(ifStatement))
                                         {
@@ -620,7 +666,7 @@ namespace DigglesModManager
         private void rememberForRestore(FileInfo file, string type)
         {
             //remember
-            StreamWriter writer = new StreamWriter(exePath + "\\" + restoreFileName, true, Encoding.Default);
+            StreamWriter writer = new StreamWriter(Paths.ExePath + "\\" + Paths.RestoreFileName, true, Encoding.Default);
             writer.WriteLine(type + "||" + file.FullName);
             writer.Flush();
             writer.Close();
@@ -628,9 +674,9 @@ namespace DigglesModManager
 
         private void restore()
         {
-            if (File.Exists(exePath + "\\" + restoreFileName))
+            if (File.Exists(Paths.ExePath + "\\" + Paths.RestoreFileName))
             {
-                StreamReader reader = new StreamReader(exePath + "\\" + restoreFileName, Encoding.Default);
+                StreamReader reader = new StreamReader(Paths.ExePath + "\\" + Paths.RestoreFileName, Encoding.Default);
                 string line;
                 while ((line = reader.ReadLine()) != null)
                 {
@@ -673,22 +719,22 @@ namespace DigglesModManager
                 }
                 reader.Close();
                 //delete restore file
-                File.Delete(exePath + "\\" + restoreFileName);
+                File.Delete(Paths.ExePath + "\\" + Paths.RestoreFileName);
             }
         }
 
         private void saveActiveMods()
         {
             //delete old file
-            if (File.Exists(exePath + "\\" + activeModsFileName))
+            if (File.Exists(Paths.ExePath + "\\" + Paths.ActiveModsFileName))
             {
-                File.Delete(exePath + "\\" + activeModsFileName);
+                File.Delete(Paths.ExePath + "\\" + Paths.ActiveModsFileName);
             }
 
             if (activeMods.Count > 0)
             {
                 //save
-                StreamWriter writer = new StreamWriter(exePath + "\\" + activeModsFileName, true, Encoding.Default);
+                StreamWriter writer = new StreamWriter(Paths.ExePath + "\\" + Paths.ActiveModsFileName, true, Encoding.Default);
                 foreach (Mod mod in activeMods)
                 {
                     string line = mod.ModDirectoryName;
@@ -709,13 +755,49 @@ namespace DigglesModManager
 
         private void button_mod_settings_Click(object sender, EventArgs e)
         {
-            int selectedIndex = listBox2.SelectedIndex;
+            int selectedIndex = installesModsListBox.SelectedIndex;
             if (selectedIndex >= 0 && selectedIndex < activeMods.Count)
             {
                 Mod mod = activeMods.ElementAt(selectedIndex); //get mod
                 FormModSettings form = new FormModSettings(mod);
-                form.Show();
+                form.ShowDialog(this); //'this' is necessary for relative aligning
             }
+        }
+
+        private void modSettingsMenuButton_Click(object sender, EventArgs e)
+        {
+            button_mod_settings_Click(sender, e);
+        }
+
+        private void quitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
+        }
+
+        private void wikiToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OpenWebPage("https://github.com/cech12/DigglesModManager/wiki");
+        }
+
+        private void deutschToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OpenWebPage("https://github.com/cech12/DigglesModManager/wiki/Mods-(de)");
+        }
+
+        private void englishToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OpenWebPage("https://github.com/cech12/DigglesModManager/wiki/Mods-(en)");
+        }
+
+        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OpenWebPage("https://github.com/cech12/DigglesModManager/blob/master/README.md");
+        }
+
+        private void OpenWebPage(String uri)
+        {
+            ProcessStartInfo sInfo = new ProcessStartInfo(uri);
+            Process.Start(sInfo);
         }
     }
 }
