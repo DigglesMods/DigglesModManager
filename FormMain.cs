@@ -6,6 +6,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.IO;
 using System.Diagnostics;
+using DigglesModManager.Model;
 using DigglesModManager.Properties;
 
 namespace DigglesModManager
@@ -17,14 +18,14 @@ namespace DigglesModManager
 
         bool warning = false;
 
-        List<Mod> inactiveMods = new List<Mod>();
-        List<Mod> activeMods = new List<Mod>();
+        readonly List<Mod> _inactiveMods = new List<Mod>();
+        readonly List<Mod> _activeMods = new List<Mod>();
 
         public FormMain()
         {
             InitializeComponent();
 
-            this.FormBorderStyle = FormBorderStyle.FixedSingle;
+            FormBorderStyle = FormBorderStyle.FixedSingle;
 
             if (!File.Exists($"{Paths.ExePath}\\{Paths.WigglesExecutableName}"))
             {
@@ -74,8 +75,8 @@ namespace DigglesModManager
             resetProgressBar(7);
             incrementProgressBar();
 
-            inactiveMods.Clear();
-            activeMods.Clear();
+            _inactiveMods.Clear();
+            _activeMods.Clear();
 
             incrementProgressBar();
             //check if mod directory exists
@@ -115,7 +116,7 @@ namespace DigglesModManager
                 //add active mod
                 if (Directory.Exists(Paths.ModPath + "\\" + Paths.ModDirectoryName + "\\" + mod))
                 {
-                    activeMods.Add(new Mod(mod, settings));
+                    _activeMods.Add(new Mod(mod, settings));
                 }
             }
             incrementProgressBar();
@@ -124,12 +125,12 @@ namespace DigglesModManager
             DirectoryInfo[] modDirectories = (new DirectoryInfo(Paths.ModPath + "\\" + Paths.ModDirectoryName)).GetDirectories();
             foreach (DirectoryInfo modInfo in modDirectories)
             {
-                if (!activeMods.Contains(new Mod(modInfo.Name, null)))
+                if (!_activeMods.Contains(new Mod(modInfo.Name, null)))
                 {
-                    inactiveMods.Add(new Mod(modInfo.Name, null));
+                    _inactiveMods.Add(new Mod(modInfo.Name, null));
                 }
             }
-            inactiveMods.Sort();
+            _inactiveMods.Sort();
             incrementProgressBar();
 
             changeDataSource();
@@ -142,9 +143,9 @@ namespace DigglesModManager
         {
             // Change the DataSource.
             availableModsListBox.DataSource = null;
-            availableModsListBox.DataSource = inactiveMods;
-            installesModsListBox.DataSource = null;
-            installesModsListBox.DataSource = activeMods;
+            availableModsListBox.DataSource = _inactiveMods;
+            installedModsListBox.DataSource = null;
+            installedModsListBox.DataSource = _activeMods;
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -162,10 +163,10 @@ namespace DigglesModManager
             ResetStatusNote();
 
             //find settings file
-            int selectedIndex = installesModsListBox.SelectedIndex;
-            if (selectedIndex >= 0 && selectedIndex < activeMods.Count)
+            int selectedIndex = installedModsListBox.SelectedIndex;
+            if (selectedIndex >= 0 && selectedIndex < _activeMods.Count)
             {
-                Mod mod = activeMods.ElementAt(selectedIndex);
+                Mod mod = _activeMods.ElementAt(selectedIndex);
 
                 DirectoryInfo modDir = new DirectoryInfo(Paths.ModPath + "\\" + Paths.ModDirectoryName + "\\" + mod.ModDirectoryName);
                 FileInfo[] modFiles = modDir.GetFiles();
@@ -173,7 +174,7 @@ namespace DigglesModManager
                 bool hasSettings = false;
                 foreach (FileInfo gameFile in modFiles)
                 {
-                    if (gameFile.Name.Equals(Paths.ModSettingsFileName))
+                    if (gameFile.Name.Equals(Paths.ModSettingsFileName) || Paths.AsJsonFileName(Paths.ModSettingsName).Equals(gameFile.Name))
                     {
                         hasSettings = true;
                     }
@@ -188,10 +189,10 @@ namespace DigglesModManager
         {
             ResetStatusNote();
             int selectedIndex = availableModsListBox.SelectedIndex;
-            if (selectedIndex >= 0 && selectedIndex < inactiveMods.Count)
+            if (selectedIndex >= 0 && selectedIndex < _inactiveMods.Count)
             {
-                activeMods.Insert(0, inactiveMods.ElementAt(selectedIndex)); //add element right at first position
-                inactiveMods.RemoveAt(selectedIndex); //remove element left
+                _activeMods.Insert(0, _inactiveMods.ElementAt(selectedIndex)); //add element right at first position
+                _inactiveMods.RemoveAt(selectedIndex); //remove element left
 
                 changeDataSource();
             }
@@ -200,12 +201,12 @@ namespace DigglesModManager
         private void button_left_Click(object sender, EventArgs e)
         {
             ResetStatusNote();
-            int selectedIndex = installesModsListBox.SelectedIndex;
-            if (selectedIndex >= 0 && selectedIndex < activeMods.Count)
+            int selectedIndex = installedModsListBox.SelectedIndex;
+            if (selectedIndex >= 0 && selectedIndex < _activeMods.Count)
             {
-                inactiveMods.Add(activeMods.ElementAt(selectedIndex)); //add element left
-                activeMods.RemoveAt(selectedIndex); //remove element right
-                inactiveMods.Sort();
+                _inactiveMods.Add(_activeMods.ElementAt(selectedIndex)); //add element left
+                _activeMods.RemoveAt(selectedIndex); //remove element right
+                _inactiveMods.Sort();
 
                 changeDataSource();
             }
@@ -214,32 +215,32 @@ namespace DigglesModManager
         private void button_up_Click(object sender, EventArgs e)
         {
             ResetStatusNote();
-            int selectedIndex = installesModsListBox.SelectedIndex;
-            if (selectedIndex > 0 && selectedIndex < activeMods.Count)
+            int selectedIndex = installedModsListBox.SelectedIndex;
+            if (selectedIndex > 0 && selectedIndex < _activeMods.Count)
             {
-                Mod mod = activeMods.ElementAt(selectedIndex); //get mod
-                activeMods.RemoveAt(selectedIndex); //remove mod
+                Mod mod = _activeMods.ElementAt(selectedIndex); //get mod
+                _activeMods.RemoveAt(selectedIndex); //remove mod
                 selectedIndex--;
-                activeMods.Insert(selectedIndex, mod); //add at new position
+                _activeMods.Insert(selectedIndex, mod); //add at new position
 
                 changeDataSource();
-                installesModsListBox.SetSelected(selectedIndex, true);
+                installedModsListBox.SetSelected(selectedIndex, true);
             }
         }
 
         private void button_down_Click(object sender, EventArgs e)
         {
             ResetStatusNote();
-            int selectedIndex = installesModsListBox.SelectedIndex;
-            if (selectedIndex >= 0 && selectedIndex < activeMods.Count - 1)
+            int selectedIndex = installedModsListBox.SelectedIndex;
+            if (selectedIndex >= 0 && selectedIndex < _activeMods.Count - 1)
             {
-                Mod mod = activeMods.ElementAt(selectedIndex); //get mod
-                activeMods.RemoveAt(selectedIndex); //remove mod
+                Mod mod = _activeMods.ElementAt(selectedIndex); //get mod
+                _activeMods.RemoveAt(selectedIndex); //remove mod
                 selectedIndex++;
-                activeMods.Insert(selectedIndex, mod); //add at new position
+                _activeMods.Insert(selectedIndex, mod); //add at new position
 
                 changeDataSource();
-                installesModsListBox.SetSelected(selectedIndex, true);
+                installedModsListBox.SetSelected(selectedIndex, true);
             }
         }
 
@@ -253,12 +254,12 @@ namespace DigglesModManager
         {
             warning = false;
             setMessage("...", Color.Black);
-            resetProgressBar(3 + activeMods.Count);
+            resetProgressBar(3 + _activeMods.Count);
             incrementProgressBar();
 
             restore();
             incrementProgressBar();
-            foreach (Mod mod in activeMods)
+            foreach (Mod mod in _activeMods)
             {
                 DirectoryInfo modDir = new DirectoryInfo(Paths.ModPath + "\\" + Paths.ModDirectoryName + "\\" + mod.ModDirectoryName);
                 letsMod(mod, modDir, new DirectoryInfo(Paths.ExePath));
@@ -390,7 +391,7 @@ namespace DigglesModManager
                             else
                             {
                                 //check if statement
-                                string ifStatement = line.Substring(4).TrimEnd();
+                                string ifStatement = line.Substring("$if:".Length).TrimEnd();
                                 bool not = false;
                                 if (ifStatement.StartsWith("!"))
                                 {
@@ -402,10 +403,10 @@ namespace DigglesModManager
                                 if (ifStatement.StartsWith("mod:"))
                                 {
                                     //$if:mod:
-                                    ifStatement = ifStatement.Substring(4);
+                                    ifStatement = ifStatement.Substring("mod:".Length);
                                     //search mod
                                     bool modFound = false;
-                                    foreach (Mod m in activeMods)
+                                    foreach (Mod m in _activeMods)
                                     {
                                         if (m.ModDirectoryName.Equals(ifStatement))
                                         {
@@ -418,15 +419,33 @@ namespace DigglesModManager
                                 else
                                 {
                                     //$if:varname
-                                    //look for vaviable
+                                    //look for variable
                                     bool modVarFound = false;
+                                    foreach (var modVar in mod.Settings.Variables)
+                                    {
+                                        if (modVar.Name.Equals(ifStatement))
+                                        {
+                                            modVarFound = true;
+                                            //supports only bool variables
+                                            switch (modVar.Type)
+                                            {
+                                                case ModVariableType.Bool:
+                                                    ifStack.Push(((bool) modVar.Value) != not); ;
+                                                    break;
+                                                default:
+                                                    MessageBox.Show("$if unterstuetzt nur boolsche Variablen: " + i + "\nDatei: " + modFile.FullName);
+                                                    break;
+                                            }
+                                            break;
+                                        }
+                                    }
                                     foreach (ModVar modVar in mod.Vars)
                                     {
                                         if (modVar.VarName.Equals(ifStatement))
                                         {
                                             modVarFound = true;
                                             //supports only bool variables
-                                            if (modVar.Type.Equals("bool"))
+                                            if ("bool".Equals(modVar.Type))
                                             {
                                                 ifStack.Push(((ModVar<bool>)modVar).Value != not);
                                             }
@@ -731,11 +750,11 @@ namespace DigglesModManager
                 File.Delete(Paths.ExePath + "\\" + Paths.ActiveModsFileName);
             }
 
-            if (activeMods.Count > 0)
+            if (_activeMods.Count > 0)
             {
                 //save
                 StreamWriter writer = new StreamWriter(Paths.ExePath + "\\" + Paths.ActiveModsFileName, true, Encoding.Default);
-                foreach (Mod mod in activeMods)
+                foreach (Mod mod in _activeMods)
                 {
                     string line = mod.ModDirectoryName;
                     if (mod.Vars.Count > 0)
@@ -755,10 +774,10 @@ namespace DigglesModManager
 
         private void button_mod_settings_Click(object sender, EventArgs e)
         {
-            int selectedIndex = installesModsListBox.SelectedIndex;
-            if (selectedIndex >= 0 && selectedIndex < activeMods.Count)
+            int selectedIndex = installedModsListBox.SelectedIndex;
+            if (selectedIndex >= 0 && selectedIndex < _activeMods.Count)
             {
-                Mod mod = activeMods.ElementAt(selectedIndex); //get mod
+                Mod mod = _activeMods.ElementAt(selectedIndex); //get mod
                 FormModSettings form = new FormModSettings(mod);
                 form.ShowDialog(this); //'this' is necessary for relative aligning
             }

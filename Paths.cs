@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace DigglesModManager
+﻿namespace DigglesModManager
 {
     public class Paths
     {
@@ -14,7 +8,14 @@ namespace DigglesModManager
         public static string ActiveModsFileName = "mods.dm";
         public static string RestoreFileName = "restore.dm";
         public static string ModSettingsFileName = "settings.dm";
+        public static string ModSettingsName = "settings";
         public static string ModDescriptionFileName = "description.dm";
+        public static string ModDescriptionName = "description";
         public static string WigglesExecutableName = "Wiggles.exe";
+
+        public static string AsJsonFileName(string fileName)
+        {
+            return fileName +".json";
+        }
     }
 }

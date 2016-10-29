@@ -1,4 +1,6 @@
-﻿using System;
+﻿using DigglesModManager.Model;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -9,6 +11,9 @@ namespace DigglesModManager
     {
         public string ModDirectoryName { get; private set; }
         private DirectoryInfo ModDirectory;
+
+        public ModMetaData MetaData { get; private set; }
+        public ModSettings Settings { get; private set; }
 
         public string DisplayText { get; private set; }
         public string ToolTipText { get; private set; }
@@ -34,7 +39,12 @@ namespace DigglesModManager
             foreach (var modFile in modFiles)
             {
                 var filename = modFile.Name;
-                if (filename.Equals(Paths.ModDescriptionFileName))
+                if(filename.Equals(Paths.AsJsonFileName(Paths.ModDescriptionName)))
+                {
+                    var json = File.ReadAllText(modFile.FullName, Encoding.Default);
+                    MetaData = JsonConvert.DeserializeObject<ModMetaData>(json);
+                }
+                else if (filename.Equals(Paths.ModDescriptionFileName))
                 {
                     //read mod description
                     var reader = new StreamReader(modFile.FullName, Encoding.Default);
@@ -43,17 +53,22 @@ namespace DigglesModManager
                     {
                         if (line.StartsWith("name:"))
                         {
-                            DisplayText = line.Substring(5);
+                            DisplayText = line.Substring("name:".Length);
                         }
                         else if (line.StartsWith("tooltip:"))
                         {
-                            ToolTipText = line.Substring(8);
+                            ToolTipText = line.Substring("tooltip:".Length);
                         }
                         else if (line.StartsWith("author:"))
                         {
-                            Author = line.Substring(7);
+                            Author = line.Substring("author:".Length);
                         }
                     }
+                }
+                else if (filename.Equals(Paths.AsJsonFileName(Paths.ModSettingsName)))
+                {
+                    var json = File.ReadAllText(modFile.FullName, Encoding.Default);
+                    Settings = JsonConvert.DeserializeObject<ModSettings>(json);
                 }
                 else if (filename.Equals(Paths.ModSettingsFileName))
                 {
@@ -85,24 +100,59 @@ namespace DigglesModManager
                             }
                             //generate mod var
                             ModVar modVar = null;
+                            ModSettingsVariable modVariable = null;
                             if (type.Equals("int"))
                             {
                                 if (minValue != null && maxValue != null)
                                 {
                                     modVar = new ModVar<int>(varName, type, description, int.Parse(gameValue), int.Parse(stdValue), int.Parse(value), int.Parse(minValue), int.Parse(maxValue));
+                                    modVariable = new ModSettingsVariable()
+                                    {
+                                        Name = varName,
+                                        Type = ModVariableType.Int,
+                                        Description = description,
+                                        Value = int.Parse(gameValue),
+                                        DefaultValue = int.Parse(stdValue),
+                                        Min = int.Parse(minValue),
+                                        Max = int.Parse(maxValue)
+                                    };
                                 }
                                 else
                                 {
                                     modVar = new ModVar<int>(varName, type, description, int.Parse(gameValue), int.Parse(stdValue), int.Parse(value));
+                                    modVariable = new ModSettingsVariable()
+                                    {
+                                        Name = varName,
+                                        Type = ModVariableType.Int,
+                                        Description = description,
+                                        Value = int.Parse(gameValue),
+                                        DefaultValue = int.Parse(stdValue)
+                                    };
                                 }
                             }
                             else if (type.Equals("bool"))
                             {
                                 modVar = new ModVar<bool>(varName, type, description, bool.Parse(gameValue), bool.Parse(stdValue), bool.Parse(value));
+                                modVariable = new ModSettingsVariable()
+                                {
+                                    Name = varName,
+                                    Type = ModVariableType.Int,
+                                    Description = description,
+                                    Value = bool.Parse(gameValue),
+                                    DefaultValue = bool.Parse(stdValue)
+                                };
                             }
                             else if (type.Equals("string"))
                             {
                                 modVar = new ModVar<string>(varName, type, description, gameValue, stdValue, value);
+                                modVariable = new ModSettingsVariable()
+                                {
+                                    Name = varName,
+                                    Type = ModVariableType.Int,
+                                    Description = description,
+                                    Value = gameValue,
+                                    DefaultValue = stdValue
+                                };
                             }
 
                             if (modVar != null)
