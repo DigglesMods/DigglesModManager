@@ -261,7 +261,7 @@ namespace DigglesModManager
             foreach (Mod mod in activeMods)
             {
                 DirectoryInfo modDir = new DirectoryInfo(Paths.ModPath + "\\" + Paths.ModDirectoryName + "\\" + mod.ModDirectoryName);
-                letsMod(mod, modDir, new DirectoryInfo(Paths.ExePath);
+                letsMod(mod, modDir, new DirectoryInfo(Paths.ExePath));
                 incrementProgressBar();
             }
 
