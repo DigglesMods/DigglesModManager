@@ -79,6 +79,7 @@
     </Compile>
     <Compile Include="Mod.cs" />
     <Compile Include="ModVar.cs" />
+    <Compile Include="Paths.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ToolTipListBox.cs">
