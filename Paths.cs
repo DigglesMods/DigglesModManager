@@ -1,5 +1,8 @@
 ﻿namespace DigglesModManager
 {
+    /// <summary>
+    /// Holds several constant file-paths and directory names.
+    /// </summary>
     public class Paths
     {
         public static string ExePath = @".";                //dyn: @"." | local: D:\Programme\Wiggles
