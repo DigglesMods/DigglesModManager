@@ -39,7 +39,7 @@ namespace DigglesModManager
             foreach (var modFile in modFiles)
             {
                 var filename = modFile.Name;
-                if(filename.Equals(Paths.AsJsonFileName(Paths.ModDescriptionName))) //.json-Format
+                if (filename.Equals(Paths.AsJsonFileName(Paths.ModDescriptionName))) //.json-Format
                 {
                     var json = File.ReadAllText(modFile.FullName, Encoding.Default);
                     MetaData = JsonConvert.DeserializeObject<ModMetaData>(json);
@@ -48,6 +48,31 @@ namespace DigglesModManager
                 {
                     var json = File.ReadAllText(modFile.FullName, Encoding.Default);
                     Settings = JsonConvert.DeserializeObject<ModSettings>(json);
+
+                    foreach (var modSettingsVariable in Settings.Variables)
+                    {
+                        //check saved application status and overwrite with values of last session
+                        if (oldSettings == null)
+                            continue;
+
+                        object oldValue = getVarElement(oldSettings, modSettingsVariable.Name + ":");
+                        if (oldValue == null)
+                            continue;
+
+                        switch (modSettingsVariable.Type)
+                        {
+                            case ModVariableType.Bool:
+                                oldValue = bool.Parse((string) oldValue);
+                                break;
+                            case ModVariableType.Int:
+                                oldValue = int.Parse((string) oldValue);
+                                break;
+                            default:
+                            case ModVariableType.String:
+                                break;
+                        }
+                        modSettingsVariable.Value = oldValue;
+                    }
                 }
                 else if (filename.Equals(Paths.ModDescriptionFileName)) //.dm-Settings-Format
                 {
@@ -86,7 +111,7 @@ namespace DigglesModManager
                         var minValue = getVarElement(line, "MinValue:");
                         var maxValue = getVarElement(line, "MaxValue:");
 
-                        if (varName != null && type != null && gameValue != null && stdValue != null) 
+                        if (varName != null && type != null && gameValue != null && stdValue != null)
                         {
                             //read old settings
                             var value = stdValue;
@@ -197,7 +222,7 @@ namespace DigglesModManager
             }
             return null;
         }
-        
+
 
         // Returns the display text of this item.
         public override string ToString()

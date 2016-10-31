@@ -746,7 +746,7 @@ namespace DigglesModManager
                         line += "|";
                         foreach (var modVar in mod.Settings.Variables)
                         {
-                            line += modVar.Value.ToString() + ":" + modVar.Value.ToString() + ";";
+                            line += modVar.Name + ":" + modVar.Value.ToString() + ";";
                         }
                     }
                     writer.WriteLine(line);
