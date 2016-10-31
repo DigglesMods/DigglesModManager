@@ -7,9 +7,9 @@ using Newtonsoft.Json;
 
 namespace DigglesModManager.Model
 {
-    public class ModSettings
+    public class AppSettings
     {
-        [JsonProperty(PropertyName = "variables")]
-        public List<ModSettingsVariable> Variables { get; set; } = new List<ModSettingsVariable>();
+        [JsonProperty(PropertyName = "activeMods")]
+        public List<string> ActiveMods { get; set; } = new List<string>();
     }
 }

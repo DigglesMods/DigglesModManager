@@ -8,6 +8,7 @@ using System.IO;
 using System.Diagnostics;
 using DigglesModManager.Model;
 using DigglesModManager.Properties;
+using Newtonsoft.Json;
 
 namespace DigglesModManager
 {
@@ -421,40 +422,25 @@ namespace DigglesModManager
                                     //$if:varname
                                     //look for variable
                                     bool modVarFound = false;
-                                    foreach (var modVar in mod.Settings.Variables)
+                                    foreach (var modVariable in mod.Settings.Variables)
                                     {
-                                        if (modVar.Name.Equals(ifStatement))
+                                        if (!modVariable.Name.Equals(ifStatement))
+                                            continue;
+
+                                        modVarFound = true;
+                                        //supports only bool variables
+                                        switch (modVariable.Type)
                                         {
-                                            modVarFound = true;
-                                            //supports only bool variables
-                                            switch (modVar.Type)
-                                            {
-                                                case ModVariableType.Bool:
-                                                    ifStack.Push(((bool) modVar.Value) != not); ;
-                                                    break;
-                                                default:
-                                                    MessageBox.Show("$if unterstuetzt nur boolsche Variablen: " + i + "\nDatei: " + modFile.FullName);
-                                                    break;
-                                            }
-                                            break;
+                                            case ModVariableType.Bool:
+                                                ifStack.Push(((bool)modVariable.Value) != not); ;
+                                                break;
+                                            case ModVariableType.Int:
+                                            case ModVariableType.String:
+                                            default:
+                                                MessageBox.Show($"$if unterstuetzt nur boole'sche Variablen: {i}\nDatei: {modFile.FullName}");
+                                                break;
                                         }
-                                    }
-                                    foreach (ModVar modVar in mod.Vars)
-                                    {
-                                        if (modVar.VarName.Equals(ifStatement))
-                                        {
-                                            modVarFound = true;
-                                            //supports only bool variables
-                                            if ("bool".Equals(modVar.Type))
-                                            {
-                                                ifStack.Push(((ModVar<bool>)modVar).Value != not);
-                                            }
-                                            else
-                                            {
-                                                MessageBox.Show("$if unterstuetzt nur boolsche Variablen: " + i + "\nDatei: " + modFile.FullName);
-                                            }
-                                            break;
-                                        }
+                                        break;
                                     }
                                     if (!modVarFound)
                                     {
@@ -617,13 +603,11 @@ namespace DigglesModManager
                                 //replace old value with new value
                                 if (oldValue != "")
                                 {
+                                    //old code had: if (mod.Vars.Count > 0). Why?
                                     //before: replace variables
-                                    if (mod.Vars.Count > 0)
+                                    foreach (var modVar in mod.Settings.Variables)
                                     {
-                                        foreach (ModVar var in mod.Vars)
-                                        {
-                                            newValue = newValue.Replace("$print:" + var.VarName, var.getValueAsString());
-                                        }
+                                        newValue = newValue.Replace("$print:" + modVar.Name, modVar.Value.ToString());
                                     }
 
                                     //replace old value with new value
@@ -757,12 +741,12 @@ namespace DigglesModManager
                 foreach (Mod mod in _activeMods)
                 {
                     string line = mod.ModDirectoryName;
-                    if (mod.Vars.Count > 0)
+                    if (mod.Settings.Variables.Count > 0)
                     {
                         line += "|";
-                        foreach (ModVar var in mod.Vars)
+                        foreach (var modVar in mod.Settings.Variables)
                         {
-                            line += var.VarName + ":" + var.getValueAsString() + ";";
+                            line += modVar.Value.ToString() + ":" + modVar.Value.ToString() + ";";
                         }
                     }
                     writer.WriteLine(line);

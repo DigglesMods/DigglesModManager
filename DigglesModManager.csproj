@@ -82,6 +82,7 @@
       <DependentUpon>FormModSettings.cs</DependentUpon>
     </Compile>
     <Compile Include="Mod.cs" />
+    <Compile Include="Model\AppSettings.cs" />
     <Compile Include="Model\ModMetaData.cs" />
     <Compile Include="Model\ModSettings.cs" />
     <Compile Include="Model\ModSettingsVariable.cs" />

@@ -126,6 +126,8 @@ namespace DigglesModManager
 
         private void button_apply_Click(object sender, EventArgs e)
         {
+            //save values
+
             //JSON-Format
             if (_mod.Settings != null)
             {
@@ -151,7 +153,6 @@ namespace DigglesModManager
             }
             //.dm-Format
             else
-                //save values
                 foreach (ModVar modVar in _mod.Vars)
                 {
                     foreach (Control control in _inputControls)
@@ -179,6 +180,8 @@ namespace DigglesModManager
 
         private void button_reset_Click(object sender, EventArgs e)
         {
+            //reset values
+
             //JSON-Format
             if (_mod.Settings != null)
             {
@@ -201,7 +204,6 @@ namespace DigglesModManager
             }
             //.dm-Format
             else
-                //reset values
                 foreach (ModVar modVar in _mod.Vars)
                 {
                     foreach (Control control in _inputControls)
@@ -224,6 +226,8 @@ namespace DigglesModManager
 
         private void button_default_Click(object sender, EventArgs e)
         {
+            //set values to default
+
             //JSON-Format
             if (_mod.Settings != null)
             {
@@ -246,7 +250,6 @@ namespace DigglesModManager
             }
             //.dm-Format
             else
-                //set values to default
                 foreach (ModVar modVar in _mod.Vars)
                 {
                     foreach (Control control in _inputControls)

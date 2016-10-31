@@ -13,7 +13,7 @@ namespace DigglesModManager
         private DirectoryInfo ModDirectory;
 
         public ModMetaData MetaData { get; private set; }
-        public ModSettings Settings { get; private set; }
+        public ModSettings Settings { get; private set; } = new ModSettings();
 
         public string DisplayText { get; private set; }
         public string ToolTipText { get; private set; }
@@ -39,12 +39,17 @@ namespace DigglesModManager
             foreach (var modFile in modFiles)
             {
                 var filename = modFile.Name;
-                if(filename.Equals(Paths.AsJsonFileName(Paths.ModDescriptionName)))
+                if(filename.Equals(Paths.AsJsonFileName(Paths.ModDescriptionName))) //.json-Format
                 {
                     var json = File.ReadAllText(modFile.FullName, Encoding.Default);
                     MetaData = JsonConvert.DeserializeObject<ModMetaData>(json);
                 }
-                else if (filename.Equals(Paths.ModDescriptionFileName))
+                else if (filename.Equals(Paths.AsJsonFileName(Paths.ModSettingsName)))
+                {
+                    var json = File.ReadAllText(modFile.FullName, Encoding.Default);
+                    Settings = JsonConvert.DeserializeObject<ModSettings>(json);
+                }
+                else if (filename.Equals(Paths.ModDescriptionFileName)) //.dm-Settings-Format
                 {
                     //read mod description
                     var reader = new StreamReader(modFile.FullName, Encoding.Default);
@@ -64,11 +69,6 @@ namespace DigglesModManager
                             Author = line.Substring("author:".Length);
                         }
                     }
-                }
-                else if (filename.Equals(Paths.AsJsonFileName(Paths.ModSettingsName)))
-                {
-                    var json = File.ReadAllText(modFile.FullName, Encoding.Default);
-                    Settings = JsonConvert.DeserializeObject<ModSettings>(json);
                 }
                 else if (filename.Equals(Paths.ModSettingsFileName))
                 {
@@ -157,11 +157,24 @@ namespace DigglesModManager
 
                             if (modVar != null)
                             {
+                                //.dm-Format
                                 Vars.Add(modVar);
+                                //JSON-Format
+                                Settings.Variables.Add(modVariable);
                             }
                         }
                     }
                 }
+            }
+
+            if (MetaData == null)
+            {
+                MetaData = new ModMetaData()
+                {
+                    Name = $"{ modDirectory }-ERROR",
+                    Author = "UNKNOWN",
+                    Description = "UNKNOWN"
+                };
             }
         }
 
