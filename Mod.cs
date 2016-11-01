@@ -161,7 +161,7 @@ namespace DigglesModManager
                                 modVariable = new ModSettingsVariable()
                                 {
                                     Name = varName,
-                                    Type = ModVariableType.Int,
+                                    Type = ModVariableType.Bool,
                                     Description = description,
                                     Value = bool.Parse(gameValue),
                                     DefaultValue = bool.Parse(stdValue)
@@ -173,7 +173,7 @@ namespace DigglesModManager
                                 modVariable = new ModSettingsVariable()
                                 {
                                     Name = varName,
-                                    Type = ModVariableType.Int,
+                                    Type = ModVariableType.String,
                                     Description = description,
                                     Value = gameValue,
                                     DefaultValue = stdValue
