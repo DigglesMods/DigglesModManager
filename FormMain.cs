@@ -313,7 +313,8 @@ namespace DigglesModManager
                 string filename = modFile.Name;
 
                 //skip modmanager files
-                if (filename.Equals(Paths.ModSettingsFileName) || filename.Equals(Paths.ModDescriptionFileName))
+                if (filename.Equals(Paths.ModSettingsFileName) || filename.Equals(Paths.ModDescriptionFileName) ||
+                    filename.Equals(Paths.AsJsonFileName(Paths.ModSettingsName)) || filename.Equals(Paths.AsJsonFileName(Paths.ModDescriptionName)))
                 {
                     continue;
                 }
@@ -341,10 +342,11 @@ namespace DigglesModManager
                 }
 
 
-                string type = "del"; //type for delelte at restore
+                string type = "del"; //type for delete at restore
                 if (rightGameFile != null && !copyExists)
                 {
                     //rename game file
+                    Console.WriteLine("Rename game file: " + rightGameFile.FullName + @" --> " + rightGameFile.FullName + copyFileEnding);
                     rightGameFile.CopyTo(rightGameFile.FullName + copyFileEnding, true);
                     type = "res"; //type for restore
                 }
@@ -354,6 +356,7 @@ namespace DigglesModManager
                 if (mode == "replace") //replacement mode
                 {
                     //copy file to game folder
+                    Console.WriteLine("Copy file: " + modFile.FullName + @" --> " + gameDirectory.FullName + "\\" + filename);
                     newModFile = modFile.CopyTo(gameDirectory.FullName + "\\" + filename, true);
                 }
                 else if (mode == "change" && rightGameFile != null) //file change mode
@@ -611,6 +614,8 @@ namespace DigglesModManager
                                     }
 
                                     //replace old value with new value
+                                    Console.WriteLine($"Replace content for {newModFile.FullName}");
+
                                     origFileContent = origFileContent.Replace(oldValue, newValue);
 
                                 }
@@ -631,6 +636,8 @@ namespace DigglesModManager
                     reader.Close();
 
                     //write content to file
+                    Console.WriteLine($"Write to file: {newModFile.FullName} --> {gameDirectory.FullName}\\{filename}");
+
                     File.WriteAllText(newModFile.FullName, origFileContent, Encoding.Default);
                 }
 
