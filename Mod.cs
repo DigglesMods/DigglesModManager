@@ -197,8 +197,8 @@ namespace DigglesModManager
                 MetaData = new ModMetaData()
                 {
                     Name = $"{ modDirectory }-ERROR",
-                    Author = "UNKNOWN",
-                    Description = "UNKNOWN"
+                    Author = "",
+                    Description = ""
                 };
             }
         }
@@ -233,14 +233,20 @@ namespace DigglesModManager
         public string GetToolTipText()
         {
             var toolTip = ToolTipText;
-            if (!toolTip.Equals("") && !Author.Equals(""))
+            if (!string.IsNullOrWhiteSpace(MetaData.Description))
+                toolTip = MetaData.Description;
+            if (!string.IsNullOrWhiteSpace(toolTip) && !string.IsNullOrWhiteSpace(Author))
             {
                 toolTip += "\n";
             }
             if (!Author.Equals(""))
             {
-                toolTip += "Autor: " + Author;
+                toolTip += "Author: " + Author;
+            } else if (!string.IsNullOrEmpty(MetaData.Author))
+            {
+                toolTip += "Author: " + MetaData.Author;
             }
+
             return toolTip;
         }
 
