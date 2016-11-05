@@ -9,7 +9,7 @@
         public static string ModPath = ExePath;             //dyn: exePath | local: @"D:\Projekte\DigglesModManager"
         public static string ModDirectoryName = "Mods";
         public static string ActiveModsFileName = "mods.dm";
-        public static string AppSettingsName = "diggles";
+        public static string AppSettingsName = "diggles-mod-manager";
         public static string RestoreFileName = "restore.dm";
         public static string RestoreName = "restore";
         public static string ModSettingsFileName = "settings.dm";
