@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Windows.Forms;
+using DigglesModManager.Properties;
 
 namespace DigglesModManager
 {
@@ -52,37 +54,50 @@ namespace DigglesModManager
                 var filename = modFile.Name;
                 if (filename.Equals(Paths.AsJsonFileName(Paths.ModDescriptionName))) //.json-Format
                 {
-                    var json = File.ReadAllText(modFile.FullName, Encoding.Default);
-                    MetaData = JsonConvert.DeserializeObject<ModMetaData>(json);
+                    try
+                    {
+                        var json = File.ReadAllText(modFile.FullName, Encoding.Default);
+                        MetaData = JsonConvert.DeserializeObject<ModMetaData>(json);
+                    }
+                    catch (JsonReaderException e)
+                    {
+                        ShowErrorMessage($"Could not parse metadata-file of '{ModDirectoryName}'!");
+                    }
                 }
                 else if (filename.Equals(Paths.AsJsonFileName(Paths.ModSettingsName)))
                 {
-                    var json = File.ReadAllText(modFile.FullName, Encoding.Default);
-                    Settings = JsonConvert.DeserializeObject<ModSettings>(json);
-
-                    foreach (var modSettingsVariable in Settings.Variables)
+                    try
                     {
-                        //check saved application status and overwrite with values of last session
-                        if (oldSettings == null)
-                            continue;
+                        var json = File.ReadAllText(modFile.FullName, Encoding.Default);
+                        Settings = JsonConvert.DeserializeObject<ModSettings>(json);
 
-                        object oldValue = getVarElement(oldSettings, modSettingsVariable.Name + ":");
-                        if (oldValue == null)
-                            continue;
-
-                        switch (modSettingsVariable.Type)
+                        foreach (var modSettingsVariable in Settings.Variables)
                         {
-                            case ModVariableType.Bool:
-                                oldValue = bool.Parse((string)oldValue);
-                                break;
-                            case ModVariableType.Int:
-                                oldValue = int.Parse((string)oldValue);
-                                break;
-                            default:
-                            case ModVariableType.String:
-                                break;
+                            //check saved application status and overwrite with values of last session
+                            if (oldSettings == null)
+                                continue;
+
+                            object oldValue = getVarElement(oldSettings, modSettingsVariable.Name + ":");
+                            if (oldValue == null)
+                                continue;
+
+                            switch (modSettingsVariable.Type)
+                            {
+                                case ModVariableType.Bool:
+                                    oldValue = bool.Parse((string) oldValue);
+                                    break;
+                                case ModVariableType.Int:
+                                    oldValue = int.Parse((string) oldValue);
+                                    break;
+                                default:
+                                case ModVariableType.String:
+                                    break;
+                            }
+                            modSettingsVariable.Value = oldValue;
                         }
-                        modSettingsVariable.Value = oldValue;
+                    } catch(JsonReaderException e)
+                    {
+                        ShowErrorMessage($"Could not parse settings-file of '{ModDirectoryName}'!");
                     }
                 }
                 else if (filename.Equals(Paths.ModDescriptionFileName)) //.dm-Settings-Format
@@ -285,5 +300,11 @@ namespace DigglesModManager
             var element = (Mod)obj;
             return DisplayText.CompareTo(element.DisplayText);
         }
+
+        private static void ShowErrorMessage(string message)
+        {
+            MessageBox.Show(message, Resources.Error);
+        }
+
     }
 }

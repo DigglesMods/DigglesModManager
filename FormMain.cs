@@ -30,7 +30,7 @@ namespace DigglesModManager
 
             if (!File.Exists($"{Paths.ExePath}\\{Paths.WigglesExecutableName}"))
             {
-                MessageBox.Show(Resources.FormMain_CouldNotFindWigglesExeErrorText, Resources.FormMain_Error);
+                MessageBox.Show(Resources.FormMain_CouldNotFindWigglesExeErrorText, Resources.Error);
             }
             else
             {
@@ -105,7 +105,7 @@ namespace DigglesModManager
                 var json = File.ReadAllText($"{Paths.ExePath}\\{Paths.AsJsonFileName(Paths.AppSettingsName)}", Encoding.Default);
                 var appSettings = JsonConvert.DeserializeObject<AppSettings>(json);
                 lastActiveMods = new List<string>();
-                foreach(var pair in appSettings.ActiveMods)
+                foreach (var pair in appSettings.ActiveMods)
                     if (Directory.Exists($"{Paths.ModPath}\\{Paths.ModDirectoryName}\\{pair.Key}"))
                         _activeMods.Add(new Mod(pair.Key, pair.Value));
 
@@ -137,9 +137,10 @@ namespace DigglesModManager
             DirectoryInfo[] modDirectories = (new DirectoryInfo(Paths.ModPath + "\\" + Paths.ModDirectoryName)).GetDirectories();
             foreach (DirectoryInfo modInfo in modDirectories)
             {
-                if (!_activeMods.Contains(new Mod(modInfo.Name, (string) null)))
+                //if (!_activeMods.Contains(new Mod(modInfo.Name, (string)null)))
+                if (!_activeMods.Exists(mod => mod.MetaData.Name.Equals(modInfo.Name)))
                 {
-                    _inactiveMods.Add(new Mod(modInfo.Name, (string) null));
+                    _inactiveMods.Add(new Mod(modInfo.Name, (string)null));
                 }
             }
             _inactiveMods.Sort();
@@ -754,11 +755,13 @@ namespace DigglesModManager
 
             if (_activeMods.Count > 0)
             {
+                //JSON-Format
                 var appSettings = new AppSettings();
-                foreach(var mod in _activeMods)
+                foreach (var mod in _activeMods)
                     appSettings.ActiveMods.Add(mod.ModDirectoryName, mod.Settings);
                 var json = JsonConvert.SerializeObject(appSettings, Formatting.Indented);
-                File.WriteAllText($"{Paths.ExePath}\\{Paths.AsJsonFileName(Paths.AppSettingsName)}", json, Encoding.UTF8);
+                File.WriteAllText($"{Paths.ExePath}\\{Paths.AsJsonFileName(Paths.AppSettingsName)}", json, Encoding.UTF8);   //overwrites any existing files, if present
+
 
                 //save
                 //StreamWriter writer = new StreamWriter(Paths.ExePath + "\\" + Paths.ActiveModsFileName, true, Encoding.Default);
@@ -777,6 +780,10 @@ namespace DigglesModManager
                 //}
                 //writer.Flush();
                 //writer.Close();
+            }
+            else
+            {
+                File.Delete($"{Paths.ExePath}\\{Paths.AsJsonFileName(Paths.AppSettingsName)}");
             }
         }
 
