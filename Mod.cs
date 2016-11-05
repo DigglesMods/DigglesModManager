@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 namespace DigglesModManager
@@ -20,6 +21,16 @@ namespace DigglesModManager
         public string Author { get; private set; }
 
         public List<ModVar> Vars { get; private set; }
+
+        public Mod(string modDirectory, ModSettings modSettings)
+            : this(modDirectory, DecodeModSettings(modSettings))
+        {
+        }
+
+        private static string DecodeModSettings(ModSettings modSettings)
+        {
+            return modSettings.Variables.Aggregate("", (current, bla) => current + $"{bla.Name}:{bla.Value};");
+        }
 
         // Constructor
         public Mod(string modDirectory, string oldSettings)
@@ -62,10 +73,10 @@ namespace DigglesModManager
                         switch (modSettingsVariable.Type)
                         {
                             case ModVariableType.Bool:
-                                oldValue = bool.Parse((string) oldValue);
+                                oldValue = bool.Parse((string)oldValue);
                                 break;
                             case ModVariableType.Int:
-                                oldValue = int.Parse((string) oldValue);
+                                oldValue = int.Parse((string)oldValue);
                                 break;
                             default:
                             case ModVariableType.String:
@@ -242,7 +253,8 @@ namespace DigglesModManager
             if (!Author.Equals(""))
             {
                 toolTip += "Author: " + Author;
-            } else if (!string.IsNullOrEmpty(MetaData.Author))
+            }
+            else if (!string.IsNullOrEmpty(MetaData.Author))
             {
                 toolTip += "Author: " + MetaData.Author;
             }

@@ -99,6 +99,17 @@ namespace DigglesModManager
                 }
                 reader.Close();
             }
+            //read JSON-AppSettings
+            if (File.Exists($"{Paths.ExePath}\\{Paths.AsJsonFileName(Paths.AppSettingsName)}"))
+            {
+                var json = File.ReadAllText($"{Paths.ExePath}\\{Paths.AsJsonFileName(Paths.AppSettingsName)}", Encoding.Default);
+                var appSettings = JsonConvert.DeserializeObject<AppSettings>(json);
+                lastActiveMods = new List<string>();
+                foreach(var pair in appSettings.ActiveMods)
+                    if (Directory.Exists($"{Paths.ModPath}\\{Paths.ModDirectoryName}\\{pair.Key}"))
+                        _activeMods.Add(new Mod(pair.Key, pair.Value));
+
+            }
             incrementProgressBar();
 
             //add to active mods 
@@ -126,9 +137,9 @@ namespace DigglesModManager
             DirectoryInfo[] modDirectories = (new DirectoryInfo(Paths.ModPath + "\\" + Paths.ModDirectoryName)).GetDirectories();
             foreach (DirectoryInfo modInfo in modDirectories)
             {
-                if (!_activeMods.Contains(new Mod(modInfo.Name, null)))
+                if (!_activeMods.Contains(new Mod(modInfo.Name, (string) null)))
                 {
-                    _inactiveMods.Add(new Mod(modInfo.Name, null));
+                    _inactiveMods.Add(new Mod(modInfo.Name, (string) null));
                 }
             }
             _inactiveMods.Sort();
@@ -743,23 +754,29 @@ namespace DigglesModManager
 
             if (_activeMods.Count > 0)
             {
+                var appSettings = new AppSettings();
+                foreach(var mod in _activeMods)
+                    appSettings.ActiveMods.Add(mod.ModDirectoryName, mod.Settings);
+                var json = JsonConvert.SerializeObject(appSettings, Formatting.Indented);
+                File.WriteAllText($"{Paths.ExePath}\\{Paths.AsJsonFileName(Paths.AppSettingsName)}", json, Encoding.UTF8);
+
                 //save
-                StreamWriter writer = new StreamWriter(Paths.ExePath + "\\" + Paths.ActiveModsFileName, true, Encoding.Default);
-                foreach (Mod mod in _activeMods)
-                {
-                    string line = mod.ModDirectoryName;
-                    if (mod.Settings.Variables.Count > 0)
-                    {
-                        line += "|";
-                        foreach (var modVar in mod.Settings.Variables)
-                        {
-                            line += modVar.Name + ":" + modVar.Value.ToString() + ";";
-                        }
-                    }
-                    writer.WriteLine(line);
-                }
-                writer.Flush();
-                writer.Close();
+                //StreamWriter writer = new StreamWriter(Paths.ExePath + "\\" + Paths.ActiveModsFileName, true, Encoding.Default);
+                //foreach (Mod mod in _activeMods)
+                //{
+                //    string line = mod.ModDirectoryName;
+                //    if (mod.Settings.Variables.Count > 0)
+                //    {
+                //        line += "|";
+                //        foreach (var modVar in mod.Settings.Variables)
+                //        {
+                //            line += modVar.Name + ":" + modVar.Value.ToString() + ";";
+                //        }
+                //    }
+                //    writer.WriteLine(line);
+                //}
+                //writer.Flush();
+                //writer.Close();
             }
         }
 
