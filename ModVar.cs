@@ -1,6 +1,6 @@
 ﻿namespace DigglesModManager
 {
-    abstract class ModVar
+    public abstract class ModVar
     {
         public string VarName;
         public string Type;
@@ -9,7 +9,7 @@
         public abstract string getValueAsString();
     }
 
-    class ModVar<T> : ModVar
+    public class ModVar<T> : ModVar
     {
         public T GameValue;
         public T StdValue;

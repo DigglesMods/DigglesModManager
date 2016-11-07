@@ -52,19 +52,19 @@ namespace DigglesModManager
             foreach (var modFile in modFiles)
             {
                 var filename = modFile.Name;
-                if (filename.Equals(Paths.AsJsonFileName(Paths.ModDescriptionName))) //.json-Format
+                if (filename.Equals(Paths.ModDescriptionName)) //.json-Format
                 {
                     try
                     {
                         var json = File.ReadAllText(modFile.FullName, Encoding.Default);
                         MetaData = JsonConvert.DeserializeObject<ModMetaData>(json);
                     }
-                    catch (JsonReaderException e)
+                    catch (JsonReaderException ex)
                     {
-                        ShowErrorMessage($"Could not parse metadata-file of '{ModDirectoryName}'!");
+                        ShowErrorMessage($"Could not parse metadata-file of '{ModDirectoryName}'!\nError is {ex}");
                     }
                 }
-                else if (filename.Equals(Paths.AsJsonFileName(Paths.ModSettingsName)))
+                else if (filename.Equals(Paths.ModSettingsName))
                 {
                     try
                     {
@@ -95,9 +95,9 @@ namespace DigglesModManager
                             }
                             modSettingsVariable.Value = oldValue;
                         }
-                    } catch(JsonReaderException e)
+                    } catch(JsonReaderException ex)
                     {
-                        ShowErrorMessage($"Could not parse settings-file of '{ModDirectoryName}'!");
+                        ShowErrorMessage($"Could not parse settings-file of '{ModDirectoryName}'!\nError is {ex}");
                     }
                 }
                 else if (filename.Equals(Paths.ModDescriptionFileName)) //.dm-Settings-Format
@@ -231,7 +231,7 @@ namespace DigglesModManager
 
         private string getVarElement(string line, string identifier)
         {
-            var startIndex = line.IndexOf(identifier);
+            var startIndex = line.IndexOf(identifier, StringComparison.Ordinal);
             if (startIndex >= 0)
             {
                 startIndex += identifier.Length;
@@ -298,7 +298,7 @@ namespace DigglesModManager
                 return 1;
 
             var element = (Mod)obj;
-            return DisplayText.CompareTo(element.DisplayText);
+            return string.Compare(DisplayText, element.DisplayText, StringComparison.Ordinal);
         }
 
         private static void ShowErrorMessage(string message)

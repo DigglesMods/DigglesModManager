@@ -8,19 +8,22 @@
         public static string ExePath = @".";                //dyn: @"." | local: D:\Programme\Wiggles
         public static string ModPath = ExePath;             //dyn: exePath | local: @"D:\Projekte\DigglesModManager"
         public static string ModDirectoryName = "Mods";
-        public static string ActiveModsFileName = "mods.dm";
-        public static string AppSettingsName = "diggles-mod-manager";
-        public static string RestoreFileName = "restore.dm";
-        public static string RestoreName = "restore";
-        public static string ModSettingsFileName = "settings.dm";
-        public static string ModSettingsName = "settings";
-        public static string ModDescriptionFileName = "description.dm";
-        public static string ModDescriptionName = "metadata";
         public static string WigglesExecutableName = "Wiggles.exe";
 
-        public static string AsJsonFileName(string fileName)
+        //.dm
+        public static string ActiveModsFileName = "mods.dm";
+        public static string RestoreFileName = "restore.dm";
+        public static string ModSettingsFileName = "settings.dm";
+        public static string ModDescriptionFileName = "description.dm";
+
+        //JSON
+        public static string AppSettingsName = AsJsonFileName("diggles-mod-manager");
+        public static string ModDescriptionName = AsJsonFileName("metadata");
+        public static string ModSettingsName = AsJsonFileName("settings");
+
+        private static string AsJsonFileName(string fileName)
         {
-            return fileName +".json";
+            return $"{fileName}.json";
         }
     }
 }

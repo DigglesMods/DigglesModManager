@@ -9,7 +9,7 @@ namespace DigglesModManager
     internal partial class FormModSettings : Form
     {
         private readonly Mod _mod;
-        private readonly Dictionary<string, Control> inputControls = new Dictionary<string, Control>();
+        private readonly Dictionary<string, Control> _inputControlMap = new Dictionary<string, Control>();
         private readonly List<Control> _inputControls;
 
         public FormModSettings(Mod mod)
@@ -71,7 +71,7 @@ namespace DigglesModManager
                 Location = new Point(12, height),
                 Name = varName + "_label",
                 TabIndex = i + 3,
-                Text = varName + ":"
+                Text = varName + @":"
             };
             Controls.Add(label);
 
@@ -88,7 +88,7 @@ namespace DigglesModManager
                 };
                 Controls.Add(checkBox);
                 _inputControls.Add(checkBox);
-                inputControls.Add(varName, checkBox);
+                _inputControlMap.Add(varName, checkBox);
             }
             else
             {
@@ -102,7 +102,7 @@ namespace DigglesModManager
                 };
                 Controls.Add(textBox);
                 _inputControls.Add(textBox);
-                inputControls.Add(varName, textBox);
+                _inputControlMap.Add(varName, textBox);
             }
 
             //add description as label
@@ -133,7 +133,7 @@ namespace DigglesModManager
             {
                 foreach (var modVariable in _mod.Settings.Variables)
                 {
-                    var control = inputControls[modVariable.Name];
+                    var control = _inputControlMap[modVariable.Name];
 
                     switch (modVariable.Type)
                     {
@@ -187,7 +187,7 @@ namespace DigglesModManager
             {
                 foreach (var modVariable in _mod.Settings.Variables)
                 {
-                    var control = inputControls[modVariable.Name];
+                    var control = _inputControlMap[modVariable.Name];
 
                     switch (modVariable.Type)
                     {
@@ -233,7 +233,7 @@ namespace DigglesModManager
             {
                 foreach (var modVariable in _mod.Settings.Variables)
                 {
-                    var control = inputControls[modVariable.Name];
+                    var control = _inputControlMap[modVariable.Name];
 
                     switch (modVariable.Type)
                     {
