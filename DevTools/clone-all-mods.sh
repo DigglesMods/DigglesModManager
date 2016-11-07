@@ -1,3 +1,4 @@
+#!/bin/bash
 read -p "Cloning all mods into 'DigglesMods' Are you sure? (y/n) " -r
 if [[ $REPLY =~ ^[Yy]$ ]]
 then

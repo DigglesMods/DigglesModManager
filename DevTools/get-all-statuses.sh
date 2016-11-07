@@ -1,3 +1,4 @@
+#!/bin/bash
 read -p "Show status of all mods? Are you sure? (y/n) " -r
 if [[ $REPLY =~ ^[Yy]$ ]]
 then
