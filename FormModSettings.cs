@@ -1,164 +1,282 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Windows.Forms;
+using DigglesModManager.Model;
 
 namespace DigglesModManager
 {
     internal partial class FormModSettings : Form
     {
-        private Mod mod;
-        private List<Control> inputControls;
+        private readonly Mod _mod;
+        private readonly Dictionary<string, Control> inputControls = new Dictionary<string, Control>();
+        private readonly List<Control> _inputControls;
 
         public FormModSettings(Mod mod)
         {
-            this.mod = mod;
-            inputControls = new List<Control>();
+            _mod = mod;
+            _inputControls = new List<Control>();
 
             InitializeComponent();
             FormBorderStyle = FormBorderStyle.FixedSingle;
 
-            Name = this.mod.DisplayText + ": Settings";
+            Name = _mod.DisplayText + " - Settings";
             Text = Name;
 
-            //add for each ModVar control row
-            int i = 0;
-            foreach (ModVar modVar in mod.Vars)
+            if (mod.Settings != null)
             {
-                int height = i * 23 + 12;
-                //add var name as label
-                Label varName = new Label();
-                varName.AutoSize = true;
-                varName.Location = new System.Drawing.Point(12, height);
-                varName.Name = modVar.VarName + "_label";
-                varName.TabIndex = i + 3;
-                varName.Text = modVar.VarName + ":";
-                Controls.Add(varName);
-
-                //add value as changeable text box or checkbox
-                if (modVar.Type.Equals("bool"))
+                //NEW JSON-FORMAT, only if json-file is present
+                var i = 0;
+                foreach (var modVariable in mod.Settings.Variables)
                 {
-                    CheckBox value = new CheckBox();
-                    value.Location = new System.Drawing.Point(162, height - 3);
-                    value.Name = modVar.VarName;
-                    value.Checked = ((ModVar<bool>)modVar).Value;
-                    value.Size = new System.Drawing.Size(20, 20);
-                    value.TabIndex = i + 3;
-                    Controls.Add(value);
-                    inputControls.Add(value);
+                    BuildVariableRow(i, modVariable);
+                    i++;
                 }
-                else
+            }
+            else
+            {
+                //OLD .DM-FORMAT
+                //add for each ModVar control row
+                var i = 0;
+                foreach (var modVar in mod.Vars)
                 {
-                    TextBox value = new TextBox();
-                    value.Location = new System.Drawing.Point(162, height - 3);
-                    value.Name = modVar.VarName;
-                    value.Text = modVar.getValueAsString();
-                    value.Size = new System.Drawing.Size(50, 20);
-                    value.TabIndex = i + 3;
-                    Controls.Add(value);
-                    inputControls.Add(value);
+                    object value = null;
+                    if (modVar.Type.Equals("bool"))
+                    {
+                        value = ((ModVar<bool>)modVar).Value;
+                    }
+                    else if (modVar.Type.Equals("int"))
+                    {
+                        value = ((ModVar<int>)modVar).Value;
+                    }
+                    BuildVariableRow(i, modVar.VarName, modVar.Description, modVar.Type, value);
+                    i++;
                 }
-
-                //add description as label
-                Label description = new Label();
-                description.AutoSize = true;
-                description.Location = new System.Drawing.Point(252, height);
-                description.Size = new System.Drawing.Size(290, description.Size.Height);           //limit size
-                description.Anchor = AnchorStyles.Top | AnchorStyles.Left |  AnchorStyles.Right;    //make label grow automatically on window resize
-                description.AutoEllipsis = true;                                                    //add '...' if text does not fit into label bounds
-                description.AutoSize = false;                                                       //stop autosizing
-                description.Name = modVar.VarName + "_desc";
-                description.Text = modVar.Description;
-                description.Cursor = Cursors.Help;
-                ToolTip tooltip = new ToolTip();
-                tooltip.SetToolTip(description, description.Text);
-
-                Controls.Add(description);
-                i++;
             }
 
+        }
+
+        private void BuildVariableRow(int i, ModSettingsVariable modVariable)
+        {
+            BuildVariableRow(i, modVariable.Name, modVariable.Description, modVariable.Type.ToString(), modVariable.Value);
+        }
+
+        private void BuildVariableRow(int i, string varName, string varDescription, string varType, object value)
+        {
+            var height = i * 23 + 12;
+            //add var name as label
+            var label = new Label
+            {
+                AutoSize = true,
+                Location = new Point(12, height),
+                Name = varName + "_label",
+                TabIndex = i + 3,
+                Text = varName + ":"
+            };
+            Controls.Add(label);
+
+            //add value as changeable text box or checkbox
+            if (varType.ToLower().Equals("bool"))
+            {
+                var checkBox = new CheckBox
+                {
+                    Location = new Point(162, height - 3),
+                    Name = varName,
+                    Checked = (bool)value,
+                    Size = new Size(20, 20),
+                    TabIndex = i + 3
+                };
+                Controls.Add(checkBox);
+                _inputControls.Add(checkBox);
+                inputControls.Add(varName, checkBox);
+            }
+            else
+            {
+                var textBox = new TextBox
+                {
+                    Location = new Point(162, height - 3),
+                    Name = varName,
+                    Text = value.ToString(),
+                    Size = new Size(50, 20),
+                    TabIndex = i + 3
+                };
+                Controls.Add(textBox);
+                _inputControls.Add(textBox);
+                inputControls.Add(varName, textBox);
+            }
+
+            //add description as label
+            var description = new Label
+            {
+                Location = new Point(252, height),
+                Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right,         //make label grow automatically on window resize
+                AutoEllipsis = true,                                                        //add '...' if text does not fit into label bounds
+                AutoSize = false,                                                           //no autosizing
+                Name = varName + "_desc",
+                Text = varDescription,
+                Cursor = Cursors.Help
+            };
+            description.Size = new Size(290, description.Size.Height);
+
+            var tooltip = new ToolTip();
+            tooltip.SetToolTip(description, description.Text);
+
+            Controls.Add(description);
         }
 
         private void button_apply_Click(object sender, EventArgs e)
         {
             //save values
-            foreach (ModVar modVar in mod.Vars)
+
+            //JSON-Format
+            if (_mod.Settings != null)
             {
-                foreach (Control control in inputControls)
+                foreach (var modVariable in _mod.Settings.Variables)
                 {
-                    if (modVar.VarName.Equals(control.Name))
+                    var control = inputControls[modVariable.Name];
+
+                    switch (modVariable.Type)
                     {
-                        if (modVar.Type.Equals("bool"))
-                        {
-                            ((ModVar<bool>)modVar).Value = ((CheckBox)control).Checked;
-                        }
-                        else if (modVar.Type.Equals("int"))
-                        {
-                            ((ModVar<int>)modVar).Value = int.Parse(control.Text);
-                        }
-                        else if (modVar.Type.Equals("string"))
-                        {
-                            ((ModVar<string>)modVar).Value = control.Text;
-                        }
-                        break;
+                        case ModVariableType.Bool:
+                            modVariable.Value = ((CheckBox)control).Checked;
+                            break;
+                        case ModVariableType.Int:
+                            modVariable.Value = int.Parse(control.Text);
+                            break;
+                        case ModVariableType.String:
+                        default:
+                            modVariable.Value = control.Text;
+                            break;
                     }
+
                 }
             }
+            //.dm-Format
+            else
+                foreach (ModVar modVar in _mod.Vars)
+                {
+                    foreach (Control control in _inputControls)
+                    {
+                        if (modVar.VarName.Equals(control.Name))
+                        {
+                            if (modVar.Type.Equals("bool"))
+                            {
+                                ((ModVar<bool>)modVar).Value = ((CheckBox)control).Checked;
+                            }
+                            else if (modVar.Type.Equals("int"))
+                            {
+                                ((ModVar<int>)modVar).Value = int.Parse(control.Text);
+                            }
+                            else if (modVar.Type.Equals("string"))
+                            {
+                                ((ModVar<string>)modVar).Value = control.Text;
+                            }
+                            break;
+                        }
+                    }
+                }
             Close();
         }
 
         private void button_reset_Click(object sender, EventArgs e)
         {
             //reset values
-            foreach (ModVar modVar in mod.Vars)
+
+            //JSON-Format
+            if (_mod.Settings != null)
             {
-                foreach (Control control in inputControls)
+                foreach (var modVariable in _mod.Settings.Variables)
                 {
-                    if (modVar.VarName.Equals(control.Name))
+                    var control = inputControls[modVariable.Name];
+
+                    switch (modVariable.Type)
                     {
-                        if (modVar.Type.Equals("bool"))
-                        {
-                            ((CheckBox)control).Checked = ((ModVar<bool>)modVar).Value;
-                        }
-                        else
-                        {
-                            control.Text = modVar.getValueAsString();
-                        }
-                        break;
+                        case ModVariableType.Bool:
+                            ((CheckBox)control).Checked = (bool)modVariable.Value;
+                            break;
+                        case ModVariableType.Int:
+                        case ModVariableType.String:
+                        default:
+                            control.Text = modVariable.Value.ToString();
+                            break;
                     }
                 }
             }
+            //.dm-Format
+            else
+                foreach (ModVar modVar in _mod.Vars)
+                {
+                    foreach (Control control in _inputControls)
+                    {
+                        if (modVar.VarName.Equals(control.Name))
+                        {
+                            if (modVar.Type.Equals("bool"))
+                            {
+                                ((CheckBox)control).Checked = ((ModVar<bool>)modVar).Value;
+                            }
+                            else
+                            {
+                                control.Text = modVar.getValueAsString();
+                            }
+                            break;
+                        }
+                    }
+                }
         }
 
         private void button_default_Click(object sender, EventArgs e)
         {
             //set values to default
-            foreach (ModVar modVar in mod.Vars)
+
+            //JSON-Format
+            if (_mod.Settings != null)
             {
-                foreach (Control control in inputControls)
+                foreach (var modVariable in _mod.Settings.Variables)
                 {
-                    if (modVar.VarName.Equals(control.Name))
+                    var control = inputControls[modVariable.Name];
+
+                    switch (modVariable.Type)
                     {
-                        if (modVar.Type.Equals("bool"))
-                        {
-                            ((CheckBox)control).Checked = ((ModVar<bool>)modVar).StdValue;
-                        }
-                        else if (modVar.Type.Equals("int"))
-                        {
-                            control.Text = ((ModVar<int>)modVar).StdValue.ToString();
-                        }
-                        else if (modVar.Type.Equals("string"))
-                        {
-                            control.Text = ((ModVar<string>)modVar).StdValue.ToString();
-                        }
-                        break;
+                        case ModVariableType.Bool:
+                            ((CheckBox)control).Checked = (bool)modVariable.DefaultValue;
+                            break;
+                        case ModVariableType.Int:
+                        case ModVariableType.String:
+                        default:
+                            control.Text = modVariable.DefaultValue.ToString();
+                            break;
                     }
                 }
             }
+            //.dm-Format
+            else
+                foreach (ModVar modVar in _mod.Vars)
+                {
+                    foreach (Control control in _inputControls)
+                    {
+                        if (modVar.VarName.Equals(control.Name))
+                        {
+                            if (modVar.Type.Equals("bool"))
+                            {
+                                ((CheckBox)control).Checked = ((ModVar<bool>)modVar).StdValue;
+                            }
+                            else if (modVar.Type.Equals("int"))
+                            {
+                                control.Text = ((ModVar<int>)modVar).StdValue.ToString();
+                            }
+                            else if (modVar.Type.Equals("string"))
+                            {
+                                control.Text = ((ModVar<string>)modVar).StdValue.ToString();
+                            }
+                            break;
+                        }
+                    }
+                }
         }
 
         private void closeButton_Click(object sender, EventArgs e)
         {
-            this.Close();
+            Close();
         }
     }
 }

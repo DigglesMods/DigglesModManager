@@ -1,0 +1,40 @@
+{
+  "variables": [
+    {
+      "name": "MAX_AGE",
+      "type": "int",
+      "value": 24,
+      "default": 24,
+      "min": 12,
+      "max": 999,
+      "description": "Maximales Alter der Wiggles"
+    },
+    {
+      "name": "POP_SOLL",
+      "type": "int",
+      "value": 22,
+      "default": 22,
+      "min": 18,
+      "max": 99,
+      "description": "Maximale Population der Wiggle"
+    },
+    {
+      "name": "MIN_EXP",
+      "type": "INT",
+      "value": 1,
+      "default": 1,
+      "min": 1,
+      "max": 999,
+      "description": "Start-Erfahrungspunkte der Wiggle (1 meint 100). Muss kleiner als MAX_EXP sein!"
+    },
+    {
+      "name": "MAX_EXP",
+      "type": "Int",
+      "value": 2,
+      "default": 2,
+      "min": 1,
+      "max": 999,
+      "description": "Maximale Erfahrungspunkte der Wiggle (2 meint 200). Muss größer als MIN_EXP sein!"
+    }
+  ]
+}

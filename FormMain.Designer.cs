@@ -57,7 +57,7 @@
             this.helpModsEnglishMenuButton = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutMenuButton = new System.Windows.Forms.ToolStripMenuItem();
             this.availableModsListBox = new DigglesModManager.ToolTipListBox();
-            this.installesModsListBox = new DigglesModManager.ToolTipListBox();
+            this.installedModsListBox = new DigglesModManager.ToolTipListBox();
             this.mainPanel.SuspendLayout();
             this.statusBar.SuspendLayout();
             this.mainMenuStrip.SuspendLayout();
@@ -167,7 +167,7 @@
             this.mainPanel.Controls.Add(this.moveDownButton);
             this.mainPanel.Controls.Add(this.installModButton);
             this.mainPanel.Controls.Add(this.moveUpButton);
-            this.mainPanel.Controls.Add(this.installesModsListBox);
+            this.mainPanel.Controls.Add(this.installedModsListBox);
             this.mainPanel.Location = new System.Drawing.Point(0, 27);
             this.mainPanel.Name = "mainPanel";
             this.mainPanel.Size = new System.Drawing.Size(598, 188);
@@ -326,16 +326,16 @@
             this.availableModsListBox.TabIndex = 0;
             this.availableModsListBox.SelectedIndexChanged += new System.EventHandler(this.listBox1_SelectedIndexChanged);
             // 
-            // installesModsListBox
+            // installedModsListBox
             // 
-            this.installesModsListBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.installedModsListBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
-            this.installesModsListBox.FormattingEnabled = true;
-            this.installesModsListBox.Location = new System.Drawing.Point(302, 0);
-            this.installesModsListBox.Name = "installesModsListBox";
-            this.installesModsListBox.Size = new System.Drawing.Size(250, 251);
-            this.installesModsListBox.TabIndex = 1;
-            this.installesModsListBox.SelectedIndexChanged += new System.EventHandler(this.listBox2_SelectedIndexChanged);
+            this.installedModsListBox.FormattingEnabled = true;
+            this.installedModsListBox.Location = new System.Drawing.Point(302, 0);
+            this.installedModsListBox.Name = "installedModsListBox";
+            this.installedModsListBox.Size = new System.Drawing.Size(250, 251);
+            this.installedModsListBox.TabIndex = 1;
+            this.installedModsListBox.SelectedIndexChanged += new System.EventHandler(this.listBox2_SelectedIndexChanged);
             // 
             // FormMain
             // 
@@ -365,7 +365,7 @@
         #endregion
 
         private ToolTipListBox availableModsListBox;
-        private ToolTipListBox installesModsListBox;
+        private ToolTipListBox installedModsListBox;
         private System.Windows.Forms.Button installModButton;
         private System.Windows.Forms.Button uninstallModButton;
         private System.Windows.Forms.Button letsModButton;

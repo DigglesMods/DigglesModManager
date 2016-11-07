@@ -118,7 +118,7 @@
     <value>Could not find 'Wiggles.exe'.
 Please put the file 'DigglesModManager.exe' in the Diggles-Directory!</value>
   </data>
-  <data name="FormMain_Error" xml:space="preserve">
+  <data name="Error" xml:space="preserve">
     <value>Error</value>
   </data>
 </root>

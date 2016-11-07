@@ -50,6 +50,10 @@
     <ApplicationIcon>wiggles.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
@@ -78,6 +82,11 @@
       <DependentUpon>FormModSettings.cs</DependentUpon>
     </Compile>
     <Compile Include="Mod.cs" />
+    <Compile Include="Model\AppSettings.cs" />
+    <Compile Include="Model\ModMetaData.cs" />
+    <Compile Include="Model\ModSettings.cs" />
+    <Compile Include="Model\ModSettingsVariable.cs" />
+    <Compile Include="Model\ModVariableType.cs" />
     <Compile Include="ModVar.cs" />
     <Compile Include="Paths.cs" />
     <Compile Include="Program.cs" />
@@ -107,6 +116,7 @@
     <EmbeddedResource Include="ToolTipListBox.resx">
       <DependentUpon>ToolTipListBox.cs</DependentUpon>
     </EmbeddedResource>
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

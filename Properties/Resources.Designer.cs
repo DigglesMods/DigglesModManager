@@ -61,21 +61,21 @@ namespace DigglesModManager.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Error.
+        /// </summary>
+        internal static string Error {
+            get {
+                return ResourceManager.GetString("Error", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Could not find &apos;Wiggles.exe&apos;.
         ///Please put the file &apos;DigglesModManager.exe&apos; in the Diggles-Directory!.
         /// </summary>
         internal static string FormMain_CouldNotFindWigglesExeErrorText {
             get {
                 return ResourceManager.GetString("FormMain_CouldNotFindWigglesExeErrorText", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Error.
-        /// </summary>
-        internal static string FormMain_Error {
-            get {
-                return ResourceManager.GetString("FormMain_Error", resourceCulture);
             }
         }
     }
