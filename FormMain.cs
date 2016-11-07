@@ -811,22 +811,22 @@ namespace DigglesModManager
 
         private void wikiToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            OpenWebPage("https://github.com/cech12/DigglesModManager/wiki");
+            OpenWebPage("https://github.com/DigglesMods/DigglesModManager/wiki");
         }
 
         private void deutschToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            OpenWebPage("https://github.com/cech12/DigglesModManager/wiki/Mods-(de)");
+            OpenWebPage("https://github.com/DigglesMods/DigglesModManager/wiki/Mods-(de)");
         }
 
         private void englishToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            OpenWebPage("https://github.com/cech12/DigglesModManager/wiki/Mods-(en)");
+            OpenWebPage("https://github.com/DigglesMods/DigglesModManager/wiki/Mods-(en)");
         }
 
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            OpenWebPage("https://github.com/cech12/DigglesModManager/blob/master/README.md");
+            OpenWebPage("https://github.com/DigglesMods/DigglesModManager/blob/master/README.md");
         }
 
         private void websiteMenuButton_Click(object sender, EventArgs e)
