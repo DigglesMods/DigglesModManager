@@ -25,6 +25,7 @@ namespace DigglesModManager
         public FormMain()
         {
             InitializeComponent();
+            Text = string.Format(Resources.FormMainTitle, typeof(FormMain).Assembly.GetName().Version);
 
             FormBorderStyle = FormBorderStyle.FixedSingle;
 

@@ -121,4 +121,7 @@ Please put the file 'DigglesModManager.exe' in the Diggles-Directory!</value>
   <data name="Error" xml:space="preserve">
     <value>Error</value>
   </data>
+  <data name="FormMainTitle" xml:space="preserve">
+    <value>DigglesModManager v{0}</value>
+  </data>
 </root>

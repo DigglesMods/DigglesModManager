@@ -78,5 +78,14 @@ namespace DigglesModManager.Properties {
                 return ResourceManager.GetString("FormMain_CouldNotFindWigglesExeErrorText", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to DigglesModManager v{0}.
+        /// </summary>
+        internal static string FormMainTitle {
+            get {
+                return ResourceManager.GetString("FormMainTitle", resourceCulture);
+            }
+        }
     }
 }

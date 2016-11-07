@@ -196,7 +196,7 @@
             // statusBarLabelSpring1
             // 
             this.statusBarLabelSpring1.Name = "statusBarLabelSpring1";
-            this.statusBarLabelSpring1.Size = new System.Drawing.Size(620, 17);
+            this.statusBarLabelSpring1.Size = new System.Drawing.Size(535, 17);
             this.statusBarLabelSpring1.Spring = true;
             // 
             // statusBarLabelRight
@@ -240,14 +240,14 @@
             // 
             this.letsModMenuButton.Name = "letsModMenuButton";
             this.letsModMenuButton.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
-            this.letsModMenuButton.Size = new System.Drawing.Size(168, 22);
+            this.letsModMenuButton.Size = new System.Drawing.Size(166, 22);
             this.letsModMenuButton.Text = "Let\'s Mod";
             this.letsModMenuButton.Click += new System.EventHandler(this.letsModToolStripMenuItem_Click);
             // 
             // quitMenuButton
             // 
             this.quitMenuButton.Name = "quitMenuButton";
-            this.quitMenuButton.Size = new System.Drawing.Size(168, 22);
+            this.quitMenuButton.Size = new System.Drawing.Size(166, 22);
             this.quitMenuButton.Text = "Quit";
             this.quitMenuButton.Click += new System.EventHandler(this.quitToolStripMenuItem_Click);
             // 
@@ -349,7 +349,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.mainMenuStrip;
             this.Name = "FormMain";
-            this.Text = "DigglesModManager v0.2.7";
+            this.Text = "DigglesModManager";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.mainPanel.ResumeLayout(false);
             this.mainPanel.PerformLayout();
