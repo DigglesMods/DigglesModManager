@@ -1,2 +1,0 @@
-Var:ITEMS_PER_SLOT;Type:int;GameValue:3;StdValue:9;MinValue:1;MaxValue:20;Description:Anzahl der Items pro Lager-Slot
-Var:ADD_STORE_ROW;Type:bool;GameValue:false;StdValue:true;Description:Oberes Lagerregal hinzufügen
