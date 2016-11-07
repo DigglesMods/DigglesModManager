@@ -829,10 +829,15 @@ namespace DigglesModManager
             OpenWebPage("https://github.com/cech12/DigglesModManager/blob/master/README.md");
         }
 
-        private void OpenWebPage(String uri)
+        private void websiteMenuButton_Click(object sender, EventArgs e)
         {
-            ProcessStartInfo sInfo = new ProcessStartInfo(uri);
-            Process.Start(sInfo);
+            OpenWebPage("https://digglesmods.github.io/DigglesModManager/");
         }
+
+        private static void OpenWebPage(string uri)
+        {
+            Process.Start(new ProcessStartInfo(uri));
+        }
+
     }
 }
