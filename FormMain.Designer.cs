@@ -35,7 +35,6 @@
             this.refreshButton = new System.Windows.Forms.Button();
             this.moveUpButton = new System.Windows.Forms.Button();
             this.moveDownButton = new System.Windows.Forms.Button();
-            this.label_message = new System.Windows.Forms.Label();
             this.modSettingsButton = new System.Windows.Forms.Button();
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             this.mainPanel = new System.Windows.Forms.Panel();
@@ -53,12 +52,12 @@
             this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.modSettingsMenuButton = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.websiteMenuButton = new System.Windows.Forms.ToolStripMenuItem();
             this.wikiMenuButton = new System.Windows.Forms.ToolStripMenuItem();
             this.helpModsMenuButton = new System.Windows.Forms.ToolStripMenuItem();
             this.helpModsDeutschMenuButton = new System.Windows.Forms.ToolStripMenuItem();
             this.helpModsEnglishMenuButton = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutMenuButton = new System.Windows.Forms.ToolStripMenuItem();
-            this.websiteMenuButton = new System.Windows.Forms.ToolStripMenuItem();
             this.mainPanel.SuspendLayout();
             this.statusBar.SuspendLayout();
             this.mainMenuStrip.SuspendLayout();
@@ -133,16 +132,6 @@
             this.moveDownButton.UseVisualStyleBackColor = true;
             this.moveDownButton.Click += new System.EventHandler(this.button_down_Click);
             // 
-            // label_message
-            // 
-            this.label_message.AutoSize = true;
-            this.label_message.Location = new System.Drawing.Point(555, 18);
-            this.label_message.Name = "label_message";
-            this.label_message.Size = new System.Drawing.Size(50, 13);
-            this.label_message.TabIndex = 10;
-            this.label_message.Text = "Message";
-            this.label_message.Visible = false;
-            // 
             // modSettingsButton
             // 
             this.modSettingsButton.BackColor = System.Drawing.SystemColors.Control;
@@ -160,7 +149,6 @@
             // 
             this.mainPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
-            this.mainPanel.Controls.Add(this.label_message);
             this.mainPanel.Controls.Add(this.refreshButton);
             this.mainPanel.Controls.Add(this.modSettingsButton);
             this.mainPanel.Controls.Add(this.availableModsListBox);
@@ -302,10 +290,17 @@
             this.helpToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
             this.helpToolStripMenuItem.Text = "Help";
             // 
+            // websiteMenuButton
+            // 
+            this.websiteMenuButton.Name = "websiteMenuButton";
+            this.websiteMenuButton.Size = new System.Drawing.Size(116, 22);
+            this.websiteMenuButton.Text = "Website";
+            this.websiteMenuButton.Click += new System.EventHandler(this.websiteMenuButton_Click);
+            // 
             // wikiMenuButton
             // 
             this.wikiMenuButton.Name = "wikiMenuButton";
-            this.wikiMenuButton.Size = new System.Drawing.Size(152, 22);
+            this.wikiMenuButton.Size = new System.Drawing.Size(116, 22);
             this.wikiMenuButton.Text = "Wiki";
             this.wikiMenuButton.Click += new System.EventHandler(this.wikiToolStripMenuItem_Click);
             // 
@@ -315,7 +310,7 @@
             this.helpModsDeutschMenuButton,
             this.helpModsEnglishMenuButton});
             this.helpModsMenuButton.Name = "helpModsMenuButton";
-            this.helpModsMenuButton.Size = new System.Drawing.Size(152, 22);
+            this.helpModsMenuButton.Size = new System.Drawing.Size(116, 22);
             this.helpModsMenuButton.Text = "Mods";
             // 
             // helpModsDeutschMenuButton
@@ -335,16 +330,9 @@
             // aboutMenuButton
             // 
             this.aboutMenuButton.Name = "aboutMenuButton";
-            this.aboutMenuButton.Size = new System.Drawing.Size(152, 22);
+            this.aboutMenuButton.Size = new System.Drawing.Size(116, 22);
             this.aboutMenuButton.Text = "About";
             this.aboutMenuButton.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
-            // 
-            // websiteMenuButton
-            // 
-            this.websiteMenuButton.Name = "websiteMenuButton";
-            this.websiteMenuButton.Size = new System.Drawing.Size(152, 22);
-            this.websiteMenuButton.Text = "Website";
-            this.websiteMenuButton.Click += new System.EventHandler(this.websiteMenuButton_Click);
             // 
             // FormMain
             // 
@@ -361,7 +349,6 @@
             this.Text = "DigglesModManager";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.mainPanel.ResumeLayout(false);
-            this.mainPanel.PerformLayout();
             this.statusBar.ResumeLayout(false);
             this.statusBar.PerformLayout();
             this.mainMenuStrip.ResumeLayout(false);
@@ -381,7 +368,6 @@
         private System.Windows.Forms.Button refreshButton;
         private System.Windows.Forms.Button moveUpButton;
         private System.Windows.Forms.Button moveDownButton;
-        private System.Windows.Forms.Label label_message;
         private System.Windows.Forms.Button modSettingsButton;
         private System.ComponentModel.BackgroundWorker backgroundWorker1;
         private System.Windows.Forms.Panel mainPanel;

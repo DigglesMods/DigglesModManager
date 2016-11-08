@@ -81,6 +81,7 @@
     <Compile Include="FormModSettings.Designer.cs">
       <DependentUpon>FormModSettings.cs</DependentUpon>
     </Compile>
+    <Compile Include="Helpers.cs" />
     <Compile Include="Mod.cs" />
     <Compile Include="Model\AppSettings.cs" />
     <Compile Include="Model\ModMetaData.cs" />
@@ -90,7 +91,9 @@
     <Compile Include="ModVar.cs" />
     <Compile Include="Paths.cs" />
     <Compile Include="Program.cs" />
+    <Compile Include="ProgressBarManipulator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Service\ModdingService.cs" />
     <Compile Include="ToolTipListBox.cs">
       <SubType>Component</SubType>
     </Compile>

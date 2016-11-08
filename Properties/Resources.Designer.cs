@@ -80,6 +80,51 @@ namespace DigglesModManager.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to https://github.com/DigglesMods/DigglesModManager/wiki/Mods-(en).
+        /// </summary>
+        internal static string FormMain_EnglishWikiLink {
+            get {
+                return ResourceManager.GetString("FormMain_EnglishWikiLink", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to https://digglesmods.github.io/DigglesModManager/.
+        /// </summary>
+        internal static string FormMain_WebsiteLink {
+            get {
+                return ResourceManager.GetString("FormMain_WebsiteLink", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to https://github.com/DigglesMods/DigglesModManager/wiki/Mods-(de).
+        /// </summary>
+        internal static string FormMain_WikiDeutschLink {
+            get {
+                return ResourceManager.GetString("FormMain_WikiDeutschLink", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to https://github.com/DigglesMods/DigglesModManager/blob/master/README.md.
+        /// </summary>
+        internal static string FormMain_WikiHomeLink {
+            get {
+                return ResourceManager.GetString("FormMain_WikiHomeLink", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to https://github.com/DigglesMods/DigglesModManager/wiki.
+        /// </summary>
+        internal static string FormMain_WikiLink {
+            get {
+                return ResourceManager.GetString("FormMain_WikiLink", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to DigglesModManager v{0}.
         /// </summary>
         internal static string FormMainTitle {

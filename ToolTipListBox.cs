@@ -27,10 +27,10 @@ namespace DigglesModManager
         private bool _toolTipDisplayed;
 
         // Timer that is used to wait for the mouse to hover over an item
-        private Timer _toolTipDisplayTimer;
+        private readonly Timer _toolTipDisplayTimer;
 
         // Tooltip control
-        private ToolTip _toolTip;
+        private readonly ToolTip _toolTip;
 
         public ToolTipListBox()
         {
@@ -52,9 +52,9 @@ namespace DigglesModManager
         private void listBox_MouseMove(object sender, MouseEventArgs e)
         {
             // Get the item that the mouse is currently over
-            Point cursorPoint = Cursor.Position;
+            var cursorPoint = Cursor.Position;
             cursorPoint = this.PointToClient(cursorPoint);
-            int itemIndex = this.IndexFromPoint(cursorPoint);
+            var itemIndex = this.IndexFromPoint(cursorPoint);
 
             if (itemIndex == ListBox.NoMatches)
             {
@@ -93,15 +93,15 @@ namespace DigglesModManager
         void _toolTipDisplayTimer_Tick(object sender, EventArgs e)
         {
             // Display tooltip text since the mouse has hovered over an item
-            if (!_toolTipDisplayed && _currentItem != ListBox.NoMatches && _currentItem < this.Items.Count)
-            {
-                IToolTipDisplayer toolTipDisplayer = this.Items[_currentItem] as IToolTipDisplayer;
-                if (toolTipDisplayer != null)
-                {
-                    _toolTip.SetToolTip(this, toolTipDisplayer.GetToolTipText());
-                    _toolTipDisplayed = true;
-                }
-            }
+            if (_toolTipDisplayed || _currentItem == ListBox.NoMatches || _currentItem >= this.Items.Count)
+                return;
+
+            var toolTipDisplayer = this.Items[_currentItem] as IToolTipDisplayer;
+            if (toolTipDisplayer == null)
+                return;
+
+            _toolTip.SetToolTip(this, toolTipDisplayer.GetToolTipText());
+            _toolTipDisplayed = true;
         }
     }
 }

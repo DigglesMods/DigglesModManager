@@ -124,4 +124,19 @@ Please put the file 'DigglesModManager.exe' in the Diggles-Directory!</value>
   <data name="FormMainTitle" xml:space="preserve">
     <value>DigglesModManager v{0}</value>
   </data>
+  <data name="FormMain_WikiLink" xml:space="preserve">
+    <value>https://github.com/DigglesMods/DigglesModManager/wiki</value>
+  </data>
+  <data name="FormMain_WikiDeutschLink" xml:space="preserve">
+    <value>https://github.com/DigglesMods/DigglesModManager/wiki/Mods-(de)</value>
+  </data>
+  <data name="FormMain_EnglishWikiLink" xml:space="preserve">
+    <value>https://github.com/DigglesMods/DigglesModManager/wiki/Mods-(en)</value>
+  </data>
+  <data name="FormMain_WikiHomeLink" xml:space="preserve">
+    <value>https://github.com/DigglesMods/DigglesModManager/blob/master/README.md</value>
+  </data>
+  <data name="FormMain_WebsiteLink" xml:space="preserve">
+    <value>https://digglesmods.github.io/DigglesModManager/</value>
+  </data>
 </root>

@@ -153,9 +153,9 @@ namespace DigglesModManager
             }
             //.dm-Format
             else
-                foreach (ModVar modVar in _mod.Vars)
+                foreach (var modVar in _mod.Vars)
                 {
-                    foreach (Control control in _inputControls)
+                    foreach (var control in _inputControls)
                     {
                         if (modVar.VarName.Equals(control.Name))
                         {
@@ -204,9 +204,9 @@ namespace DigglesModManager
             }
             //.dm-Format
             else
-                foreach (ModVar modVar in _mod.Vars)
+                foreach (var modVar in _mod.Vars)
                 {
-                    foreach (Control control in _inputControls)
+                    foreach (var control in _inputControls)
                     {
                         if (modVar.VarName.Equals(control.Name))
                         {
@@ -216,7 +216,7 @@ namespace DigglesModManager
                             }
                             else
                             {
-                                control.Text = modVar.getValueAsString();
+                                control.Text = modVar.GetValueAsString();
                             }
                             break;
                         }
@@ -250,9 +250,9 @@ namespace DigglesModManager
             }
             //.dm-Format
             else
-                foreach (ModVar modVar in _mod.Vars)
+                foreach (var modVar in _mod.Vars)
                 {
-                    foreach (Control control in _inputControls)
+                    foreach (var control in _inputControls)
                     {
                         if (modVar.VarName.Equals(control.Name))
                         {
