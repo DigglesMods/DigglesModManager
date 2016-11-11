@@ -23,6 +23,7 @@ releaseRepository=aehrraid/evolution #$organization/DigglesModManager
 #all currently available mods (read from mod-names.txt)
 IFS=$'\n' read -d '' -r -a repoNames < $scriptLocation/mod-names.txt
 
+#read all necessary files from packaged-files.txt
 IFS=$'\n' read -d '' -r -a necessaryFiles < $scriptLocation/packaged-files.txt
 
 read -p "Release version $version of DigglesModManager? (y/n) " -r
