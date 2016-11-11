@@ -1,0 +1,2 @@
+DigglesModManager.exe
+Newtonsoft.Json.dll
