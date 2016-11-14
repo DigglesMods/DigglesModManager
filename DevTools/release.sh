@@ -155,7 +155,7 @@ then
 					echo "WARNING: Releasing with empty description. Please adjust on github.com!"
 				fi
 
-				$scriptLocation/github-release $releaseRepository DigglesModManager-v$version master "$description" $workDir/$releaseFileName
+				$scriptLocation/github-release/github-release $releaseRepository DigglesModManager-v$version master "$description" $workDir/$releaseFileName
 				echo "Finished."
 			fi
 		fi
