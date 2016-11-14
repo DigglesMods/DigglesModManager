@@ -18,13 +18,13 @@ scriptLocation=$(pwd)/$(dirname "$0")
 
 organization=DigglesMods
 #the github-repo to publish the release in
-releaseRepository=aehrraid/evolution #$organization/DigglesModManager
+releaseRepository=$organization/DigglesModManager
 
 #all currently available mods (read from mod-names.txt)
-IFS=$'\n' read -d '' -r -a repoNames < $scriptLocation/mod-names.txt
+IFS=$',' read -d '' -r -a repoNames < $scriptLocation/mod-names.txt
 
 #read all necessary files from packaged-files.txt
-IFS=$'\n' read -d '' -r -a necessaryFiles < $scriptLocation/packaged-files.txt
+IFS=$',' read -d '' -r -a necessaryFiles < $scriptLocation/packaged-files.txt
 
 read -p "Release version $version of DigglesModManager? (y/n) " -r
 if [[ $REPLY =~ ^[Yy]$ ]]
@@ -44,6 +44,11 @@ then
 	read -p "Continue? (y/n) " -r
 	if [[ $REPLY =~ ^[Yy]$ ]]
 	then
+		echo "Copying..."
+		
+		cp LICENSE bin/Release/LICENSE
+		cp README.md bin/Release/README.md
+	
 		echo "Validating..."
 		
 		cd $workDir
@@ -102,7 +107,7 @@ then
 			rm $releaseFileName
 		fi
 		
-		7z a $releaseFileName $(concat_array " " "${necessaryFiles[@]}") Mods
+		$scriptLocation/7zip/7za.exe a $releaseFileName $(concat_array " " "${necessaryFiles[@]}") Mods
 
 		echo "Packed zip."
 		
@@ -115,8 +120,8 @@ then
 		read -p "Adjust version number (current is $version)? (y/n) " -r
 		if [[ $REPLY =~ ^[Yy]$ ]]
 		then
-			proposal=$(echo $version | grep -o "[0-9]*$")
-			proposal=$(echo $version | grep -o "^[0-9]*").$(($proposal+1))
+			proposal=$(echo $version | grep -o "[0-9]*$") #major
+			proposal=$(echo $version | grep -o "^[0-9]*").$(($proposal+1)) #major.(minor+1)
 			read -p "New version [x.y] Version '$proposal' is proposed: " -r
 			if [ -z "$REPLY" ]; then
 				newVersion=$proposal
@@ -155,7 +160,7 @@ then
 					echo "WARNING: Releasing with empty description. Please adjust on github.com!"
 				fi
 
-				$scriptLocation/github-release/github-release $releaseRepository DigglesModManager-v$version master "$description" $workDir/$releaseFileName
+				$scriptLocation/github-release/github-release.exe $releaseRepository DigglesModManager-v$version master "$description" $workDir/$releaseFileName
 				echo "Finished."
 			fi
 		fi

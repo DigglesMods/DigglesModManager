@@ -1,2 +1,1 @@
-DigglesModManager.exe
-Newtonsoft.Json.dll
+DigglesModManager.exe,Newtonsoft.Json.dll,LICENSE,README.md
