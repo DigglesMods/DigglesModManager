@@ -8,22 +8,22 @@ to install such an environment is installing git for windows. The git bash is ca
 Run the given scripts with `./script.sh`. Some scripts may be executed from a predefined location, though.
 
 ## mod-names.txt
-A comma-separated list of all mod-repositories existing on github. Has to be edited manually at the moment. This text file is used
+A comma-separated list of all mod-repositories existing on github. At the moment it has to be edited manually. This text file is used
 by `clone-all-mods.sh`, `get-all-statuses.sh` and `release.sh` at the moment.
 
 ## packaged-files.txt
-A comma-separated list of all files which have to be packaged inside a release.zip. This includes the binaries, .exe-files, dlls and so on.
-This text file is used by release.sh mostly to build a release-package properly.
+A comma-separated list of all files which have to be packaged inside a `DigglesModManager-VERSION.zip`. This includes the binaries, .exe-files, dlls and so on.
+This text file is used by `release.sh` to build a release-package properly.
 
 ## clone-all-mods.sh
-Clones all Mod-Repositories from github to your computer.
+Clones all Mod-Repositories from github to your computer. The source for the repo-names is `mod-names.txt`.
 
 `./clone-all-mods.sh [PATH]`
 
 Provide a path to clone the repositories to a given directory.
 
 ## get-all-statuses.sh
-Checks the status of Mod-Repositories on your computer. (basically foreach (git status)) The source for the repo-names is `mod-names.txt`.
+Checks the status of Mod-Repositories on your computer. (basically foreach \[git status\]) The source for the repo-names is `mod-names.txt`.
 
 `./get-all-statuses.sh [PATH]`
 
