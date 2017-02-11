@@ -50,6 +50,13 @@
             this.letsModMenuButton = new System.Windows.Forms.ToolStripMenuItem();
             this.quitMenuButton = new System.Windows.Forms.ToolStripMenuItem();
             this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.languageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.deutschToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.englishToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.espanolToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.francaisToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.italianoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.nederlandsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.modSettingsMenuButton = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.websiteMenuButton = new System.Windows.Forms.ToolStripMenuItem();
@@ -265,10 +272,66 @@
             // settingsToolStripMenuItem
             // 
             this.settingsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.languageToolStripMenuItem,
             this.modSettingsMenuButton});
             this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
             this.settingsToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
             this.settingsToolStripMenuItem.Text = "Settings";
+            // 
+            // languageToolStripMenuItem
+            // 
+            this.languageToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.deutschToolStripMenuItem,
+            this.englishToolStripMenuItem,
+            this.espanolToolStripMenuItem,
+            this.francaisToolStripMenuItem,
+            this.italianoToolStripMenuItem,
+            this.nederlandsToolStripMenuItem});
+            this.languageToolStripMenuItem.Name = "languageToolStripMenuItem";
+            this.languageToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.languageToolStripMenuItem.Text = "Language";
+            // 
+            // deutschToolStripMenuItem
+            // 
+            this.deutschToolStripMenuItem.Name = "deutschToolStripMenuItem";
+            this.deutschToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.deutschToolStripMenuItem.Text = "Deutsch";
+            this.deutschToolStripMenuItem.Click += new System.EventHandler(this.deutschToolStripMenuItem_Click);
+            // 
+            // englishToolStripMenuItem
+            // 
+            this.englishToolStripMenuItem.Name = "englishToolStripMenuItem";
+            this.englishToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.englishToolStripMenuItem.Text = "English";
+            this.englishToolStripMenuItem.Click += new System.EventHandler(this.englishToolStripMenuItem_Click);
+            // 
+            // espanolToolStripMenuItem
+            // 
+            this.espanolToolStripMenuItem.Name = "espanolToolStripMenuItem";
+            this.espanolToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.espanolToolStripMenuItem.Text = "Español";
+            this.espanolToolStripMenuItem.Click += new System.EventHandler(this.espanolToolStripMenuItem_Click);
+            // 
+            // francaisToolStripMenuItem
+            // 
+            this.francaisToolStripMenuItem.Name = "francaisToolStripMenuItem";
+            this.francaisToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.francaisToolStripMenuItem.Text = "Français";
+            this.francaisToolStripMenuItem.Click += new System.EventHandler(this.francaisToolStripMenuItem_Click);
+            // 
+            // italianoToolStripMenuItem
+            // 
+            this.italianoToolStripMenuItem.Name = "italianoToolStripMenuItem";
+            this.italianoToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.italianoToolStripMenuItem.Text = "Italiano";
+            this.italianoToolStripMenuItem.Click += new System.EventHandler(this.italianoToolStripMenuItem_Click);
+            // 
+            // nederlandsToolStripMenuItem
+            // 
+            this.nederlandsToolStripMenuItem.Name = "nederlandsToolStripMenuItem";
+            this.nederlandsToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.nederlandsToolStripMenuItem.Text = "Nederlands";
+            this.nederlandsToolStripMenuItem.Click += new System.EventHandler(this.nederlandsToolStripMenuItem_Click);
             // 
             // modSettingsMenuButton
             // 
@@ -318,14 +381,14 @@
             this.helpModsDeutschMenuButton.Name = "helpModsDeutschMenuButton";
             this.helpModsDeutschMenuButton.Size = new System.Drawing.Size(117, 22);
             this.helpModsDeutschMenuButton.Text = "Deutsch";
-            this.helpModsDeutschMenuButton.Click += new System.EventHandler(this.deutschToolStripMenuItem_Click);
+            this.helpModsDeutschMenuButton.Click += new System.EventHandler(this.helpModsDeutschMenuButton_Click);
             // 
             // helpModsEnglishMenuButton
             // 
             this.helpModsEnglishMenuButton.Name = "helpModsEnglishMenuButton";
             this.helpModsEnglishMenuButton.Size = new System.Drawing.Size(117, 22);
             this.helpModsEnglishMenuButton.Text = "English";
-            this.helpModsEnglishMenuButton.Click += new System.EventHandler(this.englishToolStripMenuItem_Click);
+            this.helpModsEnglishMenuButton.Click += new System.EventHandler(this.helpModsEnglishMenuButton_Click);
             // 
             // aboutMenuButton
             // 
@@ -389,6 +452,13 @@
         private System.Windows.Forms.ToolStripMenuItem helpModsEnglishMenuButton;
         private System.Windows.Forms.ToolStripMenuItem wikiMenuButton;
         private System.Windows.Forms.ToolStripMenuItem websiteMenuButton;
+        private System.Windows.Forms.ToolStripMenuItem languageToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem deutschToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem englishToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem espanolToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem francaisToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem italianoToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem nederlandsToolStripMenuItem;
     }
 }
 

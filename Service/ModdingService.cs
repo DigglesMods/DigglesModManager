@@ -31,49 +31,16 @@ namespace DigglesModManager.Service
             progressBarManipulator.Increment();
 
             //read last active mods
-            var lastActiveMods = new List<string>();
-            var activeModsFilePath = Paths.ExePath + "\\" + Paths.ActiveModsFileName;
-            if (File.Exists(activeModsFilePath))
-            {
-                var reader = new StreamReader(activeModsFilePath);
-                string mod;
-                while ((mod = reader.ReadLine()) != null)
-                {
-                    lastActiveMods.Add(mod);
-                }
-                reader.Close();
-            }
-            //read JSON-AppSettings
             var appSettingsFilePath = $"{Paths.ExePath}\\{Paths.AppSettingsName}";
             if (File.Exists(appSettingsFilePath))
             {
                 var json = File.ReadAllText(appSettingsFilePath, Encoding.Default);
                 var appSettings = JsonConvert.DeserializeObject<AppSettings>(json);
-                lastActiveMods = new List<string>();
                 foreach (var pair in appSettings.ActiveMods)
                     if (Directory.Exists($"{Paths.ModPath}\\{Paths.ModDirectoryName}\\{pair.Key}"))
+                    {
                         activeMods.Add(new Mod(pair.Key, pair.Value));
-            }
-            progressBarManipulator.Increment();
-
-            //add to active mods 
-            foreach (var modAndSettings in lastActiveMods)
-            {
-                //read settings values
-                var separatorIndex = modAndSettings.IndexOf('|');
-                var mod = modAndSettings;
-                string settings = null;
-                if (separatorIndex > 0)
-                {
-                    settings = modAndSettings.Substring(separatorIndex + 1);
-                    mod = modAndSettings.Substring(0, separatorIndex);
-                }
-
-                //add active mod
-                if (Directory.Exists(Paths.ModPath + "\\" + Paths.ModDirectoryName + "\\" + mod))
-                {
-                    activeMods.Add(new Mod(mod, settings));
-                }
+                    }
             }
             progressBarManipulator.Increment();
         }
@@ -87,43 +54,25 @@ namespace DigglesModManager.Service
             writer.Close();
         }
 
-        public void SaveActiveMods(List<Mod> activeMods)
+        public void SaveActiveMods(string language, List<Mod> activeMods)
         {
-            //delete old file (.dm)
-            var oldFilePath = Paths.ExePath + "\\" + Paths.ActiveModsFileName;
-            if (File.Exists(oldFilePath))
-            {
-                File.Delete(oldFilePath);
-            }
-
             var appSettingsFilePath = $"{Paths.ExePath}\\{Paths.AppSettingsName}";
             if (activeMods.Count > 0)
             {
-                //JSON-Format
                 var appSettings = new AppSettings();
+                appSettings.Language = language;
                 foreach (var mod in activeMods)
-                    appSettings.ActiveMods.Add(mod.ModDirectoryName, mod.Settings);
+                {
+                    var variables = new Dictionary<string, object>();
+                    foreach (var variable in mod.Config.SettingsVariables)
+                    {
+                        variables.Add(variable.ID, variable.Value);
+                    }
+                    appSettings.ActiveMods.Add(mod.ModDirectoryName, variables);
+                }
+                    
                 var json = JsonConvert.SerializeObject(appSettings, Formatting.Indented);
-                File.WriteAllText(appSettingsFilePath, json, Encoding.UTF8);   //overwrites any existing files, if present
-
-
-                //save
-                //StreamWriter writer = new StreamWriter(Paths.ExePath + "\\" + Paths.ActiveModsFileName, true, Encoding.Default);
-                //foreach (Mod mod in _activeMods)
-                //{
-                //    string line = mod.ModDirectoryName;
-                //    if (mod.Settings.Variables.Count > 0)
-                //    {
-                //        line += "|";
-                //        foreach (var modVar in mod.Settings.Variables)
-                //        {
-                //            line += modVar.Name + ":" + modVar.Value.ToString() + ";";
-                //        }
-                //    }
-                //    writer.WriteLine(line);
-                //}
-                //writer.Flush();
-                //writer.Close();
+                File.WriteAllText(appSettingsFilePath, json, Encoding.UTF8); //overwrites any existing files, if present
             }
             else
             {
@@ -158,12 +107,10 @@ namespace DigglesModManager.Service
                 var mode = "replace";
                 var filename = modFile.Name;
 
-                //skip modmanager files
-                if (filename.Equals(Paths.ModSettingsFileName) || filename.Equals(Paths.ModDescriptionFileName) ||
-                    filename.Equals(Paths.ModSettingsName) || filename.Equals(Paths.ModDescriptionName))
-                {
-                    continue;
-                }
+                //skip some files in root directory
+                if (modDirectory.Name.Equals(mod.ModDirectoryName))
+                    if (filename.Equals(Paths.ModConfigName) || filename.Equals("LICENSE") || filename.Equals("README.md"))
+                        continue;
 
                 if (filename.StartsWith(ChangeFilePrefix))
                 {
@@ -263,9 +210,9 @@ namespace DigglesModManager.Service
                                     //$if:varname
                                     //look for variable
                                     var modVarFound = false;
-                                    foreach (var modVariable in mod.Settings.Variables)
+                                    foreach (var modVariable in mod.Config.SettingsVariables)
                                     {
-                                        if (!modVariable.Name.Equals(ifStatement))
+                                        if (!modVariable.ID.Equals(ifStatement))
                                             continue;
 
                                         modVarFound = true;
@@ -446,7 +393,7 @@ namespace DigglesModManager.Service
                                 {
                                     //old code had: if (mod.Vars.Count > 0). Why?
                                     //before: replace variables
-                                    foreach (var modVar in mod.Settings.Variables)
+                                    foreach (var modVar in mod.Config.SettingsVariables)
                                     {
                                         newValue = newValue.Replace("$print:" + modVar.Name, modVar.Value.ToString());
                                     }
@@ -490,6 +437,10 @@ namespace DigglesModManager.Service
             var gameDirectories = gameDirectory.GetDirectories();
             foreach (var modDir in modDirectories)
             {
+                //skip .git directories
+                if (modDir.Name.Equals(".git"))
+                    continue;
+
                 //search for game directory
                 DirectoryInfo rightGameDir = null;
                 foreach (var gameDir in gameDirectories)

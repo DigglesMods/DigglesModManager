@@ -3,7 +3,6 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using DigglesModManager.Properties;
@@ -14,69 +13,44 @@ namespace DigglesModManager
     {
         public string ModDirectoryName { get; private set; }
 
-        public ModMetaData MetaData { get; private set; }
-        public ModSettings Settings { get; private set; } = new ModSettings();
-
-        public string DisplayText { get; private set; }
+        public ModConfig Config { get; private set; }
+        
         public string ToolTipText { get; private set; }
         public string Author { get; private set; }
 
-        public List<ModVar> Vars { get; private set; }
-
-        public Mod(string modDirectory, ModSettings modSettings)
-            : this(modDirectory, DecodeModSettings(modSettings))
+        public Mod(string modDirectory) : this(modDirectory, new Dictionary<string, object>())
         {
-        }
-
-        private static string DecodeModSettings(ModSettings modSettings)
-        {
-            return modSettings.Variables.Aggregate("", (current, variable) => current + $"{variable.Name}:{variable.Value};");
         }
 
         // Constructor
-        public Mod(string modDirectory, string oldSettings)
+        public Mod(string modDirectory, Dictionary<string, object> oldSettings)
         {
             ModDirectoryName = modDirectory;
 
             //get description
             var modDirectoryInfo = new DirectoryInfo(Paths.ExePath + "\\" + Paths.ModDirectoryName + "\\" + ModDirectoryName);
-            DisplayText = modDirectory;
             ToolTipText = "";
             Author = "";
-            Vars = new List<ModVar>();
 
-            //test for description file and settings file and read it
+            //test for config file and read it
             var modFiles = modDirectoryInfo.GetFiles();
 
             foreach (var modFile in modFiles)
             {
                 var filename = modFile.Name;
-                if (filename.Equals(Paths.ModDescriptionName)) //.json-Format
+                if (filename.Equals(Paths.ModConfigName))
                 {
-                    ReadModMetaDataFromJson(modFile);
-                }
-                else if (filename.Equals(Paths.ModSettingsName))
-                {
-                    ReadModSettingsFromJsonAndMergeWithOldValues(oldSettings, modFile);
-                }
-                else if (filename.Equals(Paths.ModDescriptionFileName)) //.dm-Settings-Format
-                {
-                    //read mod description
-                    ReadModDescriptionFromDm(modFile);
-                }
-                else if (filename.Equals(Paths.ModSettingsFileName))
-                {
-                    ReadModSettingsFromDm(oldSettings, modFile);
+                    ReadModConfigAndMergeWithOldValues(modFile, oldSettings);
                 }
             }
 
-            if (MetaData == null)
+            if (Config == null)
             {
-                MetaData = new ModMetaData()
+                Config = new ModConfig()
                 {
-                    Name = $"{ modDirectory }-ERROR",
+                    Name = new ModTranslationString($"{ modDirectory }-ERROR"),
                     Author = "",
-                    Description = ""
+                    Description = new ModTranslationString("")
                 };
             }
         }
@@ -84,33 +58,33 @@ namespace DigglesModManager
         /// <summary>
         /// Reads from the given JSON-File and parses the content to ModSettings. The resulting Settings-Variables 
         /// are then merged with the given oldSettings.
+        /// Opens the json file containing the metadata for a specific mod and parses the content to ModMetaData.
+        /// If there is any Error, an Error Message is shown.
         /// </summary>
         /// <param name="oldSettings">The old/pre-existing variable settings.</param>
         /// <param name="modFile">The file to be read from.</param>
-        private void ReadModSettingsFromJsonAndMergeWithOldValues(string oldSettings, FileInfo modFile)
+        private void ReadModConfigAndMergeWithOldValues(FileInfo modFile, Dictionary<string, object> oldSettings)
         {
             try
             {
                 var json = File.ReadAllText(modFile.FullName, Encoding.Default);
-                Settings = JsonConvert.DeserializeObject<ModSettings>(json);
+                Config = JsonConvert.DeserializeObject<ModConfig>(json);
 
-                foreach (var modSettingsVariable in Settings.Variables)
+                foreach (var modSettingsVariable in Config.SettingsVariables)
                 {
-                    //check saved application status and overwrite with values of last session
-                    if (oldSettings == null)
-                        continue;
-
-                    object oldValue = GetVarElement(oldSettings, modSettingsVariable.Name + ":");
-                    if (oldValue == null)
-                        continue;
+                    //check saved application status and overwrite with values of last session or set the default value
+                    object oldValue = null;
+                    if (!oldSettings.TryGetValue(modSettingsVariable.ID, out oldValue) // set oldValue at success
+                        || oldValue == null)
+                        oldValue = modSettingsVariable.DefaultValue;
 
                     switch (modSettingsVariable.Type)
                     {
                         case ModVariableType.Bool:
-                            oldValue = bool.Parse((string)oldValue);
+                            oldValue = bool.Parse(oldValue.ToString());
                             break;
                         case ModVariableType.Int:
-                            oldValue = int.Parse((string)oldValue);
+                            oldValue = int.Parse(oldValue.ToString());
                             break;
                         default:
                         case ModVariableType.String:
@@ -121,185 +95,21 @@ namespace DigglesModManager
             }
             catch (JsonReaderException ex)
             {
-                ShowErrorMessage($"Could not parse settings-file of '{ModDirectoryName}'!\nError is {ex}");
+                ShowErrorMessage($"Could not parse config-file of '{ModDirectoryName}'!\nError is {ex}");
             }
         }
-
-        /// <summary>
-        /// Opens the json file containing the metadata for a specific mod and parses the content to ModMetaData.
-        /// If there is any Error, an Error Message is shown.
-        /// </summary>
-        /// <param name="modFile">The File Info for the JSON-File</param>
-        private void ReadModMetaDataFromJson(FileInfo modFile)
-        {
-            try
-            {
-                var json = File.ReadAllText(modFile.FullName, Encoding.Default);
-                MetaData = JsonConvert.DeserializeObject<ModMetaData>(json);
-            }
-            catch (JsonReaderException ex)
-            {
-                ShowErrorMessage($"Could not parse metadata-file of '{ModDirectoryName}'!\nError is {ex}");
-            }
-        }
-
-        /// <summary>
-        /// LEGACY, DEPRECATED
-        /// </summary>
-        /// <param name="oldSettings"></param>
-        /// <param name="modFile"></param>
-        private void ReadModSettingsFromDm(string oldSettings, FileInfo modFile)
-        {
-            //reading mod settings
-            var reader = new StreamReader(modFile.FullName, Encoding.Default);
-            string line;
-            while ((line = reader.ReadLine()) != null)
-            {
-                //read var
-                var varName = GetVarElement(line, "Var:");
-                var type = GetVarElement(line, "Type:");
-                var description = GetVarElement(line, "Description:");
-                var gameValue = GetVarElement(line, "GameValue:");
-                var stdValue = GetVarElement(line, "StdValue:");
-                var minValue = GetVarElement(line, "MinValue:");
-                var maxValue = GetVarElement(line, "MaxValue:");
-
-                if (varName != null && type != null && gameValue != null && stdValue != null)
-                {
-                    //read old settings
-                    var value = stdValue;
-                    if (oldSettings != null)
-                    {
-                        value = GetVarElement(oldSettings, varName + ":");
-                        if (value == null)
-                        {
-                            value = stdValue;
-                        }
-                    }
-                    //generate mod var
-                    ModVar modVar = null;
-                    ModSettingsVariable modVariable = null;
-                    if (type.Equals("int"))
-                    {
-                        if (minValue != null && maxValue != null)
-                        {
-                            modVar = new ModVar<int>(varName, type, description, int.Parse(gameValue), int.Parse(stdValue),
-                                int.Parse(value), int.Parse(minValue), int.Parse(maxValue));
-                            modVariable = new ModSettingsVariable()
-                            {
-                                Name = varName,
-                                Type = ModVariableType.Int,
-                                Description = description,
-                                Value = int.Parse(gameValue),
-                                DefaultValue = int.Parse(stdValue),
-                                Min = int.Parse(minValue),
-                                Max = int.Parse(maxValue)
-                            };
-                        }
-                        else
-                        {
-                            modVar = new ModVar<int>(varName, type, description, int.Parse(gameValue), int.Parse(stdValue),
-                                int.Parse(value));
-                            modVariable = new ModSettingsVariable()
-                            {
-                                Name = varName,
-                                Type = ModVariableType.Int,
-                                Description = description,
-                                Value = int.Parse(gameValue),
-                                DefaultValue = int.Parse(stdValue)
-                            };
-                        }
-                    }
-                    else if (type.Equals("bool"))
-                    {
-                        modVar = new ModVar<bool>(varName, type, description, bool.Parse(gameValue), bool.Parse(stdValue),
-                            bool.Parse(value));
-                        modVariable = new ModSettingsVariable()
-                        {
-                            Name = varName,
-                            Type = ModVariableType.Bool,
-                            Description = description,
-                            Value = bool.Parse(gameValue),
-                            DefaultValue = bool.Parse(stdValue)
-                        };
-                    }
-                    else if (type.Equals("string"))
-                    {
-                        modVar = new ModVar<string>(varName, type, description, gameValue, stdValue, value);
-                        modVariable = new ModSettingsVariable()
-                        {
-                            Name = varName,
-                            Type = ModVariableType.String,
-                            Description = description,
-                            Value = gameValue,
-                            DefaultValue = stdValue
-                        };
-                    }
-
-                    if (modVar != null)
-                    {
-                        //.dm-Format
-                        Vars.Add(modVar);
-                        //JSON-Format
-                        Settings.Variables.Add(modVariable);
-                    }
-                }
-            }
-        }
-
-        private void ReadModDescriptionFromDm(FileInfo modFile)
-        {
-            var reader = new StreamReader(modFile.FullName, Encoding.Default);
-            string line;
-            while ((line = reader.ReadLine()) != null)
-            {
-                if (line.StartsWith("name:"))
-                {
-                    DisplayText = line.Substring("name:".Length);
-                }
-                else if (line.StartsWith("tooltip:"))
-                {
-                    ToolTipText = line.Substring("tooltip:".Length);
-                }
-                else if (line.StartsWith("author:"))
-                {
-                    Author = line.Substring("author:".Length);
-                }
-            }
-        }
-
-        private static string GetVarElement(string line, string identifier)
-        {
-            var startIndex = line.IndexOf(identifier, StringComparison.Ordinal);
-            if (startIndex >= 0)
-            {
-                startIndex += identifier.Length;
-                var tmp = line.Substring(startIndex);
-                var endIndex = tmp.IndexOf(';');
-                if (endIndex > 0)
-                {
-                    return tmp.Substring(0, endIndex);
-                }
-                else
-                {
-                    return tmp;
-                }
-            }
-            return null;
-        }
-
 
         // Returns the display text of this item.
         public override string ToString()
         {
-            return DisplayText;
+            return Config.Name.getString(FormMain._language);
         }
         // Returns the tooltip text of this item.
         public string GetToolTipText()
         {
             var toolTip = ToolTipText;
-            if (!string.IsNullOrWhiteSpace(MetaData.Description))
-                toolTip = MetaData.Description;
+            if (!string.IsNullOrWhiteSpace(Config.Description.getString(FormMain._language)))
+                toolTip = Config.Description.getString(FormMain._language);
             if (!string.IsNullOrWhiteSpace(toolTip) && !string.IsNullOrWhiteSpace(Author))
             {
                 toolTip += "\n";
@@ -308,9 +118,9 @@ namespace DigglesModManager
             {
                 toolTip += "Author: " + Author;
             }
-            else if (!string.IsNullOrEmpty(MetaData.Author))
+            else if (!string.IsNullOrEmpty(Config.Author))
             {
-                toolTip += "Author: " + MetaData.Author;
+                toolTip += "Author: " + Config.Author;
             }
 
             return toolTip;
@@ -323,12 +133,12 @@ namespace DigglesModManager
                 return false;
 
             var element = (Mod)obj;
-            return DisplayText.Equals(element.DisplayText);
+            return ToString().Equals(element.ToString());
         }
 
         public override int GetHashCode()
         {
-            return DisplayText.GetHashCode();
+            return ToString().GetHashCode();
         }
 
         public int CompareTo(object obj)
@@ -337,7 +147,7 @@ namespace DigglesModManager
                 return 1;
 
             var element = (Mod)obj;
-            return string.Compare(DisplayText, element.DisplayText, StringComparison.Ordinal);
+            return string.Compare(ToString(), element.ToString(), StringComparison.Ordinal);
         }
 
         private static void ShowErrorMessage(string message)

@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using System.IO;
 using DigglesModManager.Properties;
 using DigglesModManager.Service;
+using Newtonsoft.Json;
+using System.Text;
+using DigglesModManager.Model;
 
 namespace DigglesModManager
 {
@@ -14,6 +16,9 @@ namespace DigglesModManager
     {
         private readonly List<Mod> _inactiveMods = new List<Mod>();
         private readonly List<Mod> _activeMods = new List<Mod>();
+
+        public static string _language = "en";
+        private static Dictionary<string, ToolStripMenuItem> languageMenuItems = new Dictionary<string, ToolStripMenuItem>();
 
         private readonly ModdingService _moddingService;
 
@@ -25,6 +30,24 @@ namespace DigglesModManager
             Text = string.Format(Resources.FormMainTitle, typeof(FormMain).Assembly.GetName().Version);
 
             FormBorderStyle = FormBorderStyle.FixedSingle;
+
+            //set language menu items for checking
+            languageMenuItems.Add("de", deutschToolStripMenuItem);
+            languageMenuItems.Add("en", englishToolStripMenuItem);
+            languageMenuItems.Add("es", espanolToolStripMenuItem);
+            languageMenuItems.Add("fr", francaisToolStripMenuItem);
+            languageMenuItems.Add("it", italianoToolStripMenuItem);
+            languageMenuItems.Add("nl", nederlandsToolStripMenuItem);
+
+            //get language
+            var appSettingsFilePath = $"{Paths.ExePath}\\{Paths.AppSettingsName}";
+            if (File.Exists(appSettingsFilePath))
+            {
+                var json = File.ReadAllText(appSettingsFilePath, Encoding.Default);
+                var appSettings = JsonConvert.DeserializeObject<AppSettings>(json);
+                _language = appSettings.Language;
+            }
+            setCheckOfLanguageInMenu(true);
 
             _moddingService = new ModdingService();
             _progressBarManipulator = new ProgressBarManipulator(modProgressStatusBar);
@@ -59,6 +82,21 @@ namespace DigglesModManager
             statusBarLabelRight.ForeColor = color;
         }
 
+
+        private void setCheckOfLanguageInMenu(bool check)
+        {
+            ToolStripMenuItem menuItem = null;
+            if (languageMenuItems.TryGetValue(_language, out menuItem) && menuItem != null)
+            {
+                menuItem.Checked = check;
+                if (check)
+                    menuItem.CheckState = CheckState.Checked;
+                else 
+                    menuItem.CheckState = CheckState.Unchecked;
+
+            }
+        }
+
         private void ReadMods()
         {
             _progressBarManipulator.Reset(7);
@@ -73,10 +111,9 @@ namespace DigglesModManager
             var modDirectories = (new DirectoryInfo(Paths.ModPath + "\\" + Paths.ModDirectoryName)).GetDirectories();
             foreach (var modInfo in modDirectories)
             {
-                //if (!_activeMods.Contains(new Mod(modInfo.Name, (string)null)))
-                if (!_activeMods.Exists(mod => mod.MetaData.Name.Equals(modInfo.Name)))
+                if (!_activeMods.Exists(mod => mod.ModDirectoryName.Equals(modInfo.Name)))
                 {
-                    _inactiveMods.Add(new Mod(modInfo.Name, (string)null));
+                    _inactiveMods.Add(new Mod(modInfo.Name));
                 }
             }
             _inactiveMods.Sort();
@@ -115,20 +152,9 @@ namespace DigglesModManager
             int selectedIndex = installedModsListBox.SelectedIndex;
             if (selectedIndex >= 0 && selectedIndex < _activeMods.Count)
             {
-                var mod = _activeMods.ElementAt(selectedIndex);
+                var hasSettings = _activeMods.ElementAt(selectedIndex).Config.SettingsVariables != null 
+                    && _activeMods.ElementAt(selectedIndex).Config.SettingsVariables.Count > 0;
 
-                var modDir = new DirectoryInfo(Paths.ModPath + "\\" + Paths.ModDirectoryName + "\\" + mod.ModDirectoryName);
-                var modFiles = modDir.GetFiles();
-
-                var hasSettings = false;
-                foreach (var gameFile in modFiles)
-                {
-                    //.dm-Format || .json-Format
-                    if (gameFile.Name.Equals(Paths.ModSettingsFileName) || Paths.ModSettingsName.Equals(gameFile.Name))
-                    {
-                        hasSettings = true;
-                    }
-                }
                 //set settings button enabled
                 modSettingsButton.Enabled = hasSettings;
                 modSettingsMenuButton.Enabled = hasSettings;
@@ -220,7 +246,7 @@ namespace DigglesModManager
                 _progressBarManipulator.Increment();
             }
 
-            _moddingService.SaveActiveMods(_activeMods);
+            _moddingService.SaveActiveMods(_language, _activeMods);
             _progressBarManipulator.Increment();
 
             if (warning)
@@ -245,7 +271,7 @@ namespace DigglesModManager
             if (selectedIndex >= 0 && selectedIndex < _activeMods.Count)
             {
                 var mod = _activeMods.ElementAt(selectedIndex); //get mod
-                var form = new FormModSettings(mod);
+                var form = new FormModSettings(mod, _language);
                 form.ShowDialog(this); //'this' is necessary for relative aligning
             }
         }
@@ -253,6 +279,46 @@ namespace DigglesModManager
         private void modSettingsMenuButton_Click(object sender, EventArgs e)
         {
             button_mod_settings_Click(sender, e);
+        }
+        
+        private void changeLanguage(string language)
+        {
+            setCheckOfLanguageInMenu(false);
+            _language = language;
+            setCheckOfLanguageInMenu(true);
+            //refresh view
+            _inactiveMods.Sort();
+            ChangeDataSource();
+        }
+
+        private void deutschToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            changeLanguage("de");
+        }
+
+        private void englishToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            changeLanguage("en");
+        }
+
+        private void espanolToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            changeLanguage("es");
+        }
+
+        private void francaisToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            changeLanguage("fr");
+        }
+
+        private void italianoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            changeLanguage("it");
+        }
+
+        private void nederlandsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            changeLanguage("nl");
         }
 
         private void quitToolStripMenuItem_Click(object sender, EventArgs e)
@@ -265,12 +331,12 @@ namespace DigglesModManager
             Helpers.OpenWebPage(Resources.FormMain_WikiLink);
         }
 
-        private void deutschToolStripMenuItem_Click(object sender, EventArgs e)
+        private void helpModsDeutschMenuButton_Click(object sender, EventArgs e)
         {
             Helpers.OpenWebPage(Resources.FormMain_WikiDeutschLink);
         }
 
-        private void englishToolStripMenuItem_Click(object sender, EventArgs e)
+        private void helpModsEnglishMenuButton_Click(object sender, EventArgs e)
         {
             Helpers.OpenWebPage(Resources.FormMain_EnglishWikiLink);
         }

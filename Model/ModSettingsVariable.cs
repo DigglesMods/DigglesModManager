@@ -9,16 +9,22 @@ namespace DigglesModManager.Model
     public class ModSettingsVariable
     {
         /// <summary>
-        /// The mod-unique name of the variable. Is referenced/used in tcl-code aswell. [REQUIRED]
+        /// The mod-unique name/id of the variable. Is referenced/used in tcl-code aswell. [REQUIRED]
+        /// </summary>
+        [JsonProperty(PropertyName = "id", Required = Required.Always)]
+        public string ID { get; set; }
+
+        /// <summary>
+        /// The human readanle name of the variable. [REQUIRED]
         /// </summary>
         [JsonProperty(PropertyName="name", Required = Required.Always)]
-        public string Name { get; set; }
+        public ModTranslationString Name { get; set; }
 
         /// <summary>
         /// A short description for the ui of the mod-variable. [REQUIRED]
         /// </summary>
         [JsonProperty(PropertyName = "description", Required = Required.Always)]
-        public string Description { get; set; }
+        public ModTranslationString Description { get; set; }
 
         /// <summary>
         /// The data-type of the variable. Can be bool, int.. [REQUIRED]
@@ -27,16 +33,15 @@ namespace DigglesModManager.Model
         public ModVariableType Type { get; set; }
 
         /// <summary>
-        /// The current tuned value of the variable. [REQUIRED]
-        /// </summary>
-        [JsonProperty(PropertyName = "value", Required = Required.Always)]
-        public object Value { get; set; }
-
-        /// <summary>
         /// The default value, which is present in Diggles-sourcecode aswell. [REQUIRED]
         /// </summary>
         [JsonProperty(PropertyName = "default", Required = Required.Always)]
         public object DefaultValue { get; set; }
+
+        /// <summary>
+        /// The actual value. Is the default or a loaded value.
+        /// </summary>
+        public object Value { get; set; }
 
         /// <summary>
         /// A maximum value. (only for int variables)
