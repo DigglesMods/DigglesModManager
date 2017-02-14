@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DigglesModManager.Properties;
+using System;
 using System.Windows.Forms;
 
 namespace DigglesModManager
@@ -13,7 +14,15 @@ namespace DigglesModManager
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new FormMain());
+            try
+            {
+                Application.Run(new FormMain());
+            }
+            catch (System.IO.FileNotFoundException e)
+            {
+                Helpers.ShowErrorMessage(Resources.FormMain_CouldNotFindFile.Replace("FILENAME", e.FileName), Resources.Error);
+            }
+            
         }
     }
 }
