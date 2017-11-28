@@ -391,11 +391,10 @@ namespace DigglesModManager.Service
                                 //replace old value with new value
                                 if (oldValue != "")
                                 {
-                                    //old code had: if (mod.Vars.Count > 0). Why?
                                     //before: replace variables
                                     foreach (var modVar in mod.Config.SettingsVariables)
                                     {
-                                        newValue = newValue.Replace("$print:" + modVar.Name, modVar.Value.ToString());
+                                        newValue = newValue.Replace("$print:" + modVar.ID, modVar.Value.ToString());
                                     }
 
                                     //replace old value with new value
