@@ -26,7 +26,7 @@ if [ -d "$dir" ] ; then
 		declare -a repoBase="https://github.com/DigglesMods"
 		declare -a repoNames=("BetterStorage" "Barrow" "Rimless" "PowerPotion" "ProductionStatistics" 
 						"CommandF9" "DwarfStatistics" "SwitcherGeneratorDungeon" "RareResources" 
-						"DroppingResources" "ChangeGameSettings" "BugFix" "StoneDoor")
+						"DroppingResources" "ChangeGameSettings" "BugFix" "StoneDoor" "WigSound")
 
 		## clone every repo
 		for repo in "${repoNames[@]}"

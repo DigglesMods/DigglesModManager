@@ -5,7 +5,7 @@ then
 	## all repo names
 	declare -a repoNames=("BetterStorage" "Barrow" "Rimless" "PowerPotion" "ProductionStatistics" 
 					"CommandF9" "DwarfStatistics" "SwitcherGeneratorDungeon" "RareResources" 
-					"DroppingResources" "ChangeGameSettings" "BugFix" "StoneDoor")
+					"DroppingResources" "ChangeGameSettings" "BugFix" "StoneDoor" "WigSound")
 
 	## iterte over every repo
 	for repo in "${repoNames[@]}"
