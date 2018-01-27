@@ -107,6 +107,12 @@ namespace DigglesModManager.Service
                 var mode = "replace";
                 var filename = modFile.Name;
 
+                if (filename == ".git")
+                {
+                    //skip Git version control system files
+                    continue;
+                }
+
                 //skip some files in root directory
                 if (modDirectory.Name.Equals(mod.ModDirectoryName))
                     if (filename.Equals(Paths.ModConfigName) || filename.Equals("LICENSE") || filename.Equals("README.md"))
