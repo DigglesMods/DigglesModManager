@@ -73,7 +73,7 @@
             // installModButton
             // 
             this.installModButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.installModButton.Location = new System.Drawing.Point(256, 53);
+            this.installModButton.Location = new System.Drawing.Point(256, 90);
             this.installModButton.Name = "installModButton";
             this.installModButton.Size = new System.Drawing.Size(40, 32);
             this.installModButton.TabIndex = 2;
@@ -84,7 +84,7 @@
             // uninstallModButton
             // 
             this.uninstallModButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.uninstallModButton.Location = new System.Drawing.Point(256, 91);
+            this.uninstallModButton.Location = new System.Drawing.Point(256, 128);
             this.uninstallModButton.Name = "uninstallModButton";
             this.uninstallModButton.Size = new System.Drawing.Size(40, 32);
             this.uninstallModButton.TabIndex = 3;
@@ -95,9 +95,9 @@
             // letsModButton
             // 
             this.letsModButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.letsModButton.Location = new System.Drawing.Point(604, 27);
+            this.letsModButton.Location = new System.Drawing.Point(604, 237);
             this.letsModButton.Name = "letsModButton";
-            this.letsModButton.Size = new System.Drawing.Size(94, 183);
+            this.letsModButton.Size = new System.Drawing.Size(108, 40);
             this.letsModButton.TabIndex = 4;
             this.letsModButton.Text = "Let\'s Mod";
             this.letsModButton.UseVisualStyleBackColor = true;
@@ -107,7 +107,7 @@
             // 
             this.refreshButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 24F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.refreshButton.Image = ((System.Drawing.Image)(resources.GetObject("refreshButton.Image")));
-            this.refreshButton.Location = new System.Drawing.Point(256, 143);
+            this.refreshButton.Location = new System.Drawing.Point(256, 210);
             this.refreshButton.Name = "refreshButton";
             this.refreshButton.Size = new System.Drawing.Size(40, 40);
             this.refreshButton.TabIndex = 7;
@@ -118,7 +118,7 @@
             // moveUpButton
             // 
             this.moveUpButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.moveUpButton.Location = new System.Drawing.Point(558, 53);
+            this.moveUpButton.Location = new System.Drawing.Point(558, 90);
             this.moveUpButton.Name = "moveUpButton";
             this.moveUpButton.Padding = new System.Windows.Forms.Padding(2, 0, 0, 2);
             this.moveUpButton.Size = new System.Drawing.Size(40, 32);
@@ -130,7 +130,7 @@
             // moveDownButton
             // 
             this.moveDownButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.moveDownButton.Location = new System.Drawing.Point(558, 91);
+            this.moveDownButton.Location = new System.Drawing.Point(558, 128);
             this.moveDownButton.Name = "moveDownButton";
             this.moveDownButton.Padding = new System.Windows.Forms.Padding(2, 0, 0, 2);
             this.moveDownButton.Size = new System.Drawing.Size(40, 32);
@@ -145,7 +145,7 @@
             this.modSettingsButton.Enabled = false;
             this.modSettingsButton.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.modSettingsButton.Image = ((System.Drawing.Image)(resources.GetObject("modSettingsButton.Image")));
-            this.modSettingsButton.Location = new System.Drawing.Point(558, 143);
+            this.modSettingsButton.Location = new System.Drawing.Point(558, 210);
             this.modSettingsButton.Name = "modSettingsButton";
             this.modSettingsButton.Size = new System.Drawing.Size(40, 40);
             this.modSettingsButton.TabIndex = 11;
@@ -166,7 +166,7 @@
             this.mainPanel.Controls.Add(this.installedModsListBox);
             this.mainPanel.Location = new System.Drawing.Point(0, 27);
             this.mainPanel.Name = "mainPanel";
-            this.mainPanel.Size = new System.Drawing.Size(598, 188);
+            this.mainPanel.Size = new System.Drawing.Size(598, 253);
             this.mainPanel.TabIndex = 12;
             // 
             // availableModsListBox
@@ -198,9 +198,9 @@
             this.statusBarLabelSpring1,
             this.statusBarLabelRight,
             this.modProgressStatusBar});
-            this.statusBar.Location = new System.Drawing.Point(0, 215);
+            this.statusBar.Location = new System.Drawing.Point(0, 280);
             this.statusBar.Name = "statusBar";
-            this.statusBar.Size = new System.Drawing.Size(703, 22);
+            this.statusBar.Size = new System.Drawing.Size(717, 22);
             this.statusBar.SizingGrip = false;
             this.statusBar.TabIndex = 14;
             this.statusBar.Text = "Hello!";
@@ -229,7 +229,7 @@
             this.modProgressStatusBar.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
             this.modProgressStatusBar.Margin = new System.Windows.Forms.Padding(1, 3, -8, 3);
             this.modProgressStatusBar.Name = "modProgressStatusBar";
-            this.modProgressStatusBar.Size = new System.Drawing.Size(92, 16);
+            this.modProgressStatusBar.Size = new System.Drawing.Size(106, 16);
             this.modProgressStatusBar.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
             this.modProgressStatusBar.Value = 48;
             // 
@@ -241,7 +241,7 @@
             this.helpToolStripMenuItem});
             this.mainMenuStrip.Location = new System.Drawing.Point(0, 0);
             this.mainMenuStrip.Name = "mainMenuStrip";
-            this.mainMenuStrip.Size = new System.Drawing.Size(703, 24);
+            this.mainMenuStrip.Size = new System.Drawing.Size(717, 24);
             this.mainMenuStrip.TabIndex = 15;
             this.mainMenuStrip.Text = "menuStrip1";
             // 
@@ -258,14 +258,14 @@
             // 
             this.letsModMenuButton.Name = "letsModMenuButton";
             this.letsModMenuButton.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
-            this.letsModMenuButton.Size = new System.Drawing.Size(166, 22);
+            this.letsModMenuButton.Size = new System.Drawing.Size(168, 22);
             this.letsModMenuButton.Text = "Let\'s Mod";
             this.letsModMenuButton.Click += new System.EventHandler(this.letsModToolStripMenuItem_Click);
             // 
             // quitMenuButton
             // 
             this.quitMenuButton.Name = "quitMenuButton";
-            this.quitMenuButton.Size = new System.Drawing.Size(166, 22);
+            this.quitMenuButton.Size = new System.Drawing.Size(168, 22);
             this.quitMenuButton.Text = "Quit";
             this.quitMenuButton.Click += new System.EventHandler(this.quitToolStripMenuItem_Click);
             // 
@@ -288,48 +288,48 @@
             this.italianoToolStripMenuItem,
             this.nederlandsToolStripMenuItem});
             this.languageToolStripMenuItem.Name = "languageToolStripMenuItem";
-            this.languageToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.languageToolStripMenuItem.Size = new System.Drawing.Size(144, 22);
             this.languageToolStripMenuItem.Text = "Language";
             // 
             // deutschToolStripMenuItem
             // 
             this.deutschToolStripMenuItem.Name = "deutschToolStripMenuItem";
-            this.deutschToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.deutschToolStripMenuItem.Size = new System.Drawing.Size(134, 22);
             this.deutschToolStripMenuItem.Text = "Deutsch";
             this.deutschToolStripMenuItem.Click += new System.EventHandler(this.deutschToolStripMenuItem_Click);
             // 
             // englishToolStripMenuItem
             // 
             this.englishToolStripMenuItem.Name = "englishToolStripMenuItem";
-            this.englishToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.englishToolStripMenuItem.Size = new System.Drawing.Size(134, 22);
             this.englishToolStripMenuItem.Text = "English";
             this.englishToolStripMenuItem.Click += new System.EventHandler(this.englishToolStripMenuItem_Click);
             // 
             // espanolToolStripMenuItem
             // 
             this.espanolToolStripMenuItem.Name = "espanolToolStripMenuItem";
-            this.espanolToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.espanolToolStripMenuItem.Size = new System.Drawing.Size(134, 22);
             this.espanolToolStripMenuItem.Text = "Español";
             this.espanolToolStripMenuItem.Click += new System.EventHandler(this.espanolToolStripMenuItem_Click);
             // 
             // francaisToolStripMenuItem
             // 
             this.francaisToolStripMenuItem.Name = "francaisToolStripMenuItem";
-            this.francaisToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.francaisToolStripMenuItem.Size = new System.Drawing.Size(134, 22);
             this.francaisToolStripMenuItem.Text = "Français";
             this.francaisToolStripMenuItem.Click += new System.EventHandler(this.francaisToolStripMenuItem_Click);
             // 
             // italianoToolStripMenuItem
             // 
             this.italianoToolStripMenuItem.Name = "italianoToolStripMenuItem";
-            this.italianoToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.italianoToolStripMenuItem.Size = new System.Drawing.Size(134, 22);
             this.italianoToolStripMenuItem.Text = "Italiano";
             this.italianoToolStripMenuItem.Click += new System.EventHandler(this.italianoToolStripMenuItem_Click);
             // 
             // nederlandsToolStripMenuItem
             // 
             this.nederlandsToolStripMenuItem.Name = "nederlandsToolStripMenuItem";
-            this.nederlandsToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.nederlandsToolStripMenuItem.Size = new System.Drawing.Size(134, 22);
             this.nederlandsToolStripMenuItem.Text = "Nederlands";
             this.nederlandsToolStripMenuItem.Click += new System.EventHandler(this.nederlandsToolStripMenuItem_Click);
             // 
@@ -401,7 +401,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(703, 237);
+            this.ClientSize = new System.Drawing.Size(717, 302);
             this.Controls.Add(this.statusBar);
             this.Controls.Add(this.mainMenuStrip);
             this.Controls.Add(this.letsModButton);
