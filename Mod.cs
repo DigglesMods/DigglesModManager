@@ -116,11 +116,11 @@ namespace DigglesModManager
             }
             if (!Author.Equals(""))
             {
-                toolTip += "Author: " + Author;
+                toolTip += " Author: " + Author;
             }
             else if (!string.IsNullOrEmpty(Config.Author))
             {
-                toolTip += "Author: " + Config.Author;
+                toolTip += " Author: " + Config.Author;
             }
 
             return toolTip;
