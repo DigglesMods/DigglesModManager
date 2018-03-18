@@ -14,8 +14,11 @@ if ! [[ -d "$dir" ]]; then
 		fi
 	fi
 fi
-	
 
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+#all currently available mods (read from mod-names.txt)
+IFS=$',' read -d '' -r -a repoNames < $SCRIPT_DIR/mod-names.txt
+	
 if [ -d "$dir" ] ; then
 	cd "$dir" #change to the directory provided (relative to the script)
 	read -p "Cloning all mods into '$(pwd)' Are you sure? (y/n) " -r
@@ -24,9 +27,6 @@ if [ -d "$dir" ] ; then
 
 		## all repo names
 		declare -a repoBase="https://github.com/DigglesMods"
-		declare -a repoNames=("BetterStorage" "Barrow" "Rimless" "PowerPotion" "ProductionStatistics" 
-						"CommandF9" "DwarfStatistics" "SwitcherGeneratorDungeon" "RareResources" 
-						"DroppingResources" "ChangeGameSettings" "BugFix" "StoneDoor" "WigSound")
 
 		## clone every repo
 		for repo in "${repoNames[@]}"
@@ -45,5 +45,3 @@ if [ -d "$dir" ] ; then
 else
 	echo "The chosen path is not a directory! Aborted."
 fi
-
-
