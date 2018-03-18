@@ -25,8 +25,10 @@ Provide a path to clone the repositories to a given directory.
 ## get-all-statuses.sh
 Checks the status of Mod-Repositories on your computer (basically foreach \[git status\]). The shell has to be inside of the DigglesMods-directory.
 
-`cd DigglesMods`
-`../DevTools/get-all-statuses.sh`
+```bash
+cd DigglesMods
+../DevTools/get-all-statuses.sh
+```
 
 ### Example:
 - root
