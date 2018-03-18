@@ -23,23 +23,22 @@ Clones all Mod-Repositories from github to your computer. The source for the rep
 Provide a path to clone the repositories to a given directory.
 
 ## get-all-statuses.sh
-Checks the status of Mod-Repositories on your computer. (basically foreach \[git status\]) The source for the repo-names is `mod-names.txt`.
+Checks the status of Mod-Repositories on your computer (basically foreach \[git status\]). The shell has to be inside of the DigglesMods-directory.
 
-`./get-all-statuses.sh [PATH]`
-
-Provide a path to check the repos in the given directory. In the given path has to be several directories with valid git-repositories.
+`cd DigglesMods`
+`../DevTools/get-all-statuses.sh`
 
 ### Example:
-- you are here
+- root
   - DevTools
-  - Mods
+  - DigglesMods <-- you are here
     - Barrow
     - Rimless
     - ..
     - StoneDoor
 
 ```bash
-> DevTools/get-all-statuses.sh Mods/
+> ../DevTools/get-all-statuses.sh
 Show status of all mods? Are you sure? (y/n) y
 On branch master
 Your branch is up-to-date with 'origin/master'.
