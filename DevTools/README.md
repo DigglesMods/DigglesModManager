@@ -77,7 +77,7 @@ This script automates the release-process to make it less error-prone.
   - Give it a title like 'DigglesModManager v1.0'
   - Don't forget to provide the zip-file!
 
-###Usage
+### Usage
 
 1. Build the DigglesModProject using Visual Studio in Release-mode (Solution configuration).
 2. Make sure there is a file `github.token` in the same directory as `release.sh`. It must contain a valid github-token for your account. This token is used to make the new release-package public on github. (https://help.github.com/articles/creating-an-access-token-for-command-line-use/)
