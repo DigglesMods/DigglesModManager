@@ -23,23 +23,24 @@ Clones all Mod-Repositories from github to your computer. The source for the rep
 Provide a path to clone the repositories to a given directory.
 
 ## get-all-statuses.sh
-Checks the status of Mod-Repositories on your computer. (basically foreach \[git status\]) The source for the repo-names is `mod-names.txt`.
+Checks the status of Mod-Repositories on your computer (basically foreach \[git status\]). The shell has to be inside of the DigglesMods-directory.
 
-`./get-all-statuses.sh [PATH]`
-
-Provide a path to check the repos in the given directory. In the given path has to be several directories with valid git-repositories.
+```bash
+cd DigglesMods
+../DevTools/get-all-statuses.sh
+```
 
 ### Example:
-- you are here
+- root
   - DevTools
-  - Mods
+  - DigglesMods <-- you are here
     - Barrow
     - Rimless
     - ..
     - StoneDoor
 
 ```bash
-> DevTools/get-all-statuses.sh Mods/
+> ../DevTools/get-all-statuses.sh
 Show status of all mods? Are you sure? (y/n) y
 On branch master
 Your branch is up-to-date with 'origin/master'.
@@ -76,7 +77,7 @@ This script automates the release-process to make it less error-prone.
   - Give it a title like 'DigglesModManager v1.0'
   - Don't forget to provide the zip-file!
 
-###Usage
+### Usage
 
 1. Build the DigglesModProject using Visual Studio in Release-mode (Solution configuration).
 2. Make sure there is a file `github.token` in the same directory as `release.sh`. It must contain a valid github-token for your account. This token is used to make the new release-package public on github. (https://help.github.com/articles/creating-an-access-token-for-command-line-use/)
