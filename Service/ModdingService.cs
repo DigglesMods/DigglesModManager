@@ -122,13 +122,17 @@ namespace DigglesModManager.Service
                 var copyExists = false;
                 foreach (var gameFile in gameFiles)
                 {
+                    //Only compare lower case strings to support other languages of the game.
+                    //Polish game version has i.e. LAGER.TCL instead of lager.tcl.
+                    var lowerCaseFilename = filename.ToLower();
+                    var lowerCaseGameFilename = gameFile.Name.ToLower();
                     //check for game file
-                    if (gameFile.Name == filename)
+                    if (lowerCaseGameFilename == lowerCaseFilename)
                     {
                         rightGameFile = gameFile;
                     }
                     //check for copy
-                    if (gameFile.Name == filename + CopyFileSuffix)
+                    if (lowerCaseGameFilename == lowerCaseFilename + CopyFileSuffix)
                     {
                         copyExists = true;
                     }
