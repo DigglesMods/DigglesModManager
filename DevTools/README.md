@@ -23,23 +23,24 @@ Clones all Mod-Repositories from github to your computer. The source for the rep
 Provide a path to clone the repositories to a given directory.
 
 ## get-all-statuses.sh
-Checks the status of Mod-Repositories on your computer. (basically foreach \[git status\]) The source for the repo-names is `mod-names.txt`.
+Checks the status of Mod-Repositories on your computer (basically foreach \[git status\]). The shell has to be inside of the DigglesMods-directory.
 
-`./get-all-statuses.sh [PATH]`
-
-Provide a path to check the repos in the given directory. In the given path has to be several directories with valid git-repositories.
+```bash
+cd DigglesMods
+../DevTools/get-all-statuses.sh
+```
 
 ### Example:
-- you are here
+- root
   - DevTools
-  - Mods
+  - DigglesMods <-- you are here
     - Barrow
     - Rimless
     - ..
     - StoneDoor
 
 ```bash
-> DevTools/get-all-statuses.sh Mods/
+> ../DevTools/get-all-statuses.sh
 Show status of all mods? Are you sure? (y/n) y
 On branch master
 Your branch is up-to-date with 'origin/master'.
@@ -52,7 +53,36 @@ nothing to commit, working directory clean
 ## release.sh
 This script automates the release-process to make it less error-prone.
 
+### Usage
+
+1. Build the DigglesModProject using Visual Studio in Release-mode (Solution configuration).
+2. Make sure there is a file `github.token` in the same directory as `release.sh`. It must contain a valid github-token for your account. This token is used to make the new release-package public on github. (https://help.github.com/articles/creating-an-access-token-for-command-line-use/)
+2. Use a linux-bash.
+3. Navigate to project-root of DigglesModManager. (cd XY)
+4. Execute release.sh. (Usually with `DevTools/release.sh`)
+5. Press y,Enter if asked for. Provide a valid next version, if asked for. e.g. Release 1.0 -> Next version 1.1, Release 2.9 -> Next version 2.10
+
+### Troubleshooting
+
+ - To reset the working files, completely delete the bin/Release folder and rebuild using Visual Studio (#1.)
+ - The file `github.token` must not contain any other letters or line breaks except the one line with the github-token.
+ - Any files which are read by `release.sh` must not contain only one line with comma-separated and trimmed strings.
+ - You can revert the relese by visiting https://github.com/DigglesMods/DigglesModManager/releases, clicking the wrong release and click 'Delete'
+
+### Dependencies
+The release-script uses 7zip and github-release to automate all necessary release steps. 7zip is used to pack several files to a zip-archive. github-release(.exe) is used to automatically provide a new release on github using the commandline.
+
+#### 7zip
+Used command:
+`DevTools/7zip/7za.exe a $ZIPFILE $NECESSARY_FILES... Mods`
+
+#### github-release
+Used command:
+`DevTools/github-release/github-release.exe DigglesMods/DigglesModManager DigglesModManager-v$VERSION master "$DESCRIPTION" $ZIPFILE`
+
 ### Release-Steps
+
+What is the release-script doing?
 
 1. Gather all Mods.
   - If the mods are checked out using git, make sure the .git-directories are deleted.
@@ -75,32 +105,6 @@ This script automates the release-process to make it less error-prone.
   - Describe the release-changes
   - Give it a title like 'DigglesModManager v1.0'
   - Don't forget to provide the zip-file!
-
-###Usage
-
-1. Build the DigglesModProject using Visual Studio in Release-mode (Solution configuration).
-2. Make sure there is a file `github.token` in the same directory as `release.sh`. It must contain a valid github-token for your account. This token is used to make the new release-package public on github. (https://help.github.com/articles/creating-an-access-token-for-command-line-use/)
-2. Use a linux-bash.
-3. Navigate to project-root of DigglesModManager. (cd XY)
-4. Execute release.sh. (Usually with `DevTools/release.sh`)
-5. Press y,Enter if asked for. Provide a valid next version, if asked for. e.g. Release 1.0 -> Next version 1.1, Release 2.9 -> Next version 2.10
-
-### Troubleshooting
-
- - To reset the working files, completely delete the bin/Release folder and rebuild using Visual Studio (#1.)
- - The file `github.token` must not contain any other letters or line breaks except the one line with the github-token.
- - Any files which are read by `release.sh` must not contain only one line with comma-separated and trimmed strings.
-
-### Dependencies
-The release-script uses 7zip and github-release to automate all necessary release steps. 7zip is used to pack several files to a zip-archive. github-release(.exe) is used to automatically provide a new release on github using the commandline.
-
-#### 7zip
-Used command:
-`DevTools/7zip/7za.exe a $ZIPFILE $NECESSARY_FILES... Mods`
-
-#### github-release
-Used command:
-`DevTools/github-release/github-release.exe DigglesMods/DigglesModManager DigglesModManager-v$VERSION master "$DESCRIPTION" $ZIPFILE`
 
 
 
