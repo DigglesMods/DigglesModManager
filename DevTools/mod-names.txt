@@ -1,1 +1,1 @@
-BetterStorage,Barrow,Rimless,PowerPotion,ProductionStatistics,CommandF9,DwarfStatistics,SwitcherGeneratorDungeon,RareResources,DroppingResources,ChangeGameSettings,BugFix,StoneDoor
+BetterStorage,Barrow,Rimless,PowerPotion,ProductionStatistics,CommandF9,DwarfStatistics,SwitcherGeneratorDungeon,RareResources,DroppingResources,ChangeGameSettings,BugFix,StoneDoor,ChangeCampaignClan
