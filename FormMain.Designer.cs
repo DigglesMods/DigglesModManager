@@ -287,7 +287,8 @@
             this.espanolToolStripMenuItem,
             this.francaisToolStripMenuItem,
             this.italianoToolStripMenuItem,
-            this.nederlandsToolStripMenuItem});
+            this.nederlandsToolStripMenuItem,
+            this.polishToolStripMenuItem});
             this.languageToolStripMenuItem.Name = "languageToolStripMenuItem";
             this.languageToolStripMenuItem.Size = new System.Drawing.Size(144, 22);
             this.languageToolStripMenuItem.Text = "Language";
