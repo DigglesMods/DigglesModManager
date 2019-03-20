@@ -38,6 +38,7 @@ namespace DigglesModManager
             languageMenuItems.Add("fr", francaisToolStripMenuItem);
             languageMenuItems.Add("it", italianoToolStripMenuItem);
             languageMenuItems.Add("nl", nederlandsToolStripMenuItem);
+            languageMenuItems.Add("pl", polishToolStripMenuItem);
 
             //get language
             var appSettingsFilePath = $"{Paths.ExePath}\\{Paths.AppSettingsName}";
@@ -321,6 +322,11 @@ namespace DigglesModManager
             changeLanguage("nl");
         }
 
+        private void polishToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            changeLanguage("pl");
+        }
+        
         private void quitToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Helpers.ExitApplication();
