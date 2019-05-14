@@ -211,7 +211,7 @@
             // 
             this.statusBarLabelLeft.Name = "statusBarLabelLeft";
             this.statusBarLabelLeft.Size = new System.Drawing.Size(42, 17);
-            this.statusBarLabelLeft.Text = "Ready.";
+            this.statusBarLabelLeft.Text = "";
             // 
             // statusBarLabelSpring1
             // 
@@ -224,7 +224,7 @@
             this.statusBarLabelRight.Margin = new System.Windows.Forms.Padding(0, 3, 10, 2);
             this.statusBarLabelRight.Name = "statusBarLabelRight";
             this.statusBarLabelRight.Size = new System.Drawing.Size(16, 17);
-            this.statusBarLabelRight.Text = "...";
+            this.statusBarLabelRight.Text = "";
             // 
             // modProgressStatusBar
             // 
@@ -283,15 +283,14 @@
             // languageToolStripMenuItem
             // 
             this.languageToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-                this.deutschToolStripMenuItem,
-                this.englishToolStripMenuItem,
-                this.espanolToolStripMenuItem,
-                this.francaisToolStripMenuItem,
-                this.italianoToolStripMenuItem,
-                this.nederlandsToolStripMenuItem,
-                this.polishToolStripMenuItem,
-                this.russianToolStripMenuItem
-            });
+            this.deutschToolStripMenuItem,
+            this.englishToolStripMenuItem,
+            this.espanolToolStripMenuItem,
+            this.francaisToolStripMenuItem,
+            this.italianoToolStripMenuItem,
+            this.nederlandsToolStripMenuItem,
+            this.polishToolStripMenuItem,
+            this.russianToolStripMenuItem});
             this.languageToolStripMenuItem.Name = "languageToolStripMenuItem";
             this.languageToolStripMenuItem.Size = new System.Drawing.Size(144, 22);
             this.languageToolStripMenuItem.Text = "Language";

@@ -9,6 +9,7 @@ using DigglesModManager.Service;
 using Newtonsoft.Json;
 using System.Text;
 using DigglesModManager.Model;
+using System.Threading.Tasks;
 
 namespace DigglesModManager
 {
@@ -19,6 +20,8 @@ namespace DigglesModManager
 
         public static string _language = "en";
         private static Dictionary<string, ToolStripMenuItem> languageMenuItems = new Dictionary<string, ToolStripMenuItem>();
+
+        private bool moddingServiceRunning = false;
 
         private readonly ModdingService _moddingService;
 
@@ -142,23 +145,24 @@ namespace DigglesModManager
 
         private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            ResetStatusNote();
+            //do nothing
         }
 
         private void listBox2_SelectedIndexChanged(object sender, EventArgs e)
         {
-            ResetStatusNote();
-
-            //find settings file
-            int selectedIndex = installedModsListBox.SelectedIndex;
-            if (selectedIndex >= 0 && selectedIndex < _activeMods.Count)
+            if (!this.moddingServiceRunning)
             {
-                var hasSettings = _activeMods.ElementAt(selectedIndex).Config.SettingsVariables != null 
-                    && _activeMods.ElementAt(selectedIndex).Config.SettingsVariables.Count > 0;
+                //find settings file
+                int selectedIndex = installedModsListBox.SelectedIndex;
+                if (selectedIndex >= 0 && selectedIndex < _activeMods.Count)
+                {
+                    var hasSettings = _activeMods.ElementAt(selectedIndex).Config.SettingsVariables != null
+                        && _activeMods.ElementAt(selectedIndex).Config.SettingsVariables.Count > 0;
 
-                //set settings button enabled
-                modSettingsButton.Enabled = hasSettings;
-                modSettingsMenuButton.Enabled = hasSettings;
+                    //set settings button enabled
+                    modSettingsButton.Enabled = hasSettings;
+                    modSettingsMenuButton.Enabled = hasSettings;
+                }
             }
         }
 
@@ -231,34 +235,70 @@ namespace DigglesModManager
             ReadMods();
         }
 
-        private void button_mod_Click(object sender, EventArgs e)
+        private void setUIToModdingState(bool moddingState)
         {
-            var warning = false;
-            SetMessage("...", Color.Black);
-            _progressBarManipulator.Reset(3 + _activeMods.Count);
-            _progressBarManipulator.Increment();
+            // set wait cursor
+            Application.UseWaitCursor = moddingState;
 
-            _moddingService.Restore();
-            _progressBarManipulator.Increment();
-            foreach (var mod in _activeMods)
+            var buttonsEnabled = !moddingState;
+            // Refresh Button
+            this.refreshButton.Enabled = buttonsEnabled;
+            // Arrow Buttons
+            this.installModButton.Enabled = buttonsEnabled;
+            this.uninstallModButton.Enabled = buttonsEnabled;
+            this.moveUpButton.Enabled = buttonsEnabled;
+            this.moveDownButton.Enabled = buttonsEnabled;
+            // Mod Settings Buttons
+            this.moddingServiceRunning = moddingState;
+            if (buttonsEnabled)
             {
-                var modDir = new DirectoryInfo(Paths.ModPath + "\\" + Paths.ModDirectoryName + "\\" + mod.ModDirectoryName);
-                warning = _moddingService.LetsMod(mod, modDir, new DirectoryInfo(Paths.ExePath), _activeMods) || warning;
-                _progressBarManipulator.Increment();
-            }
-
-            _moddingService.SaveActiveMods(_language, _activeMods);
-            _progressBarManipulator.Increment();
-
-            if (warning)
-            {
-                SetMessage("Warning", Color.Orange);
+                this.listBox2_SelectedIndexChanged(null, null);
             }
             else
             {
-                SetMessage("Modding was successful", Color.Green);
+                this.modSettingsButton.Enabled = false;
+                this.modSettingsMenuButton.Enabled = false;
             }
-            _progressBarManipulator.Finish();
+            // Lets Mod Buttons
+            this.letsModButton.Enabled = buttonsEnabled;
+            this.letsModMenuButton.Enabled = buttonsEnabled;
+        }
+
+        private void button_mod_Click(object sender, EventArgs e)
+        {
+            // set user interface into the modding state (disable buttons etc)
+            this.setUIToModdingState(true);
+            // Modding in second task to avoid UI freeze
+            Task.Factory.StartNew(() => {
+                var warning = false;
+                SetMessage("Please wait", Color.Black);
+                _progressBarManipulator.Reset(3 + _activeMods.Count);
+                _progressBarManipulator.Increment();
+
+                _moddingService.Restore();
+                _progressBarManipulator.Increment();
+                foreach (var mod in _activeMods)
+                {
+                    var modDir = new DirectoryInfo(Paths.ModPath + "\\" + Paths.ModDirectoryName + "\\" + mod.ModDirectoryName);
+                    warning = _moddingService.LetsMod(mod, modDir, new DirectoryInfo(Paths.ExePath), _activeMods) || warning;
+                    _progressBarManipulator.Increment();
+                }
+
+                _moddingService.SaveActiveMods(_language, _activeMods);
+                _progressBarManipulator.Increment();
+
+                if (warning)
+                {
+                    SetMessage("Warning", Color.Orange);
+                }
+                else
+                {
+                    SetMessage("Modding was successful", Color.Green);
+                }
+                _progressBarManipulator.Finish();
+                // set user interface into normal state (enable buttons etc)
+                this.setUIToModdingState(false);
+            });
         }
 
         private void letsModToolStripMenuItem_Click(object sender, EventArgs e)
