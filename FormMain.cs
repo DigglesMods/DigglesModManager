@@ -273,7 +273,14 @@ namespace DigglesModManager
             Task.Factory.StartNew(() => {
                 var warning = false;
                 SetMessage("Please wait", Color.Black);
-                _progressBarManipulator.Reset(3 + _activeMods.Count);
+                //get file count of all active mods
+                var fileCount = 0;
+                foreach (var mod in _activeMods)
+                {
+                    fileCount += mod.FileCount;
+                }
+                //reset progress bar to new file count
+                _progressBarManipulator.Reset(fileCount + 3);
                 _progressBarManipulator.Increment();
 
                 _moddingService.Restore();
@@ -281,12 +288,11 @@ namespace DigglesModManager
                 foreach (var mod in _activeMods)
                 {
                     var modDir = new DirectoryInfo(Paths.ModPath + "\\" + Paths.ModDirectoryName + "\\" + mod.ModDirectoryName);
-                    warning = _moddingService.LetsMod(mod, modDir, new DirectoryInfo(Paths.ExePath), _activeMods) || warning;
-                    _progressBarManipulator.Increment();
+                    warning = _moddingService.LetsMod(mod, modDir, new DirectoryInfo(Paths.ExePath), _activeMods, _progressBarManipulator) || warning;
                 }
 
                 _moddingService.SaveActiveMods(_language, _activeMods);
-                _progressBarManipulator.Increment();
+                _progressBarManipulator.Finish();
 
                 if (warning)
                 {
@@ -296,7 +302,6 @@ namespace DigglesModManager
                 {
                     SetMessage("Modding was successful", Color.Green);
                 }
-                _progressBarManipulator.Finish();
                 // set user interface into normal state (enable buttons etc)
                 this.setUIToModdingState(false);
             });

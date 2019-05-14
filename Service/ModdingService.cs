@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using DigglesModManager.Model;
 using Newtonsoft.Json;
 
@@ -18,7 +17,7 @@ namespace DigglesModManager.Service
 
         public static string ChangeFilePrefix = "change_";
         public static string CopyFileSuffix = "_copy";
-
+        
         public void ReadModsFromFiles(List<Mod> activeMods, ProgressBarManipulator progressBarManipulator)
         {
             progressBarManipulator.Increment();
@@ -80,7 +79,7 @@ namespace DigglesModManager.Service
             }
         }
 
-        public bool LetsMod(Mod mod, DirectoryInfo modDirectory, DirectoryInfo gameDirectory, List<Mod> activeMods)
+        public bool LetsMod(Mod mod, DirectoryInfo modDirectory, DirectoryInfo gameDirectory, List<Mod> activeMods, ProgressBarManipulator progressBarManipulator)
         {
             var modFiles = modDirectory.GetFiles();
             var gameFiles = gameDirectory.GetFiles();
@@ -109,8 +108,13 @@ namespace DigglesModManager.Service
 
                 //skip some files in root directory
                 if (modDirectory.Name.Equals(mod.ModDirectoryName))
+                {
                     if (filename.Equals(Paths.ModConfigName) || filename.Equals("LICENSE") || filename.Equals("README.md"))
+                    {
+                        progressBarManipulator.Increment();
                         continue;
+                    }
+                }
 
                 if (filename.StartsWith(ChangeFilePrefix))
                 {
@@ -434,6 +438,8 @@ namespace DigglesModManager.Service
                 {
                     this.RememberForRestore(newModFile, type);
                 }
+
+                progressBarManipulator.Increment();
             }
 
             var modDirectories = modDirectory.GetDirectories();
@@ -442,7 +448,11 @@ namespace DigglesModManager.Service
             {
                 //skip .git directories
                 if (modDir.Name.Equals(".git"))
+                {
+                    //increment progress bar for all files in git directory
+                    progressBarManipulator.Increment(modDir.GetFiles("*", SearchOption.AllDirectories).Length);
                     continue;
+                }
 
                 //search for game directory
                 DirectoryInfo rightGameDir = null;
@@ -461,7 +471,7 @@ namespace DigglesModManager.Service
                     //TODO merke neues verzeichnis fuer wiederherstellung
                 }
                 //same procedure for subdirectrory
-                warning = warning || LetsMod(mod, modDir, rightGameDir, activeMods);
+                warning = warning || LetsMod(mod, modDir, rightGameDir, activeMods, progressBarManipulator);
             }
             return warning;
         }

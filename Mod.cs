@@ -18,6 +18,8 @@ namespace DigglesModManager
         public string ToolTipText { get; private set; }
         public string Author { get; private set; }
 
+        public int FileCount { get; private set; }
+
         public Mod(string modDirectory) : this(modDirectory, new Dictionary<string, object>())
         {
         }
@@ -26,9 +28,10 @@ namespace DigglesModManager
         public Mod(string modDirectory, Dictionary<string, object> oldSettings)
         {
             ModDirectoryName = modDirectory;
-
+            
             //get description
             var modDirectoryInfo = new DirectoryInfo(Paths.ExePath + "\\" + Paths.ModDirectoryName + "\\" + ModDirectoryName);
+            FileCount = modDirectoryInfo.GetFiles("*", SearchOption.AllDirectories).Length;
             ToolTipText = "";
             Author = "";
 
