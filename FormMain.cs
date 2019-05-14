@@ -42,6 +42,7 @@ namespace DigglesModManager
             languageMenuItems.Add("it", italianoToolStripMenuItem);
             languageMenuItems.Add("nl", nederlandsToolStripMenuItem);
             languageMenuItems.Add("pl", polishToolStripMenuItem);
+            languageMenuItems.Add("ru", russianToolStripMenuItem);
 
             //get language
             var appSettingsFilePath = $"{Paths.ExePath}\\{Paths.AppSettingsName}";
