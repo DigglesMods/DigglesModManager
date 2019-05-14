@@ -326,7 +326,12 @@ namespace DigglesModManager
         {
             changeLanguage("pl");
         }
-        
+
+        private void russianToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            changeLanguage("ru");
+        }
+
         private void quitToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Helpers.ExitApplication();

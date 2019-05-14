@@ -58,6 +58,7 @@
             this.italianoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.nederlandsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.polishToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.russianToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.modSettingsMenuButton = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.websiteMenuButton = new System.Windows.Forms.ToolStripMenuItem();
@@ -282,13 +283,15 @@
             // languageToolStripMenuItem
             // 
             this.languageToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.deutschToolStripMenuItem,
-            this.englishToolStripMenuItem,
-            this.espanolToolStripMenuItem,
-            this.francaisToolStripMenuItem,
-            this.italianoToolStripMenuItem,
-            this.nederlandsToolStripMenuItem,
-            this.polishToolStripMenuItem});
+                this.deutschToolStripMenuItem,
+                this.englishToolStripMenuItem,
+                this.espanolToolStripMenuItem,
+                this.francaisToolStripMenuItem,
+                this.italianoToolStripMenuItem,
+                this.nederlandsToolStripMenuItem,
+                this.polishToolStripMenuItem,
+                this.russianToolStripMenuItem
+            });
             this.languageToolStripMenuItem.Name = "languageToolStripMenuItem";
             this.languageToolStripMenuItem.Size = new System.Drawing.Size(144, 22);
             this.languageToolStripMenuItem.Text = "Language";
@@ -341,6 +344,13 @@
             this.polishToolStripMenuItem.Size = new System.Drawing.Size(134, 22);
             this.polishToolStripMenuItem.Text = "Polski";
             this.polishToolStripMenuItem.Click += new System.EventHandler(this.polishToolStripMenuItem_Click);
+            // 
+            // russianToolStripMenuItem
+            // 
+            this.russianToolStripMenuItem.Name = "russianToolStripMenuItem";
+            this.russianToolStripMenuItem.Size = new System.Drawing.Size(134, 22);
+            this.russianToolStripMenuItem.Text = "ру́сский";
+            this.russianToolStripMenuItem.Click += new System.EventHandler(this.russianToolStripMenuItem_Click);
             // 
             // modSettingsMenuButton
             // 
@@ -468,7 +478,8 @@
         private System.Windows.Forms.ToolStripMenuItem francaisToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem italianoToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem nederlandsToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem polishToolStripMenuItem;     
+        private System.Windows.Forms.ToolStripMenuItem polishToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem russianToolStripMenuItem;
     }
 }
 

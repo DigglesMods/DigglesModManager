@@ -48,7 +48,13 @@ namespace DigglesModManager.Model
         /// </summary>
         [JsonProperty(PropertyName = "pl", Required = Required.Default)]
         public string pl { get; set; }
-        
+
+        /// <summary>
+        /// russian translation
+        /// </summary>
+        [JsonProperty(PropertyName = "ru", Required = Required.Default)]
+        public string ru { get; set; }
+
         /// <summary>
         /// Constructor with intial englisch string
         /// </summary>
@@ -85,6 +91,9 @@ namespace DigglesModManager.Model
                     break;
                 case "pl":
                     str = pl;
+                    break;
+                case "ru":
+                    str = ru;
                     break;
                 default:
                     str = en;
