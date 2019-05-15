@@ -20,7 +20,7 @@ namespace DigglesModManager
             }
             catch (System.IO.FileNotFoundException e)
             {
-                Helpers.ShowErrorMessage(Resources.FormMain_CouldNotFindFile.Replace("FILENAME", e.FileName), Resources.Error);
+                Helpers.ShowErrorMessage(Resources.FormMain_CouldNotFindFile.Replace("FILENAME", e.FileName));
             }
             
         }

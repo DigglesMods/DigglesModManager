@@ -16,5 +16,8 @@
         //JSON
         public static string AppSettingsName = "diggles-mod-manager.json";
         public static string ModConfigName = "config.json";
+
+        //log
+        public static string ErrorLogFileName = "diggles-mod-manager-errors.log";
     }
 }

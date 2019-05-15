@@ -16,11 +16,14 @@ namespace DigglesModManager
             Application.Exit();
         }
 
-        public static void ShowErrorMessage(string text, string title = null)
+        public static void ShowMessage(string text, string title)
         {
-            if (title == null)
-                title = Resources.Error;
             MessageBox.Show(text, title);
+        }
+
+        public static void ShowErrorMessage(string text)
+        {
+            ShowMessage(text, Resources.Error);
         }
     }
 }

@@ -15,6 +15,10 @@ namespace DigglesModManager.Service
     public class ModdingService
     {
 
+        public const int SUCCESS_CODE = 0;
+        public const int WARNING_CODE = 1;
+        public const int ERROR_CODE = 2;
+
         public static string ChangeFilePrefix = "change_";
         public static string CopyFileSuffix = "_copy";
         
@@ -79,11 +83,11 @@ namespace DigglesModManager.Service
             }
         }
 
-        public bool LetsMod(Mod mod, DirectoryInfo modDirectory, DirectoryInfo gameDirectory, List<Mod> activeMods, ProgressBarManipulator progressBarManipulator)
+        public int LetsMod(Mod mod, DirectoryInfo modDirectory, DirectoryInfo gameDirectory, List<Mod> activeMods, ProgressBarManipulator progressBarManipulator)
         {
             var modFiles = modDirectory.GetFiles();
             var gameFiles = gameDirectory.GetFiles();
-            var warning = false;
+            var returnValue = SUCCESS_CODE;
 
             //if Texture directory deactivate texmaps.bin
             if (gameDirectory.Name == "Texture")
@@ -176,10 +180,10 @@ namespace DigglesModManager.Service
                     string[] command = { "", "" };
                     string[] commandText = { "", "" };
 
-                    var i = 0;
+                    var lineNumber = 0;
                     while ((line = reader.ReadLine()) != null)
                     {
-                        i++;
+                        lineNumber++;
                         //check for if ending
                         if (line.StartsWith("$ifend") && ifStack.Count > 0)
                         {
@@ -223,24 +227,19 @@ namespace DigglesModManager.Service
                                         if (!modVariable.ID.Equals(ifStatement))
                                             continue;
 
-                                        modVarFound = true;
                                         //supports only bool variables
-                                        switch (modVariable.Type)
+                                        if (modVariable.Type == ModVariableType.Bool)
                                         {
-                                            case ModVariableType.Bool:
-                                                ifStack.Push(((bool)modVariable.Value) != not);
-                                                break;
-                                            case ModVariableType.Int:
-                                            case ModVariableType.String:
-                                            default:
-                                                Helpers.ShowErrorMessage($"$if unterstuetzt nur boole'sche Variablen: {i}\nDatei: {modFile.FullName}");
-                                                break;
+                                            modVarFound = true;
+                                            ifStack.Push(((bool)modVariable.Value) != not);
                                         }
                                         break;
                                     }
                                     if (!modVarFound)
                                     {
-                                        Helpers.ShowErrorMessage("$if boolsche Variable '" + ifStatement + "' nicht gefunden: " + i + "\nDatei: " + modFile.FullName);
+                                        Log.Error("Boolean mod variable '" + ifStatement + "' not found for '$if' statement", modFile, lineNumber);
+                                        returnValue = ERROR_CODE;
+                                        break;
                                     }
                                 }
                             }
@@ -261,8 +260,8 @@ namespace DigglesModManager.Service
                             }
                             else
                             {
-                                Helpers.ShowErrorMessage("$start an der falschen Stelle\nZeile: " + i + "\nDatei: " + modFile.FullName);
-                                warning = true;
+                                Log.Error("'$start' at wrong place", modFile, lineNumber);
+                                returnValue = ERROR_CODE;
                                 break;
                             }
                             //end tag
@@ -277,8 +276,8 @@ namespace DigglesModManager.Service
                             }
                             else
                             {
-                                Helpers.ShowErrorMessage("$before an der falschen Stelle\nZeile: " + i + "\nDatei: " + modFile.FullName);
-                                warning = true;
+                                Log.Error("'$before' at wrong place", modFile, lineNumber);
+                                returnValue = ERROR_CODE;
                                 break;
                             }
                         }
@@ -292,8 +291,8 @@ namespace DigglesModManager.Service
                             }
                             else
                             {
-                                Helpers.ShowErrorMessage("$after an der falschen Stelle\nZeile: " + i + "\nDatei: " + modFile.FullName);
-                                warning = true;
+                                Log.Error("'$after' at wrong place", modFile, lineNumber);
+                                returnValue = ERROR_CODE;
                                 break;
                             }
                         }
@@ -307,8 +306,8 @@ namespace DigglesModManager.Service
                             }
                             else
                             {
-                                Helpers.ShowErrorMessage("$put an der falschen Stelle\nZeile: " + i + "\nDatei: " + modFile.FullName);
-                                warning = true;
+                                Log.Error("'$put' at wrong place", modFile, lineNumber);
+                                returnValue = ERROR_CODE;
                                 break;
                             }
                         }
@@ -322,7 +321,8 @@ namespace DigglesModManager.Service
                             }
                             else
                             {
-                                Helpers.ShowErrorMessage("$replace an der falschen Stelle\nZeile: " + i + "\nDatei: " + modFile.FullName);
+                                Log.Error("'$replace' at wrong place", modFile, lineNumber);
+                                returnValue = ERROR_CODE;
                                 break;
                             }
                         }
@@ -336,8 +336,8 @@ namespace DigglesModManager.Service
                             }
                             else
                             {
-                                Helpers.ShowErrorMessage("$with an der falschen Stelle\nZeile: " + i + "\nDatei: " + modFile.FullName);
-                                warning = true;
+                                Log.Error("'$with' at wrong place", modFile, lineNumber);
+                                returnValue = ERROR_CODE;
                                 break;
                             }
                         }
@@ -391,9 +391,21 @@ namespace DigglesModManager.Service
                                 }
                                 else
                                 {
-
-                                    Helpers.ShowErrorMessage("Zwei nicht zueinander passende Kommandos gefunden\nvor Zeile: " + i + "\nDatei: " + modFile.FullName);
-                                    warning = true;
+                                    if (commandCount > -1)
+                                    {
+                                        var commandsAsString = command[0];
+                                        for (int i = 1; i < commandCount; i++)
+                                        {
+                                            commandsAsString += ", " + command[i];
+                                        }
+                                        Log.Error("Found commands that do not match: " + commandsAsString, modFile, lineNumber);
+                                    }
+                                    else
+                                    {
+                                        Log.Error("'$end' at wrong place", modFile, lineNumber);
+                                    }
+                                    returnValue = ERROR_CODE;
+                                    break;
                                 }
 
                                 //replace old value with new value
@@ -412,6 +424,11 @@ namespace DigglesModManager.Service
 
                                 }
                             }
+                            else
+                            {
+                                Log.Warning("Unnecessary '$end' found", modFile, lineNumber);
+                                returnValue = WARNING_CODE;
+                            }
                             //other commands
                         }
                         else if (commandCount == 0 || commandCount == 1)
@@ -423,6 +440,11 @@ namespace DigglesModManager.Service
                                 commandText[commandCount] += "\r\n";
                             }
                             commandText[commandCount] += line;
+                        }
+                        else if (!string.IsNullOrEmpty(line) && !line.StartsWith("$if:"))
+                        {
+                            Log.Warning("Unnecessary content found: '" + line + "'", modFile, lineNumber);
+                            returnValue = WARNING_CODE;
                         }
                     }
                     reader.Close();
@@ -440,6 +462,12 @@ namespace DigglesModManager.Service
                 }
 
                 progressBarManipulator.Increment();
+            }
+
+            //if an error occurred do not mod sub directories
+            if (returnValue == ERROR_CODE)
+            {
+                return returnValue;
             }
 
             var modDirectories = modDirectory.GetDirectories();
@@ -471,9 +499,21 @@ namespace DigglesModManager.Service
                     //TODO merke neues verzeichnis fuer wiederherstellung
                 }
                 //same procedure for subdirectrory
-                warning = warning || LetsMod(mod, modDir, rightGameDir, activeMods, progressBarManipulator);
+                var subReturnValue = LetsMod(mod, modDir, rightGameDir, activeMods, progressBarManipulator);
+
+                if (subReturnValue == ERROR_CODE)
+                {
+                    //cancel when error occurred
+                    returnValue = subReturnValue;
+                    break;
+                }
+                else if (subReturnValue == WARNING_CODE)
+                {
+                    //remember warning state
+                    returnValue = subReturnValue;
+                }
             }
-            return warning;
+            return returnValue;
         }
 
         public void Restore()

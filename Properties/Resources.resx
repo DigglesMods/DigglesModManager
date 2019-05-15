@@ -146,4 +146,19 @@ Please put the file 'DigglesModManager.exe' in the Diggles-Directory!</value>
     <value>Could not find the file 'FILENAME'.
 Please put the file 'FILENAME' in the Diggles-Directory!</value>
   </data>
+  <data name="ModdingService_ErrorMessage" xml:space="preserve">
+    <value>An error occurred. For details see the file 'diggles-mod-manager-log.log'.</value>
+  </data>
+  <data name="ModdingService_WarningMessage" xml:space="preserve">
+    <value>A warning occurred. For details see the file 'diggles-mod-manager-errors.log'.</value>
+  </data>
+  <data name="ModdingSuccessful" xml:space="preserve">
+    <value>Modding was successful</value>
+  </data>
+  <data name="PleaseWait" xml:space="preserve">
+    <value>Please wait</value>
+  </data>
+  <data name="Warning" xml:space="preserve">
+    <value>Warning</value>
+  </data>
 </root>

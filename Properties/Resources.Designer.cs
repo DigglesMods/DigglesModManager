@@ -142,5 +142,50 @@ namespace DigglesModManager.Properties {
                 return ResourceManager.GetString("FormMainTitle", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die An error occurred. For details see the file &apos;diggles-mod-manager-log.log&apos;. ähnelt.
+        /// </summary>
+        internal static string ModdingService_ErrorMessage {
+            get {
+                return ResourceManager.GetString("ModdingService_ErrorMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die A warning occurred. For details see the file &apos;diggles-mod-manager-errors.log&apos;. ähnelt.
+        /// </summary>
+        internal static string ModdingService_WarningMessage {
+            get {
+                return ResourceManager.GetString("ModdingService_WarningMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Modding was successful ähnelt.
+        /// </summary>
+        internal static string ModdingSuccessful {
+            get {
+                return ResourceManager.GetString("ModdingSuccessful", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Please wait ähnelt.
+        /// </summary>
+        internal static string PleaseWait {
+            get {
+                return ResourceManager.GetString("PleaseWait", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Warning ähnelt.
+        /// </summary>
+        internal static string Warning {
+            get {
+                return ResourceManager.GetString("Warning", resourceCulture);
+            }
+        }
     }
 }

@@ -76,7 +76,7 @@ namespace DigglesModManager
             }
             else
             {
-                Helpers.ShowErrorMessage(Resources.FormMain_CouldNotFindDigglesExeErrorText, Resources.Error);
+                Helpers.ShowMessage(Resources.FormMain_CouldNotFindDigglesExeErrorText, Resources.Error);
             }
         }
 
@@ -283,8 +283,7 @@ namespace DigglesModManager
             this.setUIToModdingState(true);
             // Modding in second task to avoid UI freeze
             Task.Factory.StartNew(() => {
-                var warning = false;
-                SetMessage("Please wait", Color.Black);
+                SetMessage(Resources.PleaseWait, Color.Black);
                 //get file count of all active mods
                 var fileCount = 0;
                 foreach (var mod in _activeMods)
@@ -297,22 +296,38 @@ namespace DigglesModManager
 
                 _moddingService.Restore();
                 _progressBarManipulator.Increment();
+
+                var warning = false;
+                var error = false;
                 foreach (var mod in _activeMods)
                 {
                     var modDir = new DirectoryInfo(Paths.ModPath + "\\" + Paths.ModDirectoryName + "\\" + mod.ModDirectoryName);
-                    warning = _moddingService.LetsMod(mod, modDir, new DirectoryInfo(Paths.ExePath), _activeMods, _progressBarManipulator) || warning;
+                    var returnValue = _moddingService.LetsMod(mod, modDir, new DirectoryInfo(Paths.ExePath), _activeMods, _progressBarManipulator);
+                    warning = warning || returnValue == ModdingService.WARNING_CODE;
+                    error = error || returnValue == ModdingService.ERROR_CODE;
+                    //cancel when error occured
+                    if (error)
+                    {
+                        break;
+                    }
                 }
 
                 _moddingService.SaveActiveMods(_language, _activeMods);
                 _progressBarManipulator.Finish();
 
-                if (warning)
+                if (error)
                 {
-                    SetMessage("Warning", Color.Orange);
+                    SetMessage(Resources.Error, Color.Red);
+                    Helpers.ShowMessage(Resources.ModdingService_ErrorMessage, Resources.Error);
+                } 
+                else if (warning)
+                {
+                    SetMessage(Resources.Warning, Color.Orange);
+                    Helpers.ShowMessage(Resources.ModdingService_WarningMessage, Resources.Warning);
                 }
                 else
                 {
-                    SetMessage("Modding was successful", Color.Green);
+                    SetMessage(Resources.ModdingSuccessful, Color.Green);
                 }
                 // set user interface into normal state (enable buttons etc)
                 this.setUIToModdingState(false);
