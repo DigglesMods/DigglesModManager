@@ -117,8 +117,8 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="FormMain_CouldNotFindWigglesExeErrorText" xml:space="preserve">
-    <value>Could not find 'Wiggles.exe'.
+  <data name="FormMain_CouldNotFindDigglesExeErrorText" xml:space="preserve">
+    <value>Could not find 'Diggles.exe' or 'Wiggles.exe'.
 Please put the file 'DigglesModManager.exe' in the Diggles-Directory!</value>
   </data>
   <data name="Error" xml:space="preserve">

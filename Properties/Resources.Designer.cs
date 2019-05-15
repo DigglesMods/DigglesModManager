@@ -19,7 +19,7 @@ namespace DigglesModManager.Properties {
     // -Klasse über ein Tool wie ResGen oder Visual Studio automatisch generiert.
     // Um einen Member hinzuzufügen oder zu entfernen, bearbeiten Sie die .ResX-Datei und führen dann ResGen
     // mit der /str-Option erneut aus, oder Sie erstellen Ihr VS-Projekt neu.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -70,22 +70,22 @@ namespace DigglesModManager.Properties {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Could not find &apos;Diggles.exe&apos; or &apos;Wiggles.exe&apos;.
+        ///Please put the file &apos;DigglesModManager.exe&apos; in the Diggles-Directory! ähnelt.
+        /// </summary>
+        internal static string FormMain_CouldNotFindDigglesExeErrorText {
+            get {
+                return ResourceManager.GetString("FormMain_CouldNotFindDigglesExeErrorText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Could not find the file &apos;FILENAME&apos;.
         ///Please put the file &apos;FILENAME&apos; in the Diggles-Directory! ähnelt.
         /// </summary>
         internal static string FormMain_CouldNotFindFile {
             get {
                 return ResourceManager.GetString("FormMain_CouldNotFindFile", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Could not find &apos;Wiggles.exe&apos;.
-        ///Please put the file &apos;DigglesModManager.exe&apos; in the Diggles-Directory! ähnelt.
-        /// </summary>
-        internal static string FormMain_CouldNotFindWigglesExeErrorText {
-            get {
-                return ResourceManager.GetString("FormMain_CouldNotFindWigglesExeErrorText", resourceCulture);
             }
         }
         

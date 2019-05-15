@@ -57,14 +57,26 @@ namespace DigglesModManager
             _moddingService = new ModdingService();
             _progressBarManipulator = new ProgressBarManipulator(modProgressStatusBar);
 
-            if (!File.Exists($"{Paths.ExePath}\\{Paths.WigglesExecutableName}"))
+            // check, if the exe is in the correct directory
+            var correctDirectory = false;
+            foreach (var digglesExe in Paths.DigglesExecutableNames)
             {
-                Helpers.ShowErrorMessage(Resources.FormMain_CouldNotFindWigglesExeErrorText, Resources.Error);
+                if (File.Exists($"{Paths.ExePath}\\{digglesExe}"))
+                {
+                    correctDirectory = true;
+                    break;
+                }
+            }
+
+            //Only start, when exe is in the correct directory
+            if (correctDirectory)
+            {
+                ResetStatusNote();
+                ReadMods(); 
             }
             else
             {
-                ResetStatusNote();
-                ReadMods();
+                Helpers.ShowErrorMessage(Resources.FormMain_CouldNotFindDigglesExeErrorText, Resources.Error);
             }
         }
 
