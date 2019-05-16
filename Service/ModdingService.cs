@@ -482,14 +482,65 @@ namespace DigglesModManager.Service
                     continue;
                 }
 
-                //search for game directory
                 DirectoryInfo rightGameDir = null;
-                foreach (var gameDir in gameDirectories)
+
+                //check for mod directories, that are handled in a different way
+                if (mod.Config.Directories.Count > 0)
                 {
-                    if (gameDir.Name == modDir.Name)
+                    var relativePath = modDir.FullName.Replace(mod.ModDirectoryPath, "");
+                    //replace all backslashes with slashes
+                    relativePath = relativePath.Replace("\\", "/");
+                    var skipDirectory = false;
+                    foreach (var directory in mod.Config.Directories)
                     {
-                        rightGameDir = gameDir;
-                        break;
+                        if (directory.Path.Equals(relativePath))
+                        {
+                            // if this is a special directory, check the condition
+                            if (directory.Condition != null && !directory.Condition.isTrue(mod, activeMods))
+                            {
+                                //if a condition exists and is false, skip this directory
+                                skipDirectory = true;
+                                break;
+                            }
+                            // if the condition is true or no condition exists
+                            switch (directory.Type)
+                            {
+                                case ModDirectoryType.Data:
+                                    //set the data directory as game directory
+                                    rightGameDir = new DirectoryInfo(Paths.DataPath);
+                                    break;
+                                case ModDirectoryType.Optional:
+                                    if (directory.Condition != null)
+                                    {
+                                        Log.Warning(mod.ModDirectoryName + ": The optional directory " + directory.Path  + " should have a condition");
+                                        returnValue = WARNING_CODE;
+                                    }
+                                    //do nothing, because it is now a normal directory
+                                    break;
+                                default:
+                                    Log.Warning(mod.ModDirectoryName + ": Unhandled ModDirectoryType \"" + directory.Type + "\"");
+                                    returnValue = WARNING_CODE;
+                                    break;
+                            }
+                            break;
+                        }
+                    }
+                    if (skipDirectory)
+                    {
+                        continue;
+                    }
+                }
+
+                if (rightGameDir == null)
+                {
+                    //search for game directory
+                    foreach (var gameDir in gameDirectories)
+                    {
+                        if (gameDir.Name == modDir.Name)
+                        {
+                            rightGameDir = gameDir;
+                            break;
+                        }
                     }
                 }
                 //if game directory does not exist, create it

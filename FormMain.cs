@@ -301,8 +301,7 @@ namespace DigglesModManager
                 var error = false;
                 foreach (var mod in _activeMods)
                 {
-                    var modDir = new DirectoryInfo(Paths.ModPath + "\\" + Paths.ModDirectoryName + "\\" + mod.ModDirectoryName);
-                    var returnValue = _moddingService.LetsMod(mod, modDir, new DirectoryInfo(Paths.ExePath), _activeMods, _progressBarManipulator);
+                    var returnValue = _moddingService.LetsMod(mod, mod.ModDirectoryInfo, new DirectoryInfo(Paths.ExePath), _activeMods, _progressBarManipulator);
                     warning = warning || returnValue == ModdingService.WARNING_CODE;
                     error = error || returnValue == ModdingService.ERROR_CODE;
                     //cancel when error occured

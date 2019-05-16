@@ -43,5 +43,11 @@ namespace DigglesModManager.Model
         /// </summary>
         [JsonProperty(PropertyName = "settings")]
         public List<ModSettingsVariable> SettingsVariables { get; set; } = new List<ModSettingsVariable>();
+
+        /// <summary>
+        /// A list of directories, that are handled in a different way.
+        /// </summary>
+        [JsonProperty(PropertyName = "directories")]
+        public List<ModDirectory> Directories { get; set; } = new List<ModDirectory>();
     }
 }

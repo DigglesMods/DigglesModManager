@@ -9,17 +9,32 @@ namespace DigglesModManager
         private const string ERROR = "ERROR";
         private const string WARNING = "WARNING";
 
-        private static void LogToErrorFile(string type, string message, FileInfo fileInfo, int line)
+        private static void LogToErrorFile(string text)
         {
             var writer = new StreamWriter(Paths.ExePath + "\\" + Paths.ErrorLogFileName, true, Encoding.Default);
-            writer.WriteLine(DateTime.Now + " - " + type + " in \"" + fileInfo.FullName + "\" at line " + line + ": " + message);
+            writer.WriteLine(DateTime.Now + " - " + text);
             writer.Flush();
             writer.Close();
+        }
+
+        private static void LogToErrorFile(string type, string message, FileInfo fileInfo, int line)
+        {
+            LogToErrorFile(type + " in \"" + fileInfo.FullName + "\" at line " + line + ": " + message);
+        }
+
+        public static void Error(string message)
+        {
+            LogToErrorFile(ERROR + " " + message);
         }
 
         public static void Error(string message, FileInfo fileInfo, int line)
         {
             LogToErrorFile(ERROR, message, fileInfo, line);
+        }
+
+        public static void Warning(string message)
+        {
+            LogToErrorFile(WARNING + " " + message);
         }
 
         public static void Warning(string message, FileInfo fileInfo, int line)

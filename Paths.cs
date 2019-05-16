@@ -9,6 +9,7 @@
         public static string ModPath = ExePath;             //dyn: ExePath | local: @"D:\Projekte\DigglesMods\DigglesModManager"
         public static string ModDirectoryName = "Mods";
         public static string[] DigglesExecutableNames = { "Diggles.exe", "Wiggles.exe" };
+        public static string DataPath = ExePath + "\\Data";
 
         //.dm
         public static string RestoreFileName = "restore.dm";

@@ -13,6 +13,10 @@ namespace DigglesModManager
     {
         public string ModDirectoryName { get; private set; }
 
+        public string ModDirectoryPath { get; private set; }
+
+        public DirectoryInfo ModDirectoryInfo { get; private set; }
+
         public ModConfig Config { get; private set; }
         
         public string ToolTipText { get; private set; }
@@ -28,15 +32,16 @@ namespace DigglesModManager
         public Mod(string modDirectory, Dictionary<string, object> oldSettings)
         {
             ModDirectoryName = modDirectory;
-            
+            ModDirectoryPath = Paths.ModPath + "\\" + Paths.ModDirectoryName + "\\" + ModDirectoryName + "\\";
+            ModDirectoryInfo = new DirectoryInfo(ModDirectoryPath);
+            FileCount = ModDirectoryInfo.GetFiles("*", SearchOption.AllDirectories).Length;
+
             //get description
-            var modDirectoryInfo = new DirectoryInfo(Paths.ExePath + "\\" + Paths.ModDirectoryName + "\\" + ModDirectoryName);
-            FileCount = modDirectoryInfo.GetFiles("*", SearchOption.AllDirectories).Length;
             ToolTipText = "";
             Author = "";
 
             //test for config file and read it
-            var modFiles = modDirectoryInfo.GetFiles();
+            var modFiles = ModDirectoryInfo.GetFiles();
 
             foreach (var modFile in modFiles)
             {
