@@ -145,7 +145,24 @@ namespace DigglesModManager
                             modVariable.Value = (((ComboBox)control).SelectedItem as ComboBoxItem).Value;
                             break;
                         case ModVariableType.Int:
-                            modVariable.Value = int.Parse(control.Text);
+                            try
+                            {
+                                var newValue = int.Parse(control.Text);
+                                modVariable.Value = newValue;
+                                // check min and max values
+                                if (modVariable.Min != null && newValue < Convert.ToInt32(modVariable.Min))
+                                {
+                                    modVariable.Value = modVariable.Min;
+                                }
+                                if (modVariable.Max != null && newValue > Convert.ToInt32(modVariable.Max))
+                                {
+                                    modVariable.Value = modVariable.Max;
+                                }
+                            }
+                            catch (Exception)
+                            {
+                                //don't change the value
+                            }
                             break;
                         case ModVariableType.String:
                         default:

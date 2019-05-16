@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace DigglesModManager.Model
 {
@@ -55,15 +56,17 @@ namespace DigglesModManager.Model
         public object Value { get; set; }
 
         /// <summary>
-        /// A maximum value. (only for int variables)
+        /// A minimum value. (only for int variables)
         /// </summary>
-        [JsonProperty(PropertyName = "min", Required = Required.Default)]
+        [DefaultValue(null)]
+        [JsonProperty(PropertyName = "min", Required = Required.Default, DefaultValueHandling = DefaultValueHandling.Populate)]
         public object Min { get; set; }
 
         /// <summary>
-        /// A minimum value. (only for int variables)
+        /// A maximum value. (only for int variables)
         /// </summary>
-        [JsonProperty(PropertyName = "max", Required = Required.Default)]
+        [DefaultValue(null)]
+        [JsonProperty(PropertyName = "max", Required = Required.Default, DefaultValueHandling = DefaultValueHandling.Populate)]
         public object Max { get; set; }
 
         /// <summary>
