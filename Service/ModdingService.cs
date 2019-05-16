@@ -510,7 +510,7 @@ namespace DigglesModManager.Service
                                     rightGameDir = new DirectoryInfo(Paths.DataPath);
                                     break;
                                 case ModDirectoryType.Optional:
-                                    if (directory.Condition != null)
+                                    if (directory.Condition == null)
                                     {
                                         Log.Warning(mod.ModDirectoryName + ": The optional directory " + directory.Path  + " should have a condition");
                                         returnValue = WARNING_CODE;
