@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using System.Collections.Generic;
 
 namespace DigglesModManager.Model
 {
@@ -18,13 +19,23 @@ namespace DigglesModManager.Model
         /// The human readanle name of the variable. [REQUIRED]
         /// </summary>
         [JsonProperty(PropertyName="name", Required = Required.Always)]
-        public ModTranslationString Name { get; set; }
+        private ModTranslationString NameTranslation { get; set; }
+
+        public string Name(string language)
+        {
+            return NameTranslation.getString(language);
+        }
 
         /// <summary>
         /// A short description for the ui of the mod-variable. [REQUIRED]
         /// </summary>
         [JsonProperty(PropertyName = "description", Required = Required.Always)]
-        public ModTranslationString Description { get; set; }
+        private ModTranslationString DescriptionTranslation { get; set; }
+
+        public string Description(string language)
+        {
+            return DescriptionTranslation.getString(language);
+        }
 
         /// <summary>
         /// The data-type of the variable. Can be bool, int.. [REQUIRED]
@@ -54,5 +65,11 @@ namespace DigglesModManager.Model
         /// </summary>
         [JsonProperty(PropertyName = "max", Required = Required.Default)]
         public object Max { get; set; }
+
+        /// <summary>
+        /// A List of possible values for this variable. (only for Select_Int and Select_String)
+        /// </summary>
+        [JsonProperty(PropertyName = "possibleValues", Required = Required.Default)]
+        public List<ModVariableValue> PossibleValues { get; set; } = new List<ModVariableValue>();
     }
 }

@@ -5,8 +5,8 @@
     /// </summary>
     public class Paths
     {
-        public static string ExePath = @".";                //dyn: @"." | local: D:\Programme\Wiggles
-        public static string ModPath = ExePath;             //dyn: exePath | local: @"D:\Projekte\DigglesModManager"
+        public static string ExePath = @".";                //dyn: @"." | local:  @"D:\Programme\Wiggles-Test"
+        public static string ModPath = ExePath;             //dyn: ExePath | local: @"D:\Projekte\DigglesMods\DigglesModManager"
         public static string ModDirectoryName = "Mods";
         public static string[] DigglesExecutableNames = { "Diggles.exe", "Wiggles.exe" };
 

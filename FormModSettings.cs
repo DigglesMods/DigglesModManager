@@ -34,55 +34,79 @@ namespace DigglesModManager
             }
         }
 
-        private void BuildVariableRow(int i, ModSettingsVariable modVariable, string language)
-        {
-            BuildVariableRow(i, modVariable.ID, modVariable.Name.getString(language), 
-                modVariable.Description.getString(language), modVariable.Type.ToString(), modVariable.Value);
-        }
-
-        private void BuildVariableRow(int i, string varId, string varName, string varDescription, string varType, object value)
+        private void BuildVariableRow(int i, ModSettingsVariable variable, string language)
         {
             var height = i * 23 + 12;
+            var variableType = variable.Type.ToString().ToLower();
             //add var name as label
             var label = new Label
             {
                 AutoSize = true,
                 Location = new Point(12, height),
-                Name = varId + "_label",
+                Name = variable.ID + "_label",
                 TabIndex = i + 3,
-                Text = varName + @":"
+                Text = variable.Name(language) + @":"
             };
             Controls.Add(label);
 
             //add value as changeable text box or checkbox
-            if (varType.ToLower().Equals("bool"))
+            Control controlElement;
+            if (variableType.Equals("bool"))
             {
-                var checkBox = new CheckBox
+                controlElement = new CheckBox
                 {
                     Location = new Point(162, height - 3),
-                    Name = varId,
-                    Checked = (bool)value,
+                    Name = variable.ID,
+                    Checked = (bool)variable.Value,
                     Size = new Size(20, 20),
                     TabIndex = i + 3
                 };
-                Controls.Add(checkBox);
-                _inputControls.Add(checkBox);
-                _inputControlMap.Add(varId, checkBox);
             }
-            else
+            else if (variableType.Equals("select"))
             {
-                var textBox = new TextBox
+                // Drop Down Menu
+                // Create ComboBox object
+                controlElement = new ComboBox
+                {
+                    DropDownStyle = ComboBoxStyle.DropDownList,
+                    Location = new Point(162, height - 3),
+                    Name = variable.ID,
+                    Size = new Size(70, 20),
+                    TabIndex = i + 3
+                };
+
+                //Create list entries
+                var possibleValueId = 0;
+                foreach (ModVariableValue possibleValue in variable.PossibleValues)
+                {
+                    ((ComboBox)controlElement).Items.Add(new ComboBoxItem
+                    {
+                        Text = possibleValue.Name(language),
+                        Value = possibleValue.Value
+                    });
+                    //select default or last selected value
+                    if (variable.Value.Equals(possibleValue.Value))
+                    {
+                        ((ComboBox)controlElement).SelectedIndex = possibleValueId;
+                    }
+                    possibleValueId++;
+                }
+            }
+            else //if (variableType.Equals("int") || variableType.Equals("string"))
+            {
+                //Text Box
+                controlElement = new TextBox
                 {
                     Location = new Point(162, height - 3),
-                    Name = varId,
-                    Text = value.ToString(),
+                    Name = variable.ID,
+                    Text = variable.Value.ToString(),
                     Size = new Size(50, 20),
                     TabIndex = i + 3
                 };
-                Controls.Add(textBox);
-                _inputControls.Add(textBox);
-                _inputControlMap.Add(varId, textBox);
             }
+            Controls.Add(controlElement);
+            _inputControls.Add(controlElement);
+            _inputControlMap.Add(variable.ID, controlElement);
 
             //add description as label
             var description = new Label
@@ -91,8 +115,8 @@ namespace DigglesModManager
                 Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right,         //make label grow automatically on window resize
                 AutoEllipsis = true,                                                        //add '...' if text does not fit into label bounds
                 AutoSize = false,                                                           //no autosizing
-                Name = varId + "_desc",
-                Text = varDescription,
+                Name = variable.ID + "_desc",
+                Text = variable.Description(language),
                 Cursor = Cursors.Help
             };
             description.Size = new Size(290, description.Size.Height);
@@ -116,6 +140,9 @@ namespace DigglesModManager
                     {
                         case ModVariableType.Bool:
                             modVariable.Value = ((CheckBox)control).Checked;
+                            break;
+                        case ModVariableType.Select:
+                            modVariable.Value = (((ComboBox)control).SelectedItem as ComboBoxItem).Value;
                             break;
                         case ModVariableType.Int:
                             modVariable.Value = int.Parse(control.Text);
@@ -145,6 +172,16 @@ namespace DigglesModManager
                         case ModVariableType.Bool:
                             ((CheckBox)control).Checked = (bool)modVariable.Value;
                             break;
+                        case ModVariableType.Select:
+                            foreach (ComboBoxItem item in ((ComboBox)control).Items)
+                            {
+                                if (item.Value.Equals(modVariable.Value))
+                                {
+                                    ((ComboBox)control).SelectedItem = item;
+                                    break;
+                                }
+                            }
+                            break;
                         case ModVariableType.Int:
                         case ModVariableType.String:
                         default:
@@ -169,6 +206,16 @@ namespace DigglesModManager
                         case ModVariableType.Bool:
                             ((CheckBox)control).Checked = (bool)modVariable.DefaultValue;
                             break;
+                        case ModVariableType.Select:
+                            foreach (ComboBoxItem item in ((ComboBox)control).Items)
+                            {
+                                if (item.Value.Equals(modVariable.DefaultValue))
+                                {
+                                    ((ComboBox)control).SelectedItem = item;
+                                    break;
+                                }
+                            }
+                            break;
                         case ModVariableType.Int:
                         case ModVariableType.String:
                         default:
@@ -182,6 +229,17 @@ namespace DigglesModManager
         private void closeButton_Click(object sender, EventArgs e)
         {
             Close();
+        }
+
+        private class ComboBoxItem
+        {
+            public string Text { get; set; }
+            public object Value { get; set; }
+
+            public override string ToString()
+            {
+                return Text;
+            }
         }
     }
 }

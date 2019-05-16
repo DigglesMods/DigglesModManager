@@ -90,6 +90,7 @@
     <Compile Include="Model\ModTranslationString.cs" />
     <Compile Include="Model\ModSettingsVariable.cs" />
     <Compile Include="Model\ModVariableType.cs" />
+    <Compile Include="Model\ModVariableValue.cs" />
     <Compile Include="Paths.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="ProgressBarManipulator.cs" />

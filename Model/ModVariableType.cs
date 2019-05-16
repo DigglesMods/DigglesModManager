@@ -5,6 +5,6 @@
     /// </summary>
     public enum ModVariableType
     {
-        Int, Bool, String
+        Int, Bool, String, Select
     }
 }
