@@ -487,7 +487,7 @@ namespace DigglesModManager.Service
                 //check for mod directories, that are handled in a different way
                 if (mod.Config.Directories.Count > 0)
                 {
-                    var relativePath = modDir.FullName.Replace(mod.ModDirectoryPath, "");
+                    var relativePath = modDir.FullName.Replace(mod.ModDirectoryInfo.FullName, "");
                     //replace all backslashes with slashes
                     relativePath = relativePath.Replace("\\", "/");
                     var skipDirectory = false;

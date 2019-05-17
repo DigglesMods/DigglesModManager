@@ -13,8 +13,6 @@ namespace DigglesModManager
     {
         public string ModDirectoryName { get; private set; }
 
-        public string ModDirectoryPath { get; private set; }
-
         public DirectoryInfo ModDirectoryInfo { get; private set; }
 
         public ModConfig Config { get; private set; }
@@ -32,8 +30,8 @@ namespace DigglesModManager
         public Mod(string modDirectory, Dictionary<string, object> oldSettings)
         {
             ModDirectoryName = modDirectory;
-            ModDirectoryPath = Paths.ModPath + "\\" + Paths.ModDirectoryName + "\\" + ModDirectoryName + "\\";
-            ModDirectoryInfo = new DirectoryInfo(ModDirectoryPath);
+            // the last backslash is important for path cutting!
+            ModDirectoryInfo = new DirectoryInfo(Paths.ModPath + "\\" + Paths.ModDirectoryName + "\\" + ModDirectoryName + "\\");
             FileCount = ModDirectoryInfo.GetFiles("*", SearchOption.AllDirectories).Length;
 
             //get description
