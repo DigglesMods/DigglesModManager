@@ -163,6 +163,15 @@ namespace DigglesModManager.Service
                     //copy file to game folder
                     Console.WriteLine($"Copy file: {modFile.FullName} --> {gameDirectory.FullName}\\{filename}");
                     newModFile = modFile.CopyTo(gameDirectory.FullName + "\\" + filename, true);
+
+                    //replace variables
+                    var fileContent = File.ReadAllText(newModFile.FullName, Encoding.Default);
+                    foreach (var modVar in mod.Config.SettingsVariables)
+                    {
+                        fileContent = fileContent.Replace("$print:" + modVar.ID, modVar.Value.ToString());
+                    }
+                    Console.WriteLine($"Replace content for {newModFile.FullName}");
+                    File.WriteAllText(newModFile.FullName, fileContent, Encoding.Default);
                 }
                 else if (mode == "change" && rightGameFile != null) //file change mode
                 {
