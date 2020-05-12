@@ -26,7 +26,8 @@
         /// Required method for Designer support - do not modify
         /// the contents of this method with the code editor.
         /// </summary>
-        private void InitializeComponent()
+        /// <param name="modVarHeight">Height of the mod variables part.</param>
+        private void InitializeComponent(int modVarHeight)
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormModSettings));
             this.okButton = new System.Windows.Forms.Button();
@@ -35,11 +36,12 @@
             this.process1 = new System.Diagnostics.Process();
             this.closeButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
+            var buttonY = modVarHeight + 7;
             // 
             // okButton
             // 
             this.okButton.Cursor = System.Windows.Forms.Cursors.Default;
-            this.okButton.Location = new System.Drawing.Point(352, 180);
+            this.okButton.Location = new System.Drawing.Point(352, buttonY);
             this.okButton.Name = "okButton";
             this.okButton.Size = new System.Drawing.Size(88, 23);
             this.okButton.TabIndex = 0;
@@ -49,7 +51,7 @@
             // 
             // resetButton
             // 
-            this.resetButton.Location = new System.Drawing.Point(98, 180);
+            this.resetButton.Location = new System.Drawing.Point(98, buttonY);
             this.resetButton.Name = "resetButton";
             this.resetButton.Size = new System.Drawing.Size(75, 23);
             this.resetButton.TabIndex = 1;
@@ -59,7 +61,7 @@
             // 
             // setDefaultButton
             // 
-            this.setDefaultButton.Location = new System.Drawing.Point(12, 180);
+            this.setDefaultButton.Location = new System.Drawing.Point(12, buttonY);
             this.setDefaultButton.Name = "setDefaultButton";
             this.setDefaultButton.Size = new System.Drawing.Size(80, 23);
             this.setDefaultButton.TabIndex = 2;
@@ -80,7 +82,7 @@
             // closeButton
             // 
             this.closeButton.Cursor = System.Windows.Forms.Cursors.Default;
-            this.closeButton.Location = new System.Drawing.Point(446, 180);
+            this.closeButton.Location = new System.Drawing.Point(446, buttonY);
             this.closeButton.Name = "closeButton";
             this.closeButton.Size = new System.Drawing.Size(88, 23);
             this.closeButton.TabIndex = 3;
@@ -92,7 +94,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(545, 215);
+            this.ClientSize = new System.Drawing.Size(545, buttonY + 35);
             this.Controls.Add(this.closeButton);
             this.Controls.Add(this.setDefaultButton);
             this.Controls.Add(this.resetButton);

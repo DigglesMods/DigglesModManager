@@ -17,7 +17,7 @@ namespace DigglesModManager
             _mod = mod;
             _inputControls = new List<Control>();
 
-            InitializeComponent();
+            InitializeComponent(Math.Max(173, mod.Config.SettingsVariables.Count * 23 + 12));
             FormBorderStyle = FormBorderStyle.FixedSingle;
 
             Name = _mod.ToString() + " - Settings";
