@@ -94,7 +94,7 @@ namespace DigglesModManager.Service
             {
                 foreach (var gameFile in gameFiles)
                 {
-                    if (gameFile.Name == "texmaps.bin")
+                    if (gameFile.Name.ToLower() == "texmaps.bin")
                     {
                         this.RememberForRestore(gameFile, "res");
                         gameFile.MoveTo(gameFile.FullName + CopyFileSuffix);
