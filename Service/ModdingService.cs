@@ -90,7 +90,7 @@ namespace DigglesModManager.Service
             var returnValue = SUCCESS_CODE;
 
             //if Texture directory deactivate texmaps.bin
-            if (gameDirectory.Name == "Texture")
+            if (gameDirectory.Name.ToLower() == "texture")
             {
                 foreach (var gameFile in gameFiles)
                 {
@@ -545,7 +545,7 @@ namespace DigglesModManager.Service
                     //search for game directory
                     foreach (var gameDir in gameDirectories)
                     {
-                        if (gameDir.Name == modDir.Name)
+                        if (gameDir.Name.ToLower() == modDir.Name.ToLower())
                         {
                             rightGameDir = gameDir;
                             break;
