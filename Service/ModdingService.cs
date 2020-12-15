@@ -197,6 +197,7 @@ namespace DigglesModManager.Service
                         if (line.StartsWith("$ifend") && ifStack.Count > 0)
                         {
                             ifStack.Pop();
+                            continue;
                         }
                         //if clause
                         if (line.StartsWith("$if:"))
