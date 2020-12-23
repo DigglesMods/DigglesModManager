@@ -1,6 +1,6 @@
-﻿using System.Diagnostics;
+﻿using DigglesModManager.Properties;
+using System.Diagnostics;
 using System.Windows.Forms;
-using DigglesModManager.Properties;
 
 namespace DigglesModManager
 {

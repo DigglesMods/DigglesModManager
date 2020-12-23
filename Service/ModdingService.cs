@@ -1,10 +1,10 @@
-﻿using System;
+﻿using DigglesModManager.Model;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using DigglesModManager.Model;
-using Newtonsoft.Json;
 
 namespace DigglesModManager.Service
 {
@@ -21,12 +21,12 @@ namespace DigglesModManager.Service
 
         public static string ChangeFilePrefix = "change_";
         public static string CopyFileSuffix = "_copy";
-        
+
         public void ReadModsFromFiles(List<Mod> activeMods, ProgressBarManipulator progressBarManipulator)
         {
             progressBarManipulator.Increment();
             //check if mod directory exists
-            var modDirectoryPath = Paths.ModPath + "\\" + Paths.ModDirectoryName;
+            var modDirectoryPath = $"{Paths.ModPath}\\{Paths.ModDirectoryName}";
             if (!Directory.Exists(modDirectoryPath))
             {
                 Directory.CreateDirectory(modDirectoryPath);
@@ -51,8 +51,8 @@ namespace DigglesModManager.Service
         public void RememberForRestore(FileInfo file, string type)
         {
             //remember
-            var writer = new StreamWriter(Paths.ExePath + "\\" + Paths.RestoreFileName, true, Encoding.Default);
-            writer.WriteLine(type + "||" + file.FullName);
+            var writer = new StreamWriter($"{Paths.ExePath}\\{Paths.RestoreFileName}", true, Encoding.Default);
+            writer.WriteLine($"{type}||{file.FullName}");
             writer.Flush();
             writer.Close();
         }
@@ -73,7 +73,7 @@ namespace DigglesModManager.Service
                     }
                     appSettings.ActiveMods.Add(mod.ModDirectoryName, variables);
                 }
-                    
+
                 var json = JsonConvert.SerializeObject(appSettings, Formatting.Indented);
                 File.WriteAllText(appSettingsFilePath, json, Encoding.UTF8); //overwrites any existing files, if present
             }
@@ -96,7 +96,7 @@ namespace DigglesModManager.Service
                 {
                     if (gameFile.Name.ToLower() == "texmaps.bin")
                     {
-                        this.RememberForRestore(gameFile, "res");
+                        RememberForRestore(gameFile, "res");
                         gameFile.MoveTo(gameFile.FullName + CopyFileSuffix);
                         break;
                     }
@@ -162,13 +162,13 @@ namespace DigglesModManager.Service
                 {
                     //copy file to game folder
                     Console.WriteLine($"Copy file: {modFile.FullName} --> {gameDirectory.FullName}\\{filename}");
-                    newModFile = modFile.CopyTo(gameDirectory.FullName + "\\" + filename, true);
+                    newModFile = modFile.CopyTo($"{gameDirectory.FullName}\\{filename}", true);
 
                     //replace variables
                     var fileContent = File.ReadAllText(newModFile.FullName, Encoding.Default);
                     foreach (var modVar in mod.Config.SettingsVariables)
                     {
-                        fileContent = fileContent.Replace("$print:" + modVar.ID, modVar.Value.ToString());
+                        fileContent = fileContent.Replace($"$print:{modVar.ID}", modVar.Value.ToString());
                     }
                     Console.WriteLine($"Replace content for {newModFile.FullName}");
                     File.WriteAllText(newModFile.FullName, fileContent, Encoding.Default);
@@ -247,7 +247,7 @@ namespace DigglesModManager.Service
                                     }
                                     if (!modVarFound)
                                     {
-                                        Log.Error("Boolean mod variable '" + ifStatement + "' not found for '$if' statement", modFile, lineNumber);
+                                        Log.Error($"Boolean mod variable '{ifStatement}' not found for '$if' statement", modFile, lineNumber);
                                         returnValue = ERROR_CODE;
                                         break;
                                     }
@@ -406,9 +406,9 @@ namespace DigglesModManager.Service
                                         var commandsAsString = command[0];
                                         for (int i = 1; i < commandCount; i++)
                                         {
-                                            commandsAsString += ", " + command[i];
+                                            commandsAsString += $", {command[i]}";
                                         }
-                                        Log.Error("Found commands that do not match: " + commandsAsString, modFile, lineNumber);
+                                        Log.Error($"Found commands that do not match: {commandsAsString}", modFile, lineNumber);
                                     }
                                     else
                                     {
@@ -424,7 +424,7 @@ namespace DigglesModManager.Service
                                     //before: replace variables
                                     foreach (var modVar in mod.Config.SettingsVariables)
                                     {
-                                        newValue = newValue.Replace("$print:" + modVar.ID, modVar.Value.ToString());
+                                        newValue = newValue.Replace($"$print:{modVar.ID}", modVar.Value.ToString());
                                     }
 
                                     //replace old value with new value
@@ -453,7 +453,7 @@ namespace DigglesModManager.Service
                         }
                         else if (!string.IsNullOrEmpty(line) && !line.StartsWith("$if:"))
                         {
-                            Log.Warning("Unnecessary content found: '" + line + "'", modFile, lineNumber);
+                            Log.Warning($"Unnecessary content found: '{line}'", modFile, lineNumber);
                             returnValue = WARNING_CODE;
                         }
                     }
@@ -468,7 +468,7 @@ namespace DigglesModManager.Service
                 //remember
                 if (newModFile != null && !copyExists)
                 {
-                    this.RememberForRestore(newModFile, type);
+                    RememberForRestore(newModFile, type);
                 }
 
                 progressBarManipulator.Increment();
@@ -506,7 +506,7 @@ namespace DigglesModManager.Service
                         if (directory.Path.Equals(relativePath))
                         {
                             // if this is a special directory, check the condition
-                            if (directory.Condition != null && !directory.Condition.isTrue(mod, activeMods))
+                            if (directory.Condition != null && !directory.Condition.IsTrue(mod, activeMods))
                             {
                                 //if a condition exists and is false, skip this directory
                                 skipDirectory = true;
@@ -522,13 +522,13 @@ namespace DigglesModManager.Service
                                 case ModDirectoryType.Optional:
                                     if (directory.Condition == null)
                                     {
-                                        Log.Warning(mod.ModDirectoryName + ": The optional directory " + directory.Path  + " should have a condition");
+                                        Log.Warning($"{mod.ModDirectoryName}: The optional directory {directory.Path} should have a condition");
                                         returnValue = WARNING_CODE;
                                     }
                                     //do nothing, because it is now a normal directory
                                     break;
                                 default:
-                                    Log.Warning(mod.ModDirectoryName + ": Unhandled ModDirectoryType \"" + directory.Type + "\"");
+                                    Log.Warning($"{mod.ModDirectoryName}: Unhandled ModDirectoryType \"{directory.Type}\"");
                                     returnValue = WARNING_CODE;
                                     break;
                             }
@@ -579,9 +579,9 @@ namespace DigglesModManager.Service
 
         public void Restore()
         {
-            if (File.Exists(Paths.ExePath + "\\" + Paths.RestoreFileName))
+            if (File.Exists($"{Paths.ExePath}\\{Paths.RestoreFileName}"))
             {
-                var reader = new StreamReader(Paths.ExePath + "\\" + Paths.RestoreFileName, Encoding.Default);
+                var reader = new StreamReader($"{Paths.ExePath}\\{Paths.RestoreFileName}", Encoding.Default);
                 string line;
                 while ((line = reader.ReadLine()) != null)
                 {
@@ -633,7 +633,7 @@ namespace DigglesModManager.Service
                 }
                 reader.Close();
                 //delete restore file
-                File.Delete(Paths.ExePath + "\\" + Paths.RestoreFileName);
+                File.Delete($"{Paths.ExePath}\\{Paths.RestoreFileName}");
             }
         }
     }

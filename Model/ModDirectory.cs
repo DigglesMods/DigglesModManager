@@ -35,7 +35,7 @@ namespace DigglesModManager.Model
         /// </summary>
         [DefaultValue(null)]
         [JsonProperty(PropertyName = "condition", Required = Required.Default, DefaultValueHandling = DefaultValueHandling.Populate)]
-        public ModDirectroyCondition Condition { get; set; }
+        public ModDirectoryCondition Condition { get; set; }
 
     }
 }

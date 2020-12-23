@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Drawing;
 using System.Windows.Forms;
 
 namespace DigglesModManager
@@ -36,8 +35,8 @@ namespace DigglesModManager
         {
             InitializeComponent();
 
-            this.MouseMove += listBox_MouseMove;
-            this.MouseLeave += listBox_MouseLeave;
+            MouseMove += listBox_MouseMove;
+            MouseLeave += listBox_MouseLeave;
 
             _currentItemSet = false;
             _toolTipDisplayed = false;
@@ -53,8 +52,8 @@ namespace DigglesModManager
         {
             // Get the item that the mouse is currently over
             var cursorPoint = Cursor.Position;
-            cursorPoint = this.PointToClient(cursorPoint);
-            var itemIndex = this.IndexFromPoint(cursorPoint);
+            cursorPoint = PointToClient(cursorPoint);
+            var itemIndex = IndexFromPoint(cursorPoint);
 
             if (itemIndex == ListBox.NoMatches)
             {
@@ -93,10 +92,10 @@ namespace DigglesModManager
         void _toolTipDisplayTimer_Tick(object sender, EventArgs e)
         {
             // Display tooltip text since the mouse has hovered over an item
-            if (_toolTipDisplayed || _currentItem == ListBox.NoMatches || _currentItem >= this.Items.Count)
+            if (_toolTipDisplayed || _currentItem == ListBox.NoMatches || _currentItem >= Items.Count)
                 return;
 
-            var toolTipDisplayer = this.Items[_currentItem] as IToolTipDisplayer;
+            var toolTipDisplayer = Items[_currentItem] as IToolTipDisplayer;
             if (toolTipDisplayer == null)
                 return;
 

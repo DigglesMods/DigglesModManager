@@ -1,11 +1,11 @@
 ﻿using DigglesModManager.Model;
+using DigglesModManager.Properties;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Windows.Forms;
-using DigglesModManager.Properties;
 
 namespace DigglesModManager
 {
@@ -16,7 +16,7 @@ namespace DigglesModManager
         public DirectoryInfo ModDirectoryInfo { get; private set; }
 
         public ModConfig Config { get; private set; }
-        
+
         public string ToolTipText { get; private set; }
         public string Author { get; private set; }
 
@@ -31,7 +31,7 @@ namespace DigglesModManager
         {
             ModDirectoryName = modDirectory;
             // the last backslash is important for path cutting!
-            ModDirectoryInfo = new DirectoryInfo(Paths.ModPath + "\\" + Paths.ModDirectoryName + "\\" + ModDirectoryName + "\\");
+            ModDirectoryInfo = new DirectoryInfo($"{Paths.ModPath}\\{Paths.ModDirectoryName}\\{ModDirectoryName}\\");
             FileCount = ModDirectoryInfo.GetFiles("*", SearchOption.AllDirectories).Length;
 
             //get description
@@ -122,11 +122,11 @@ namespace DigglesModManager
             }
             if (!Author.Equals(""))
             {
-                toolTip += " Author: " + Author;
+                toolTip += $" Author: {Author}";
             }
             else if (!string.IsNullOrEmpty(Config.Author))
             {
-                toolTip += " Author: " + Config.Author;
+                toolTip += $" Author: {Config.Author}";
             }
 
             return toolTip;

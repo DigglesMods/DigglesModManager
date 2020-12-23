@@ -22,7 +22,7 @@ namespace DigglesModManager
             {
                 Helpers.ShowErrorMessage(Resources.FormMain_CouldNotFindFile.Replace("FILENAME", e.FileName));
             }
-            
+
         }
     }
 }

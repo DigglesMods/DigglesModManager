@@ -1,15 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Windows.Forms;
-using System.IO;
+﻿using DigglesModManager.Model;
 using DigglesModManager.Properties;
 using DigglesModManager.Service;
 using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
+using System.Linq;
 using System.Text;
-using DigglesModManager.Model;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace DigglesModManager
 {
@@ -72,7 +72,7 @@ namespace DigglesModManager
             if (correctDirectory)
             {
                 ResetStatusNote();
-                ReadMods(); 
+                ReadMods();
             }
             else
             {
@@ -108,7 +108,7 @@ namespace DigglesModManager
                 menuItem.Checked = check;
                 if (check)
                     menuItem.CheckState = CheckState.Checked;
-                else 
+                else
                     menuItem.CheckState = CheckState.Unchecked;
 
             }
@@ -125,7 +125,7 @@ namespace DigglesModManager
             _moddingService.ReadModsFromFiles(_activeMods, _progressBarManipulator);
 
             //read mods
-            var modDirectories = (new DirectoryInfo(Paths.ModPath + "\\" + Paths.ModDirectoryName)).GetDirectories();
+            var modDirectories = (new DirectoryInfo($"{Paths.ModPath}\\{Paths.ModDirectoryName}")).GetDirectories();
             foreach (var modInfo in modDirectories)
             {
                 if (!_activeMods.Exists(mod => mod.ModDirectoryName.Equals(modInfo.Name)))
@@ -163,7 +163,7 @@ namespace DigglesModManager
 
         private void listBox2_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (!this.moddingServiceRunning)
+            if (!moddingServiceRunning)
             {
                 //find settings file
                 int selectedIndex = installedModsListBox.SelectedIndex;
@@ -255,34 +255,35 @@ namespace DigglesModManager
 
             var buttonsEnabled = !moddingState;
             // Refresh Button
-            this.refreshButton.Enabled = buttonsEnabled;
+            refreshButton.Enabled = buttonsEnabled;
             // Arrow Buttons
-            this.installModButton.Enabled = buttonsEnabled;
-            this.uninstallModButton.Enabled = buttonsEnabled;
-            this.moveUpButton.Enabled = buttonsEnabled;
-            this.moveDownButton.Enabled = buttonsEnabled;
+            installModButton.Enabled = buttonsEnabled;
+            uninstallModButton.Enabled = buttonsEnabled;
+            moveUpButton.Enabled = buttonsEnabled;
+            moveDownButton.Enabled = buttonsEnabled;
             // Mod Settings Buttons
-            this.moddingServiceRunning = moddingState;
+            moddingServiceRunning = moddingState;
             if (buttonsEnabled)
             {
-                this.listBox2_SelectedIndexChanged(null, null);
+                listBox2_SelectedIndexChanged(null, null);
             }
             else
             {
-                this.modSettingsButton.Enabled = false;
-                this.modSettingsMenuButton.Enabled = false;
+                modSettingsButton.Enabled = false;
+                modSettingsMenuButton.Enabled = false;
             }
             // Lets Mod Buttons
-            this.letsModButton.Enabled = buttonsEnabled;
-            this.letsModMenuButton.Enabled = buttonsEnabled;
+            letsModButton.Enabled = buttonsEnabled;
+            letsModMenuButton.Enabled = buttonsEnabled;
         }
 
         private void button_mod_Click(object sender, EventArgs e)
         {
             // set user interface into the modding state (disable buttons etc)
-            this.setUIToModdingState(true);
+            setUIToModdingState(true);
             // Modding in second task to avoid UI freeze
-            Task.Factory.StartNew(() => {
+            Task.Factory.StartNew(() =>
+            {
                 SetMessage(Resources.PleaseWait, Color.Black);
                 //get file count of all active mods
                 var fileCount = 0;
@@ -318,7 +319,7 @@ namespace DigglesModManager
                 {
                     SetMessage(Resources.Error, Color.Red);
                     Helpers.ShowMessage(Resources.ModdingService_ErrorMessage, Resources.Error);
-                } 
+                }
                 else if (warning)
                 {
                     SetMessage(Resources.Warning, Color.Orange);
@@ -329,7 +330,7 @@ namespace DigglesModManager
                     SetMessage(Resources.ModdingSuccessful, Color.Green);
                 }
                 // set user interface into normal state (enable buttons etc)
-                this.setUIToModdingState(false);
+                setUIToModdingState(false);
             });
         }
 
@@ -353,7 +354,7 @@ namespace DigglesModManager
         {
             button_mod_settings_Click(sender, e);
         }
-        
+
         private void changeLanguage(string language)
         {
             setCheckOfLanguageInMenu(false);

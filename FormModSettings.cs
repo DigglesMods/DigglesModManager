@@ -1,8 +1,8 @@
-﻿using System;
+﻿using DigglesModManager.Model;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
-using DigglesModManager.Model;
 
 namespace DigglesModManager
 {
@@ -20,9 +20,9 @@ namespace DigglesModManager
             InitializeComponent(Math.Max(173, mod.Config.SettingsVariables.Count * 23 + 12));
             FormBorderStyle = FormBorderStyle.FixedSingle;
 
-            Name = _mod.ToString() + " - Settings";
+            Name = $"{_mod} - Settings";
             Text = Name;
-            
+
             var i = 0;
             if (_mod.Config != null)
             {
@@ -43,9 +43,9 @@ namespace DigglesModManager
             {
                 AutoSize = true,
                 Location = new Point(12, height),
-                Name = variable.ID + "_label",
+                Name = $"{variable.ID}_label",
                 TabIndex = i + 3,
-                Text = variable.Name(language) + @":"
+                Text = $"{variable.Name(language)}:"
             };
             Controls.Add(label);
 

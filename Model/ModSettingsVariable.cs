@@ -19,7 +19,7 @@ namespace DigglesModManager.Model
         /// <summary>
         /// The human readanle name of the variable. [REQUIRED]
         /// </summary>
-        [JsonProperty(PropertyName="name", Required = Required.Always)]
+        [JsonProperty(PropertyName = "name", Required = Required.Always)]
         private ModTranslationString NameTranslation { get; set; }
 
         public string Name(string language)
@@ -41,7 +41,7 @@ namespace DigglesModManager.Model
         /// <summary>
         /// The data-type of the variable. Can be bool, int.. [REQUIRED]
         /// </summary>
-        [JsonConverter(typeof(StringEnumConverter)), JsonProperty(PropertyName="type", Required = Required.Always)]
+        [JsonConverter(typeof(StringEnumConverter)), JsonProperty(PropertyName = "type", Required = Required.Always)]
         public ModVariableType Type { get; set; }
 
         /// <summary>

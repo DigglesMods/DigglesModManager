@@ -1,6 +1,6 @@
 ﻿namespace DigglesModManager.Model
 {
-    public enum ModDirectroyConditionType
+    public enum ModDirectoryConditionType
     {
         Mod, Variable
     }
