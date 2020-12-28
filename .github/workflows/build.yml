@@ -1,0 +1,21 @@
+name: Build Application
+ 
+on: [push]
+ 
+jobs:
+  build:
+ 
+    runs-on: windows-latest
+ 
+    steps:
+    - uses: actions/checkout@v2
+      name: Checkout Code
+     
+    - name: setup-msbuild
+      uses: microsoft/setup-msbuild@v1
+     
+    - name: Restore NuGet Packages
+      run: nuget restore DigglesModManager.sln
+ 
+    - name: Build the Application
+      run: msbuild DigglesModManager.sln
