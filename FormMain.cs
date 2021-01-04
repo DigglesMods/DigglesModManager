@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -15,9 +14,6 @@ namespace DigglesModManager
 {
     public partial class FormMain : Form
     {
-        private readonly List<Mod> _inactiveMods = new List<Mod>();
-        private readonly List<Mod> _activeMods = new List<Mod>();
-
         public static string _language = "en";
         private static Dictionary<string, ToolStripMenuItem> languageMenuItems = new Dictionary<string, ToolStripMenuItem>();
 
@@ -31,6 +27,15 @@ namespace DigglesModManager
         {
             InitializeComponent();
             Text = string.Format(Resources.FormMainTitle, typeof(FormMain).Assembly.GetName().Version);
+
+            //add imagelist to listviews
+            var imageList = new ImageList();
+            imageList.Images.Add("info", Resources.InfoIcon);
+            imageList.Images.Add("warning", Resources.WarningIcon);
+            imageList.Images.Add("error", Resources.ErrorIcon);
+
+            availableModsListView.SmallImageList = imageList;
+            activeModsListView.SmallImageList = imageList;
 
             FormBorderStyle = FormBorderStyle.FixedSingle;
 
@@ -55,7 +60,7 @@ namespace DigglesModManager
             setCheckOfLanguageInMenu(true);
 
             _moddingService = new ModdingService();
-            _progressBarManipulator = new ProgressBarManipulator(modProgressStatusBar);
+            _progressBarManipulator = new ProgressBarManipulator(this, modProgressStatusBar);
 
             // check, if the exe is in the correct directory
             var correctDirectory = false;
@@ -93,10 +98,15 @@ namespace DigglesModManager
         /// </summary>
         /// <param name="text">The text to be set.</param>
         /// <param name="color">The color to be set to the foreground of the status bar label.</param>
-        private void SetMessage(string text, Color color)
+        private bool SetMessage(string text, Color color)
         {
+            if (InvokeRequired)
+            {
+                return (bool)Invoke((Func<string, Color, bool>)SetMessage, text, color);
+            }
             statusBarLabelRight.Text = text;
             statusBarLabelRight.ForeColor = color;
+            return true;
         }
 
 
@@ -119,36 +129,36 @@ namespace DigglesModManager
             _progressBarManipulator.Reset(7);
             _progressBarManipulator.Increment();
 
-            _inactiveMods.Clear();
-            _activeMods.Clear();
+            availableModsListView.Items.Clear();
+            activeModsListView.Items.Clear();
 
-            _moddingService.ReadModsFromFiles(_activeMods, _progressBarManipulator);
+            var activeMods = new List<Mod>();
+
+            _moddingService.ReadModsFromFiles(activeMods, _progressBarManipulator);
 
             //read mods
             var modDirectories = (new DirectoryInfo($"{Paths.ModPath}\\{Paths.ModDirectoryName}")).GetDirectories();
             foreach (var modInfo in modDirectories)
             {
-                if (!_activeMods.Exists(mod => mod.ModDirectoryName.Equals(modInfo.Name)))
+                var modObject = new Mod(modInfo.Name);
+                ListViewItem listViewItem = new ListViewItem(modObject.ToString(), "")
                 {
-                    _inactiveMods.Add(new Mod(modInfo.Name));
+                    Tag = modObject
+                };
+                listViewItem.ToolTipText = modObject.GetToolTipText();
+                if (activeMods.Exists(mod => mod.ModDirectoryName.Equals(modInfo.Name)))
+                {
+                    activeModsListView.Items.Add(listViewItem);
+                }
+                else
+                {
+                    availableModsListView.Items.Add(listViewItem);
                 }
             }
-            _inactiveMods.Sort();
             _progressBarManipulator.Increment();
-
-            ChangeDataSource();
 
             _progressBarManipulator.Increment();
             _progressBarManipulator.Finish();
-        }
-
-        private void ChangeDataSource()
-        {
-            // Change the DataSource.
-            availableModsListBox.DataSource = null;
-            availableModsListBox.DataSource = _inactiveMods;
-            installedModsListBox.DataSource = null;
-            installedModsListBox.DataSource = _activeMods;
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -158,7 +168,20 @@ namespace DigglesModManager
 
         private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            //do nothing
+            if (!moddingServiceRunning)
+            {
+                var selectedItems = availableModsListView.SelectedItems;
+                if (selectedItems.Count > 0)
+                {
+                    var selectedMod = (selectedItems[0].Tag as Mod);
+                    //change content of description box
+                    descriptionBox.Text = selectedMod.GetDescription();
+                }
+                else
+                {
+                    descriptionBox.Text = "";
+                }
+            }
         }
 
         private void listBox2_SelectedIndexChanged(object sender, EventArgs e)
@@ -166,15 +189,23 @@ namespace DigglesModManager
             if (!moddingServiceRunning)
             {
                 //find settings file
-                int selectedIndex = installedModsListBox.SelectedIndex;
-                if (selectedIndex >= 0 && selectedIndex < _activeMods.Count)
+                var selectedItems = activeModsListView.SelectedItems;
+                if (selectedItems.Count > 0)
                 {
-                    var hasSettings = _activeMods.ElementAt(selectedIndex).Config.SettingsVariables != null
-                        && _activeMods.ElementAt(selectedIndex).Config.SettingsVariables.Count > 0;
+                    var selectedMod = (selectedItems[0].Tag as Mod);
+                    var hasSettings = selectedMod.Config.SettingsVariables != null
+                        && selectedMod.Config.SettingsVariables.Count > 0;
 
                     //set settings button enabled
                     modSettingsButton.Enabled = hasSettings;
                     modSettingsMenuButton.Enabled = hasSettings;
+
+                    //change content of description box
+                    descriptionBox.Text = selectedMod.GetDescription();
+                }
+                else
+                {
+                    descriptionBox.Text = "";
                 }
             }
         }
@@ -182,47 +213,46 @@ namespace DigglesModManager
         private void button_right_Click(object sender, EventArgs e)
         {
             ResetStatusNote();
-            var selectedIndex = availableModsListBox.SelectedIndex;
-            if (selectedIndex >= 0 && selectedIndex < _inactiveMods.Count)
+            var selectedItems = availableModsListView.SelectedItems;
+            if (selectedItems.Count > 0)
             {
-                _activeMods.Insert(0, _inactiveMods.ElementAt(selectedIndex)); //add element right at first position
-                _inactiveMods.RemoveAt(selectedIndex); //remove element left
-
-                ChangeDataSource();
+                var selectedItem = selectedItems[0];
+                availableModsListView.Items.Remove(selectedItem); //remove element from the left
+                activeModsListView.Items.Add(selectedItem); //add element on the right
             }
         }
 
         private void button_left_Click(object sender, EventArgs e)
         {
             ResetStatusNote();
-            var selectedIndex = installedModsListBox.SelectedIndex;
-            if (selectedIndex >= 0 && selectedIndex < _activeMods.Count)
+            var selectedItems = activeModsListView.SelectedItems;
+            if (selectedItems.Count > 0)
             {
-                _inactiveMods.Add(_activeMods.ElementAt(selectedIndex)); //add element left
-                _activeMods.RemoveAt(selectedIndex); //remove element right
-                _inactiveMods.Sort();
-
-                ChangeDataSource();
+                var selectedItem = selectedItems[0];
+                activeModsListView.Items.Remove(selectedItem); //remove element from the right
+                availableModsListView.Items.Add(selectedItem); //add element on the left
             }
         }
 
         private void button_up_Click(object sender, EventArgs e)
         {
             ResetStatusNote();
-            var selectedIndex = installedModsListBox.SelectedIndex;
-            if (selectedIndex > 0 && selectedIndex < _activeMods.Count)
+            var selectedItems = activeModsListView.SelectedItems;
+            if (selectedItems.Count > 0)
             {
-                MoveActiveModInList(selectedIndex, -1);
+                var selectedItem = selectedItems[0];
+                MoveActiveModInList(selectedItem, -1);
             }
         }
 
         private void button_down_Click(object sender, EventArgs e)
         {
             ResetStatusNote();
-            var selectedIndex = installedModsListBox.SelectedIndex;
-            if (selectedIndex >= 0 && selectedIndex < _activeMods.Count - 1)
+            var selectedItems = activeModsListView.SelectedItems;
+            if (selectedItems.Count > 0)
             {
-                MoveActiveModInList(selectedIndex, 1);
+                var selectedItem = selectedItems[0];
+                MoveActiveModInList(selectedItem, 1);
             }
         }
 
@@ -231,15 +261,15 @@ namespace DigglesModManager
         /// </summary>
         /// <param name="index">The to-be-moved item.</param>
         /// <param name="relativePosition">The distance and direction to let the item 'travel'. -1 is up, 2 is down (two steps)</param>
-        private void MoveActiveModInList(int index, int relativePosition)
+        private void MoveActiveModInList(ListViewItem item, int relativePosition)
         {
-            var mod = _activeMods.ElementAt(index); //get mod
-            _activeMods.RemoveAt(index); //remove mod
-            index += relativePosition;
-            _activeMods.Insert(index, mod); //add at new position
-
-            ChangeDataSource();
-            installedModsListBox.SetSelected(index, true);
+            var index = activeModsListView.Items.IndexOf(item);  //get index
+            var newPosition = index + relativePosition;
+            if (0 <= newPosition && newPosition < activeModsListView.Items.Count)
+            {
+                activeModsListView.Items.RemoveAt(index); //remove mod
+                activeModsListView.Items.Insert(newPosition, item); //add at new position
+            }
         }
 
         private void button_refresh_Click(object sender, EventArgs e)
@@ -248,8 +278,12 @@ namespace DigglesModManager
             ReadMods();
         }
 
-        private void setUIToModdingState(bool moddingState)
+        private bool setUIToModdingState(bool moddingState)
         {
+            if (InvokeRequired)
+            {
+                return (bool)Invoke((Func<bool, bool>)setUIToModdingState, moddingState);
+            }
             // set wait cursor
             Application.UseWaitCursor = moddingState;
 
@@ -275,22 +309,27 @@ namespace DigglesModManager
             // Lets Mod Buttons
             letsModButton.Enabled = buttonsEnabled;
             letsModMenuButton.Enabled = buttonsEnabled;
+            return true;
         }
+
 
         private void button_mod_Click(object sender, EventArgs e)
         {
             // set user interface into the modding state (disable buttons etc)
             setUIToModdingState(true);
             // Modding in second task to avoid UI freeze
+            var activeMods = new List<Mod>();
+            //get file count of all active mods
+            var fileCount = 0;
+            foreach (ListViewItem modItem in activeModsListView.Items)
+            {
+                var mod = modItem.Tag as Mod;
+                activeMods.Add(mod);
+                fileCount += mod.FileCount;
+            }
             Task.Factory.StartNew(() =>
             {
                 SetMessage(Resources.PleaseWait, Color.Black);
-                //get file count of all active mods
-                var fileCount = 0;
-                foreach (var mod in _activeMods)
-                {
-                    fileCount += mod.FileCount;
-                }
                 //reset progress bar to new file count
                 _progressBarManipulator.Reset(fileCount + 3);
                 _progressBarManipulator.Increment();
@@ -300,9 +339,9 @@ namespace DigglesModManager
 
                 var warning = false;
                 var error = false;
-                foreach (var mod in _activeMods)
+                foreach (var mod in activeMods)
                 {
-                    var returnValue = _moddingService.LetsMod(mod, mod.ModDirectoryInfo, new DirectoryInfo(Paths.ExePath), _activeMods, _progressBarManipulator);
+                    var returnValue = _moddingService.LetsMod(mod, mod.ModDirectoryInfo, new DirectoryInfo(Paths.ExePath), activeMods, _progressBarManipulator);
                     warning = warning || returnValue == ModdingService.WARNING_CODE;
                     error = error || returnValue == ModdingService.ERROR_CODE;
                     //cancel when error occured
@@ -312,7 +351,7 @@ namespace DigglesModManager
                     }
                 }
 
-                _moddingService.SaveActiveMods(_language, _activeMods);
+                _moddingService.SaveActiveMods(_language, activeMods);
                 _progressBarManipulator.Finish();
 
                 if (error)
@@ -341,11 +380,11 @@ namespace DigglesModManager
 
         private void button_mod_settings_Click(object sender, EventArgs e)
         {
-            var selectedIndex = installedModsListBox.SelectedIndex;
-            if (selectedIndex >= 0 && selectedIndex < _activeMods.Count)
+            var selectedItems = activeModsListView.SelectedItems;
+            if (selectedItems.Count > 0)
             {
-                var mod = _activeMods.ElementAt(selectedIndex); //get mod
-                var form = new FormModSettings(mod, _language);
+                var selectedMod = (selectedItems[0].Tag as Mod);
+                var form = new FormModSettings(selectedMod, _language);
                 form.ShowDialog(this); //'this' is necessary for relative aligning
             }
         }
@@ -360,9 +399,7 @@ namespace DigglesModManager
             setCheckOfLanguageInMenu(false);
             _language = language;
             setCheckOfLanguageInMenu(true);
-            //refresh view
-            _inactiveMods.Sort();
-            ChangeDataSource();
+            ReadMods();
         }
 
         private void deutschToolStripMenuItem_Click(object sender, EventArgs e)

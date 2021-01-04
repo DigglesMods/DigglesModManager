@@ -110,26 +110,48 @@ namespace DigglesModManager
         {
             return Config.Name.getString(FormMain._language);
         }
-        // Returns the tooltip text of this item.
+
+        // Returns the mod author.
+        private string GetAuthor()
+        {
+            if (!Author.Equals(""))
+            {
+                return Author;
+            }
+            else if (!string.IsNullOrEmpty(Config.Author))
+            {
+                return Config.Author;
+            }
+            return null;
+        }
+
+        // Returns the tooltip text of this mod.
         public string GetToolTipText()
         {
             var toolTip = ToolTipText;
             if (!string.IsNullOrWhiteSpace(Config.Description.getString(FormMain._language)))
+            {
                 toolTip = Config.Description.getString(FormMain._language);
-            if (!string.IsNullOrWhiteSpace(toolTip) && !string.IsNullOrWhiteSpace(Author))
-            {
-                toolTip += "\n";
             }
-            if (!Author.Equals(""))
-            {
-                toolTip += $" Author: {Author}";
-            }
-            else if (!string.IsNullOrEmpty(Config.Author))
-            {
-                toolTip += $" Author: {Config.Author}";
-            }
-
             return toolTip;
+        }
+
+        // Returns the description of this mod.
+        public string GetDescription()
+        {
+            var text = ToString();
+            if (!string.IsNullOrWhiteSpace(Config.Description.getString(FormMain._language)))
+            {
+                text += "\n\n";
+                text += Config.Description.getString(FormMain._language);
+            }
+            var author = GetAuthor();
+            if (!string.IsNullOrWhiteSpace(author))
+            {
+                text += "\n\n";
+                text += $"Author: {author}";
+            }
+            return text;
         }
 
         public override bool Equals(object obj)
