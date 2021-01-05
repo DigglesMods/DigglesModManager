@@ -90,9 +90,11 @@
     <Compile Include="Model\ModDirectoryType.cs" />
     <Compile Include="Model\ModDirectoryCondition.cs" />
     <Compile Include="Model\ModDirectoryConditionType.cs" />
+    <Compile Include="Model\ModMessage.cs" />
     <Compile Include="Model\ModLinks.cs" />
     <Compile Include="Model\ModTranslationString.cs" />
     <Compile Include="Model\ModSettingsVariable.cs" />
+    <Compile Include="Model\ModMessageType.cs" />
     <Compile Include="Model\ModVariableType.cs" />
     <Compile Include="Model\ModVariableValue.cs" />
     <Compile Include="Paths.cs" />

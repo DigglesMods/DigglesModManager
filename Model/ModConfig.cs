@@ -39,6 +39,12 @@ namespace DigglesModManager.Model
         public ModLinks Links { get; set; }
 
         /// <summary>
+        /// A list of messages, that are shown to the user to inform about specific mod behavior. (incompatibilities, ...)
+        /// </summary>
+        [JsonProperty(PropertyName = "messages")]
+        public List<ModMessage> Messages { get; set; } = new List<ModMessage>();
+
+        /// <summary>
         /// The variables of a mod which can be tuned by the user.
         /// </summary>
         [JsonProperty(PropertyName = "settings")]

@@ -99,10 +99,19 @@ namespace DigglesModManager
                     modSettingsVariable.Value = oldValue;
                 }
             }
-            catch (JsonReaderException ex)
+            catch (Exception ex)
             {
                 ShowErrorMessage($"Could not parse config-file of '{ModDirectoryName}'!\nError is {ex}");
             }
+        }
+
+        // Returns the mod messages.
+        public List<ModMessage> GetMessages()
+        {
+            var messages = new List<ModMessage>(Config.Messages);
+            //TODO add incompatibility warnings & errors
+            messages.Sort();
+            return messages;
         }
 
         // Returns the display text of this item.
@@ -125,15 +134,32 @@ namespace DigglesModManager
             return null;
         }
 
+        // Returns the mod messages as listed string with an initial \n.
+        private string GetMessagesString()
+        {
+            var result = "";
+            foreach (var message in GetMessages())
+            {
+                result += $"\n- {message.Type}: {message.Content.getString(FormMain._language)}";
+            }
+            return result;
+        }
+
         // Returns the tooltip text of this mod.
         public string GetToolTipText()
         {
-            var toolTip = ToolTipText;
+            var text = ToolTipText;
             if (!string.IsNullOrWhiteSpace(Config.Description.getString(FormMain._language)))
             {
-                toolTip = Config.Description.getString(FormMain._language);
+                text = Config.Description.getString(FormMain._language);
             }
-            return toolTip;
+            var messages = GetMessagesString();
+            if (!string.IsNullOrWhiteSpace(messages))
+            {
+                if (!string.IsNullOrWhiteSpace(text)) text += "\n\n";
+                text += $"Messages:{messages}";
+            }
+            return text;
         }
 
         // Returns the description of this mod.
@@ -144,6 +170,12 @@ namespace DigglesModManager
             {
                 text += "\n\n";
                 text += Config.Description.getString(FormMain._language);
+            }
+            var messages = GetMessagesString();
+            if (!string.IsNullOrWhiteSpace(messages))
+            {
+                text += "\n\n";
+                text += $"Messages:{messages}";
             }
             var author = GetAuthor();
             if (!string.IsNullOrWhiteSpace(author))

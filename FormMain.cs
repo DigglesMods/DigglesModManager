@@ -94,6 +94,39 @@ namespace DigglesModManager
         }
 
         /// <summary>
+        /// Updates the images of the mod lists.
+        /// </summary>
+        private void UpdateModImages()
+        {
+            foreach (var mod in availableModsListView.Items)
+            {
+                UpdateModImage(mod as ListViewItem);
+            }
+            foreach (var mod in activeModsListView.Items)
+            {
+                UpdateModImage(mod as ListViewItem);
+            }
+        }
+
+        /// <summary>
+        /// Updates the images of a mod list item.
+        /// </summary>
+        /// <param name="item">ListViewItem which should be updated.</param>
+        private void UpdateModImage(ListViewItem item)
+        {
+            var mod = item.Tag as Mod;
+            var messages = mod.GetMessages();
+            if (messages.Count > 0)
+            {
+                item.ImageKey = messages[0].Type.ToString();
+            }
+            else
+            {
+                item.ImageKey = "";
+            }
+        }
+
+        /// <summary>
         /// Sets the message of the status-bar at the bottom of the window.
         /// </summary>
         /// <param name="text">The text to be set.</param>
@@ -159,6 +192,8 @@ namespace DigglesModManager
 
             _progressBarManipulator.Increment();
             _progressBarManipulator.Finish();
+
+            UpdateModImages();
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -219,6 +254,7 @@ namespace DigglesModManager
                 var selectedItem = selectedItems[0];
                 availableModsListView.Items.Remove(selectedItem); //remove element from the left
                 activeModsListView.Items.Add(selectedItem); //add element on the right
+                UpdateModImages();
             }
         }
 
@@ -231,6 +267,7 @@ namespace DigglesModManager
                 var selectedItem = selectedItems[0];
                 activeModsListView.Items.Remove(selectedItem); //remove element from the right
                 availableModsListView.Items.Add(selectedItem); //add element on the left
+                UpdateModImages();
             }
         }
 
@@ -242,6 +279,7 @@ namespace DigglesModManager
             {
                 var selectedItem = selectedItems[0];
                 MoveActiveModInList(selectedItem, -1);
+                UpdateModImages();
             }
         }
 
@@ -253,6 +291,7 @@ namespace DigglesModManager
             {
                 var selectedItem = selectedItems[0];
                 MoveActiveModInList(selectedItem, 1);
+                UpdateModImages();
             }
         }
 
