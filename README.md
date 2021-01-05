@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/DigglesMods/DigglesModManager.svg?branch=master)](https://travis-ci.org/DigglesMods/DigglesModManager)
+[![Build Application](https://github.com/DigglesMods/DigglesModManager/workflows/Build%20Application/badge.svg)](https://github.com/DigglesMods/DigglesModManager/actions?query=workflow%3A%22Build+Application%22)
 [![Software License](https://img.shields.io/badge/license-GPL3-brightgreen.svg?style=flat-square)](LICENSE)
 
 # DigglesModManager
