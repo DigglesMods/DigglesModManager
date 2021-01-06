@@ -40,6 +40,7 @@ namespace DigglesModManager
             FormBorderStyle = FormBorderStyle.FixedSingle;
 
             //set language menu items for checking
+            languageMenuItems.Add("cz", cestinaToolStripMenuItem);
             languageMenuItems.Add("de", deutschToolStripMenuItem);
             languageMenuItems.Add("en", englishToolStripMenuItem);
             languageMenuItems.Add("es", espanolToolStripMenuItem);
@@ -439,6 +440,11 @@ namespace DigglesModManager
             _language = language;
             setCheckOfLanguageInMenu(true);
             ReadMods();
+        }
+
+        private void cestinaToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            changeLanguage("cz");
         }
 
         private void deutschToolStripMenuItem_Click(object sender, EventArgs e)

@@ -8,6 +8,12 @@ namespace DigglesModManager.Model
     public class ModTranslationString
     {
         /// <summary>
+        /// czech translation
+        /// </summary>
+        [JsonProperty(PropertyName = "cz", Required = Required.Default)]
+        public string cz { get; set; }
+
+        /// <summary>
         /// german translation
         /// </summary>
         [JsonProperty(PropertyName = "de", Required = Required.Default)]
@@ -68,9 +74,12 @@ namespace DigglesModManager.Model
         /// </summary>
         public string getString(string language)
         {
-            string str = null;
+            string str;
             switch (language)
             {
+                case "cz":
+                    str = cz;
+                    break;
                 case "de":
                     str = de;
                     break;

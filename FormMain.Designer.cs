@@ -55,6 +55,7 @@
             this.quitMenuButton = new System.Windows.Forms.ToolStripMenuItem();
             this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.languageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.cestinaToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.deutschToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.englishToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.espanolToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -343,6 +344,7 @@
             // languageToolStripMenuItem
             // 
             this.languageToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.cestinaToolStripMenuItem,
             this.deutschToolStripMenuItem,
             this.englishToolStripMenuItem,
             this.espanolToolStripMenuItem,
@@ -354,6 +356,13 @@
             this.languageToolStripMenuItem.Name = "languageToolStripMenuItem";
             this.languageToolStripMenuItem.Size = new System.Drawing.Size(144, 22);
             this.languageToolStripMenuItem.Text = "Language";
+            // 
+            // cestinaToolStripMenuItem
+            // 
+            this.cestinaToolStripMenuItem.Name = "cestinaToolStripMenuItem";
+            this.cestinaToolStripMenuItem.Size = new System.Drawing.Size(134, 22);
+            this.cestinaToolStripMenuItem.Text = "Čeština";
+            this.cestinaToolStripMenuItem.Click += new System.EventHandler(this.cestinaToolStripMenuItem_Click);
             // 
             // deutschToolStripMenuItem
             // 
@@ -553,6 +562,7 @@
         private System.Windows.Forms.ToolStripMenuItem wikiMenuButton;
         private System.Windows.Forms.ToolStripMenuItem websiteMenuButton;
         private System.Windows.Forms.ToolStripMenuItem languageToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem cestinaToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem deutschToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem englishToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem espanolToolStripMenuItem;
