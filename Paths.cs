@@ -1,4 +1,6 @@
-﻿namespace DigglesModManager
+﻿using System.IO;
+
+namespace DigglesModManager
 {
     /// <summary>
     /// Holds several constant file-paths and directory names.
@@ -20,5 +22,22 @@
 
         //log
         public static string ErrorLogFileName = "diggles-mod-manager-errors.log";
+
+        /// <summary>
+        /// Returns the complete path of the game executable.
+        /// If there is no game executable, null is returned.
+        /// </summary>
+        public static string GetPathOfExecutable()
+        {
+            foreach (var digglesExe in DigglesExecutableNames)
+            {
+                var path = $"{ExePath}\\{digglesExe}";
+                if (File.Exists(path))
+                {
+                    return path;
+                }
+            }
+            return null;
+        }
     }
 }

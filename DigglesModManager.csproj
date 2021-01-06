@@ -101,6 +101,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="ProgressBarManipulator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Service\BoyerMooreBinarySearch.cs" />
     <Compile Include="Service\ModdingService.cs" />
     <Compile Include="ToolTipListBox.cs">
       <SubType>Component</SubType>

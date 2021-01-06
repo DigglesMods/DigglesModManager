@@ -62,19 +62,8 @@ namespace DigglesModManager
             _moddingService = new ModdingService();
             _progressBarManipulator = new ProgressBarManipulator(this, modProgressStatusBar);
 
-            // check, if the exe is in the correct directory
-            var correctDirectory = false;
-            foreach (var digglesExe in Paths.DigglesExecutableNames)
-            {
-                if (File.Exists($"{Paths.ExePath}\\{digglesExe}"))
-                {
-                    correctDirectory = true;
-                    break;
-                }
-            }
-
             //Only start, when exe is in the correct directory
-            if (correctDirectory)
+            if (Paths.GetPathOfExecutable() != null)
             {
                 ResetStatusNote();
                 ReadMods();
@@ -351,6 +340,16 @@ namespace DigglesModManager
             return true;
         }
 
+        public string PrintByteArray(byte[] bytes)
+        {
+            var sb = new StringBuilder("new byte[] { ");
+            foreach (var b in bytes)
+            {
+                sb.Append(b + ", ");
+            }
+            sb.Append("}");
+            return sb.ToString();
+        }
 
         private void button_mod_Click(object sender, EventArgs e)
         {
@@ -389,6 +388,102 @@ namespace DigglesModManager
                         break;
                     }
                 }
+
+                ///////////////////////////////////////////////////////////////////////
+                ///
+                var path = Paths.GetPathOfExecutable();
+                if (path != null)
+                {
+                    try
+                    {
+                        var string1 = Encoding.ASCII.GetBytes("GetBlock");
+                        var search1 = new BoyerMooreBinarySearch(string1);
+                        var matches1 = search1.GetMatchIndexes(new FileInfo(path));
+                        var string2 = Encoding.ASCII.GetBytes("ground/Msk_%c%c%c%c01.tga");
+                        var search2 = new BoyerMooreBinarySearch(string2);
+                        var matches2 = search2.GetMatchIndexes(new FileInfo(path));
+                        var string3 = Encoding.ASCII.GetBytes("ground/Gnd_%c%c%c.tga");
+                        var search3 = new BoyerMooreBinarySearch(string3);
+                        var matches3 = search3.GetMatchIndexes(new FileInfo(path));
+
+
+                        var string4 = Encoding.ASCII.GetBytes("" + matches2[0]);
+                        var search4 = new BoyerMooreBinarySearch(string4);
+                        var matches4 = search4.GetMatchIndexes(new FileInfo(path));
+
+                        Helpers.ShowMessage($"{matches4.Count}", Resources.Error);
+
+                        /*
+                        using (var stream = File.Open(path, FileMode.Open))
+                        {
+                            var length1 = matches2[0] - matches1[1];
+                            var bytes1 = new byte[length1];
+                            stream.Position = matches1[1];
+                            stream.Read(bytes1, 0, (int)length1);
+
+
+                            var length2 = matches3[0] - matches2[0];
+                            var bytes2 = new byte[length2];
+                            stream.Position = matches2[0];
+                            stream.Read(bytes2, 0, (int)length2);
+
+
+
+                            Helpers.ShowMessage($"{PrintByteArray(string1)}\n{PrintByteArray(bytes1)}\n{PrintByteArray(string2)}\n{PrintByteArray(bytes2)}", Resources.Error);
+
+                            stream.Close();
+                        }
+
+                        /*
+                        var searchStart = new BoyerMooreBinarySearch(Encoding.ASCII.GetBytes("GetBlock"));
+                        var searchStart = new BoyerMooreBinarySearch(Encoding.ASCII.GetBytes("ground/Msk_%c%c%c%c01.tga"));
+                        var searchStart = new BoyerMooreBinarySearch(Encoding.ASCII.GetBytes("ground/Gnd_%c%c%c.tga"));
+                        var startMatches = searchStart.GetMatchIndexes(new FileInfo(path));
+                        var searchNumber = new BoyerMooreBinarySearch(BitConverter.GetBytes(0x00100000));
+                        var numberMatches = searchNumber.GetMatchIndexes(new FileInfo(path));
+
+                        if (startMatches.Count == 1 && numberMatches.Count > 0)
+                        {
+                            //find correct number
+                            var numberMatch = -1L;
+                            foreach (var match in numberMatches)
+                            {
+                                if (match > startMatches[0])
+                                {
+                                    numberMatch = match;
+                                    break;
+                                }
+                            }
+
+                            if (numberMatch >= 0)
+                            {
+                                Helpers.ShowMessage($"Gute Stelle gefunden: {numberMatch}", Resources.Error);
+                                using (var stream = File.Open(path, FileMode.Open))
+                                {
+                                    var data = BitConverter.GetBytes(0x00000100);
+                                    stream.Position = numberMatch;
+                                    stream.Write(data, 0, data.Length);
+                                    stream.Close();
+                                }
+                            }
+                            else
+                            {
+                                Helpers.ShowMessage($"Keine gute Stelle gefunden: {startMatches.Count}, {numberMatches.Count}", Resources.Error);
+                            }
+                        }
+                        else
+                        {
+                            Helpers.ShowMessage($"Stelle nicht gefunden: {startMatches.Count}, {numberMatches.Count}", Resources.Error);
+                        }
+                        */
+                    }
+                    catch (Exception ex)
+                    {
+                        Helpers.ShowMessage(ex.ToString(), Resources.Error);
+                    }
+                }
+                ///////////////////////////////////////////////////////////////////////
+
 
                 _moddingService.SaveActiveMods(_language, activeMods);
                 _progressBarManipulator.Finish();
