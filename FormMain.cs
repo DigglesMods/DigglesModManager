@@ -174,13 +174,19 @@ namespace DigglesModManager
             var modDirectories = (new DirectoryInfo($"{Paths.ModPath}\\{Paths.ModDirectoryName}")).GetDirectories();
             foreach (var modInfo in modDirectories)
             {
-                var modObject = new Mod(modInfo.Name);
+                var active = true;
+                var modObject = activeMods.Find(mod => mod.ModDirectoryName.Equals(modInfo.Name));
+                if (modObject == null)
+                {
+                    active = false;
+                    modObject = new Mod(modInfo.Name);
+                }
                 ListViewItem listViewItem = new ListViewItem(modObject.ToString(), "")
                 {
                     Tag = modObject
                 };
                 listViewItem.ToolTipText = modObject.GetToolTipText();
-                if (activeMods.Exists(mod => mod.ModDirectoryName.Equals(modInfo.Name)))
+                if (active)
                 {
                     activeModsListView.Items.Add(listViewItem);
                 }
