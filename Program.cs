@@ -13,6 +13,7 @@ namespace DigglesModManager
         public static void Main()
         {
             Application.EnableVisualStyles();
+            Application.SetHighDpiMode(HighDpiMode.SystemAware);
             Application.SetCompatibleTextRenderingDefault(false);
             try
             {

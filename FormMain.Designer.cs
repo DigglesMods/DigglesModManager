@@ -40,9 +40,9 @@
             this.mainPanel = new System.Windows.Forms.Panel();
             this.activeModsLabel = new System.Windows.Forms.Label();
             this.activeModsListView = new System.Windows.Forms.ListView();
-            this.header2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.header2 = new System.Windows.Forms.ColumnHeader();
             this.availableModsListView = new System.Windows.Forms.ListView();
-            this.header1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.header1 = new System.Windows.Forms.ColumnHeader();
             this.availableModsLabel = new System.Windows.Forms.Label();
             this.statusBar = new System.Windows.Forms.StatusStrip();
             this.statusBarLabelLeft = new System.Windows.Forms.ToolStripStatusLabel();
@@ -82,10 +82,11 @@
             // installModButton
             // 
             this.installModButton.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.installModButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.installModButton.Location = new System.Drawing.Point(256, 90);
+            this.installModButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.installModButton.Location = new System.Drawing.Point(299, 104);
+            this.installModButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.installModButton.Name = "installModButton";
-            this.installModButton.Size = new System.Drawing.Size(40, 32);
+            this.installModButton.Size = new System.Drawing.Size(47, 37);
             this.installModButton.TabIndex = 2;
             this.installModButton.Text = "▶";
             this.installModButton.UseVisualStyleBackColor = true;
@@ -94,10 +95,11 @@
             // uninstallModButton
             // 
             this.uninstallModButton.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.uninstallModButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.uninstallModButton.Location = new System.Drawing.Point(256, 128);
+            this.uninstallModButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.uninstallModButton.Location = new System.Drawing.Point(299, 148);
+            this.uninstallModButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.uninstallModButton.Name = "uninstallModButton";
-            this.uninstallModButton.Size = new System.Drawing.Size(40, 32);
+            this.uninstallModButton.Size = new System.Drawing.Size(47, 37);
             this.uninstallModButton.TabIndex = 3;
             this.uninstallModButton.Text = "◀";
             this.uninstallModButton.UseVisualStyleBackColor = true;
@@ -107,10 +109,11 @@
             // 
             this.letsModButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.letsModButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.letsModButton.Location = new System.Drawing.Point(604, 237);
+            this.letsModButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.letsModButton.Location = new System.Drawing.Point(705, 273);
+            this.letsModButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.letsModButton.Name = "letsModButton";
-            this.letsModButton.Size = new System.Drawing.Size(140, 40);
+            this.letsModButton.Size = new System.Drawing.Size(163, 46);
             this.letsModButton.TabIndex = 4;
             this.letsModButton.Text = "Let\'s Mod";
             this.letsModButton.UseVisualStyleBackColor = true;
@@ -119,11 +122,12 @@
             // refreshButton
             // 
             this.refreshButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.refreshButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 24F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.refreshButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 24F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.refreshButton.Image = ((System.Drawing.Image)(resources.GetObject("refreshButton.Image")));
-            this.refreshButton.Location = new System.Drawing.Point(256, 210);
+            this.refreshButton.Location = new System.Drawing.Point(299, 242);
+            this.refreshButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.refreshButton.Name = "refreshButton";
-            this.refreshButton.Size = new System.Drawing.Size(40, 40);
+            this.refreshButton.Size = new System.Drawing.Size(47, 46);
             this.refreshButton.TabIndex = 7;
             this.refreshButton.TextAlign = System.Drawing.ContentAlignment.TopLeft;
             this.refreshButton.UseVisualStyleBackColor = true;
@@ -132,11 +136,12 @@
             // moveUpButton
             // 
             this.moveUpButton.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.moveUpButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.moveUpButton.Location = new System.Drawing.Point(558, 90);
+            this.moveUpButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.moveUpButton.Location = new System.Drawing.Point(651, 104);
+            this.moveUpButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.moveUpButton.Name = "moveUpButton";
             this.moveUpButton.Padding = new System.Windows.Forms.Padding(2, 0, 0, 2);
-            this.moveUpButton.Size = new System.Drawing.Size(40, 32);
+            this.moveUpButton.Size = new System.Drawing.Size(47, 37);
             this.moveUpButton.TabIndex = 8;
             this.moveUpButton.Text = "▲";
             this.moveUpButton.UseVisualStyleBackColor = true;
@@ -145,11 +150,12 @@
             // moveDownButton
             // 
             this.moveDownButton.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.moveDownButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.moveDownButton.Location = new System.Drawing.Point(558, 128);
+            this.moveDownButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.moveDownButton.Location = new System.Drawing.Point(651, 148);
+            this.moveDownButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.moveDownButton.Name = "moveDownButton";
             this.moveDownButton.Padding = new System.Windows.Forms.Padding(2, 0, 0, 2);
-            this.moveDownButton.Size = new System.Drawing.Size(40, 32);
+            this.moveDownButton.Size = new System.Drawing.Size(47, 37);
             this.moveDownButton.TabIndex = 9;
             this.moveDownButton.Text = "▼";
             this.moveDownButton.UseVisualStyleBackColor = true;
@@ -160,11 +166,12 @@
             this.modSettingsButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.modSettingsButton.BackColor = System.Drawing.SystemColors.Control;
             this.modSettingsButton.Enabled = false;
-            this.modSettingsButton.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.modSettingsButton.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.modSettingsButton.Image = ((System.Drawing.Image)(resources.GetObject("modSettingsButton.Image")));
-            this.modSettingsButton.Location = new System.Drawing.Point(558, 210);
+            this.modSettingsButton.Location = new System.Drawing.Point(651, 242);
+            this.modSettingsButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.modSettingsButton.Name = "modSettingsButton";
-            this.modSettingsButton.Size = new System.Drawing.Size(40, 40);
+            this.modSettingsButton.Size = new System.Drawing.Size(47, 46);
             this.modSettingsButton.TabIndex = 11;
             this.modSettingsButton.UseVisualStyleBackColor = false;
             this.modSettingsButton.Click += new System.EventHandler(this.button_mod_settings_Click);
@@ -183,17 +190,19 @@
             this.mainPanel.Controls.Add(this.moveDownButton);
             this.mainPanel.Controls.Add(this.installModButton);
             this.mainPanel.Controls.Add(this.moveUpButton);
-            this.mainPanel.Location = new System.Drawing.Point(0, 27);
+            this.mainPanel.Location = new System.Drawing.Point(0, 31);
+            this.mainPanel.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.mainPanel.Name = "mainPanel";
-            this.mainPanel.Size = new System.Drawing.Size(598, 253);
+            this.mainPanel.Size = new System.Drawing.Size(698, 292);
             this.mainPanel.TabIndex = 12;
             // 
             // activeModsLabel
             // 
             this.activeModsLabel.AutoSize = true;
-            this.activeModsLabel.Location = new System.Drawing.Point(302, 4);
+            this.activeModsLabel.Location = new System.Drawing.Point(352, 5);
+            this.activeModsLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.activeModsLabel.Name = "activeModsLabel";
-            this.activeModsLabel.Size = new System.Drawing.Size(66, 13);
+            this.activeModsLabel.Size = new System.Drawing.Size(73, 15);
             this.activeModsLabel.TabIndex = 16;
             this.activeModsLabel.Text = "Active Mods";
             // 
@@ -205,12 +214,12 @@
             this.header2});
             this.activeModsListView.FullRowSelect = true;
             this.activeModsListView.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
-            this.activeModsListView.HideSelection = false;
-            this.activeModsListView.Location = new System.Drawing.Point(305, 21);
+            this.activeModsListView.Location = new System.Drawing.Point(356, 24);
+            this.activeModsListView.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.activeModsListView.MultiSelect = false;
             this.activeModsListView.Name = "activeModsListView";
             this.activeModsListView.ShowItemToolTips = true;
-            this.activeModsListView.Size = new System.Drawing.Size(247, 229);
+            this.activeModsListView.Size = new System.Drawing.Size(288, 264);
             this.activeModsListView.TabIndex = 15;
             this.activeModsListView.UseCompatibleStateImageBehavior = false;
             this.activeModsListView.View = System.Windows.Forms.View.Details;
@@ -229,13 +238,13 @@
             this.header1});
             this.availableModsListView.FullRowSelect = true;
             this.availableModsListView.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
-            this.availableModsListView.HideSelection = false;
-            this.availableModsListView.Location = new System.Drawing.Point(6, 21);
+            this.availableModsListView.Location = new System.Drawing.Point(7, 24);
+            this.availableModsListView.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.availableModsListView.MultiSelect = false;
             this.availableModsListView.Name = "availableModsListView";
             this.availableModsListView.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.availableModsListView.ShowItemToolTips = true;
-            this.availableModsListView.Size = new System.Drawing.Size(244, 229);
+            this.availableModsListView.Size = new System.Drawing.Size(284, 264);
             this.availableModsListView.Sorting = System.Windows.Forms.SortOrder.Ascending;
             this.availableModsListView.TabIndex = 14;
             this.availableModsListView.UseCompatibleStateImageBehavior = false;
@@ -250,9 +259,10 @@
             // availableModsLabel
             // 
             this.availableModsLabel.AutoSize = true;
-            this.availableModsLabel.Location = new System.Drawing.Point(3, 4);
+            this.availableModsLabel.Location = new System.Drawing.Point(4, 5);
+            this.availableModsLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.availableModsLabel.Name = "availableModsLabel";
-            this.availableModsLabel.Size = new System.Drawing.Size(79, 13);
+            this.availableModsLabel.Size = new System.Drawing.Size(88, 15);
             this.availableModsLabel.TabIndex = 12;
             this.availableModsLabel.Text = "Available Mods";
             // 
@@ -263,9 +273,10 @@
             this.statusBarLabelSpring1,
             this.statusBarLabelRight,
             this.modProgressStatusBar});
-            this.statusBar.Location = new System.Drawing.Point(0, 280);
+            this.statusBar.Location = new System.Drawing.Point(0, 324);
             this.statusBar.Name = "statusBar";
-            this.statusBar.Size = new System.Drawing.Size(749, 22);
+            this.statusBar.Padding = new System.Windows.Forms.Padding(1, 0, 16, 0);
+            this.statusBar.Size = new System.Drawing.Size(874, 24);
             this.statusBar.SizingGrip = false;
             this.statusBar.TabIndex = 14;
             this.statusBar.Text = "Hello!";
@@ -273,26 +284,26 @@
             // statusBarLabelLeft
             // 
             this.statusBarLabelLeft.Name = "statusBarLabelLeft";
-            this.statusBarLabelLeft.Size = new System.Drawing.Size(0, 17);
+            this.statusBarLabelLeft.Size = new System.Drawing.Size(0, 19);
             // 
             // statusBarLabelSpring1
             // 
             this.statusBarLabelSpring1.Name = "statusBarLabelSpring1";
-            this.statusBarLabelSpring1.Size = new System.Drawing.Size(562, 17);
+            this.statusBarLabelSpring1.Size = new System.Drawing.Size(693, 19);
             this.statusBarLabelSpring1.Spring = true;
             // 
             // statusBarLabelRight
             // 
             this.statusBarLabelRight.Margin = new System.Windows.Forms.Padding(0, 3, 10, 2);
             this.statusBarLabelRight.Name = "statusBarLabelRight";
-            this.statusBarLabelRight.Size = new System.Drawing.Size(0, 17);
+            this.statusBarLabelRight.Size = new System.Drawing.Size(0, 19);
             // 
             // modProgressStatusBar
             // 
             this.modProgressStatusBar.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
             this.modProgressStatusBar.Margin = new System.Windows.Forms.Padding(1, 3, -8, 3);
             this.modProgressStatusBar.Name = "modProgressStatusBar";
-            this.modProgressStatusBar.Size = new System.Drawing.Size(138, 16);
+            this.modProgressStatusBar.Size = new System.Drawing.Size(161, 18);
             this.modProgressStatusBar.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
             this.modProgressStatusBar.Value = 48;
             // 
@@ -304,7 +315,8 @@
             this.helpToolStripMenuItem});
             this.mainMenuStrip.Location = new System.Drawing.Point(0, 0);
             this.mainMenuStrip.Name = "mainMenuStrip";
-            this.mainMenuStrip.Size = new System.Drawing.Size(749, 24);
+            this.mainMenuStrip.Padding = new System.Windows.Forms.Padding(7, 2, 0, 2);
+            this.mainMenuStrip.Size = new System.Drawing.Size(874, 24);
             this.mainMenuStrip.TabIndex = 15;
             this.mainMenuStrip.Text = "menuStrip1";
             // 
@@ -489,27 +501,29 @@
             this.descriptionBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.descriptionBox.Location = new System.Drawing.Point(604, 48);
+            this.descriptionBox.Location = new System.Drawing.Point(705, 55);
+            this.descriptionBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.descriptionBox.Name = "descriptionBox";
             this.descriptionBox.ReadOnly = true;
-            this.descriptionBox.Size = new System.Drawing.Size(140, 183);
+            this.descriptionBox.Size = new System.Drawing.Size(163, 211);
             this.descriptionBox.TabIndex = 16;
             this.descriptionBox.Text = "";
             // 
             // descriptionLabel
             // 
             this.descriptionLabel.AutoSize = true;
-            this.descriptionLabel.Location = new System.Drawing.Point(601, 31);
+            this.descriptionLabel.Location = new System.Drawing.Point(701, 36);
+            this.descriptionLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.descriptionLabel.Name = "descriptionLabel";
-            this.descriptionLabel.Size = new System.Drawing.Size(84, 13);
+            this.descriptionLabel.Size = new System.Drawing.Size(95, 15);
             this.descriptionLabel.TabIndex = 17;
             this.descriptionLabel.Text = "Mod Description";
             // 
             // FormMain
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(749, 302);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+            this.ClientSize = new System.Drawing.Size(874, 348);
             this.Controls.Add(this.descriptionLabel);
             this.Controls.Add(this.descriptionBox);
             this.Controls.Add(this.statusBar);
@@ -518,7 +532,8 @@
             this.Controls.Add(this.mainPanel);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.mainMenuStrip;
-            this.MinimumSize = new System.Drawing.Size(765, 341);
+            this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.MinimumSize = new System.Drawing.Size(890, 387);
             this.Name = "FormMain";
             this.Text = "DigglesModManager";
             this.Load += new System.EventHandler(this.Form1_Load);
