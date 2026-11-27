@@ -1,0 +1,78 @@
+# Publishes a release when a tag "v*" (e.g. v1.4.0) is pushed, like the release workflow of the mods:
+# builds the release package (DevTools/build-release.sh) and uses the section of the version in CHANGELOG.md as description.
+# Started manually ("Run workflow") or for a pull request, it only builds the package and uploads it as artifact.
+
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+  # test the release process (without publishing) when it is changed
+  pull_request:
+    paths:
+      - ".github/workflows/release.yml"
+      - "DevTools/**"
+      - "CHANGELOG.md"
+
+jobs:
+  release:
+    name: Release
+    runs-on: windows-latest
+    permissions:
+      contents: write
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '10.0.x'
+
+    - name: Get version
+      id: version
+      shell: bash
+      run: |
+        version=v$(tr -d '\r' < Properties/AssemblyInfo.cs | sed -nre 's/^\[assembly: AssemblyVersion\("(.*)\.\*"\)\]/\1/p')
+        echo "version=$version" >> "$GITHUB_OUTPUT"
+        if [[ "$GITHUB_REF" == refs/tags/* && "$GITHUB_REF_NAME" != "$version" ]]; then
+          echo "::error::The tag $GITHUB_REF_NAME does not match the version $version in Properties/AssemblyInfo.cs"
+          exit 1
+        fi
+
+    - name: Build release package
+      shell: bash
+      run: DevTools/build-release.sh
+
+    - name: Release notes
+      shell: bash
+      run: |
+        DevTools/changelog-section.sh "${{ steps.version.outputs.version }}" > bin/release-package/notes.md
+        if ! grep -q '[^[:space:]]' bin/release-package/notes.md; then
+          echo "::error::CHANGELOG.md has no section for ${{ steps.version.outputs.version }}"
+          exit 1
+        fi
+        echo "" >> bin/release-package/notes.md
+        cat bin/release-package/included-mods.md >> bin/release-package/notes.md
+        cat bin/release-package/notes.md
+
+    - name: Upload package
+      uses: actions/upload-artifact@v4
+      with:
+        name: DigglesModManager-release
+        path: |
+          bin/release-package/*.zip
+          bin/release-package/notes.md
+
+    - name: Create release
+      if: startsWith(github.ref, 'refs/tags/')
+      uses: softprops/action-gh-release@v2
+      with:
+        tag_name: ${{ github.ref_name }}
+        name: DigglesModManager ${{ github.ref_name }}
+        body_path: bin/release-package/notes.md
+        files: bin/release-package/DigglesModManager-*.zip
+        draft: false
+        prerelease: false

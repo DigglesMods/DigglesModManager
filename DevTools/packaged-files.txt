@@ -1,1 +1,1 @@
-DigglesModManager.exe,LICENSE,README.md
+DigglesModManager.exe,LICENSE,README.md,CHANGELOG.md

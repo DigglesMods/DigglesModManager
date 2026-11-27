@@ -9,7 +9,7 @@ Run the given scripts with `./script.sh`. Some scripts may be executed from a pr
 
 ## mod-names.txt
 A comma-separated list of all mod-repositories existing on github. At the moment it has to be edited manually. This text file is used
-by `clone-all-mods.sh`, `get-all-statuses.sh` and `release.sh` at the moment.
+by `clone-all-mods.sh`, `get-all-statuses.sh` and `build-release.sh` at the moment.
 
 The file must only contain the comma-separated names (no comments, no line breaks).
 
@@ -17,7 +17,7 @@ Before a release, make sure that all listed mods are at their latest version (th
 
 ## packaged-files.txt
 A comma-separated list of all files which have to be packaged inside a `DigglesModManager-VERSION.zip`. Since version 1.4 this is only the self-contained `DigglesModManager.exe` (no dlls) plus LICENSE and README.md.
-This text file is used by `release.sh` to build a release-package properly.
+This text file is used by `build-release.sh` to build a release-package properly.
 
 ## clone-all-mods.sh
 Clones all Mod-Repositories from github to your computer. The source for the repo-names is `mod-names.txt`.
@@ -54,61 +54,33 @@ nothing to commit, working directory clean
 nothing to commit, working directory clean
 ```
 
-## release.sh
-This script automates the release-process to make it less error-prone.
+## Release
+Releases are created by the GitHub workflow `.github/workflows/release.yml`, like the releases of the mods:
+pushing a tag `vX.Y.Z` builds the release package and publishes it as GitHub release. The description of the
+release is the section of the version in `CHANGELOG.md`, followed by the list of the included mods and their versions.
 
-### Usage
+### Release steps
+1. Make sure all mods of `mod-names.txt` are released in the version that should be part of the package (the package
+   contains the current default branch of each mod).
+2. Set the version in `Properties/AssemblyInfo.cs`: `[assembly: AssemblyVersion("1.4.0.*")]` (the `*` is replaced by
+   the compiler).
+3. Update `CHANGELOG.md`: the section `## [v1.4.0] - YYYY-MM-DD` contains all changes of this version.
+4. Optional: test the package with "Run workflow" of the workflow "Release" on GitHub (Actions). This only builds the
+   package and uploads it as artifact, nothing is published.
+5. Commit and push the changes, then create and push the tag:
+   ```bash
+   git tag v1.4.0
+   git push origin v1.4.0
+   ```
+   The workflow fails if the tag does not match the version in `Properties/AssemblyInfo.cs` or if `CHANGELOG.md` has
+   no section for the version.
+6. Add a new section for the next version to `CHANGELOG.md` when the next changes are made.
 
-1. Install the .NET 10 SDK. The script asks to build the release exe with `dotnet publish DigglesModManager.csproj -p:PublishProfile=SelfContained` (output: `bin/publish/self-contained`).
-2. Make sure there is a file `github.token` in the same directory as `release.sh`. It must contain a valid github-token for your account. This token is used to make the new release-package public on github. (https://help.github.com/articles/creating-an-access-token-for-command-line-use/)
-2. Use a linux-bash.
-3. Navigate to project-root of DigglesModManager. (cd XY)
-4. Execute release.sh. (Usually with `DevTools/release.sh`)
-5. Press y,Enter if asked for. Provide a valid next version, if asked for. e.g. Release 1.0 -> Next version 1.1, Release 2.9 -> Next version 2.10
+## build-release.sh
+Builds the release package `bin/release-package/DigglesModManager-<version>.zip` (used by the release workflow):
+the self-contained `DigglesModManager.exe` (`dotnet publish -p:PublishProfile=SelfContained`), the files of
+`packaged-files.txt` and the directory `Mods` with all mods of `mod-names.txt` (cloned from GitHub, without `.git` and
+`.github`). It can also be run locally with Git Bash and the .NET 10 SDK: `DevTools/build-release.sh`
 
-### Troubleshooting
-
- - To reset the working files, completely delete the bin/publish folder and publish again (#1.)
- - The file `github.token` must not contain any other letters or line breaks except the one line with the github-token.
- - Any files which are read by `release.sh` must not contain only one line with comma-separated and trimmed strings.
- - You can revert the relese by visiting https://github.com/DigglesMods/DigglesModManager/releases, clicking the wrong release and click 'Delete'
-
-### Dependencies
-The release-script uses 7zip and github-release to automate all necessary release steps. 7zip is used to pack several files to a zip-archive. github-release(.exe) is used to automatically provide a new release on github using the commandline.
-
-#### 7zip
-Used command:
-`DevTools/7zip/7za.exe a $ZIPFILE $NECESSARY_FILES... Mods`
-
-#### github-release
-Used command:
-`DevTools/github-release/github-release.exe DigglesMods/DigglesModManager DigglesModManager-v$VERSION master "$DESCRIPTION" $ZIPFILE`
-
-### Release-Steps
-
-What is the release-script doing?
-
-1. Gather all Mods.
-  - If the mods are checked out using git, make sure the .git-directories are deleted.
-2. Gather all necessary binaries.
-3. Zip a folder with the following files and name it DigglesModManager-VERSION.zip
-  - Mods
-    - ..
-  - DigglesModManager.exe
-  - LICENSE, README.md
-4. Adjust the version in Properties/AssemblyInfo.cs. The version consists of three numbers: `[assembly: AssemblyVersion("major.minor.patch.*")]` The `*` is a .NET-constant which functions as a placeholder for the revision. It is generated automatically by the compiler. Version 1.4.0 would look like this: `[assembly: AssemblyVersion("1.4.0.*")]`
-5. Commit version change to version-control:
-  ```bash
- git add Properties/AssemblyInfo.cs
- git commit -m "release version x.y and stepped up to x.(y+1)" #REPLACE VERSION
- git pull
- git push
-  ```
-6. Release zip-package in github.
-  - https://github.com/DigglesMods/DigglesModManager/releases/new
-  - Describe the release-changes
-  - Give it a title like 'DigglesModManager v1.0'
-  - Don't forget to provide the zip-file!
-
-
-
+## changelog-section.sh
+Prints the section of a version from `CHANGELOG.md`: `DevTools/changelog-section.sh v1.4.0`

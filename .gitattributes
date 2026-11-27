@@ -61,3 +61,6 @@
 #*.PDF   diff=astextplain
 #*.rtf   diff=astextplain
 #*.RTF   diff=astextplain
+
+# shell scripts are run with bash, also on Windows (GitHub runner)
+*.sh text eol=lf
