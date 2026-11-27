@@ -161,33 +161,20 @@ namespace DigglesModManager
 
             //read mods
             var configErrors = new List<string>();
+            //active mods in the saved order (it is the order in which the mods are applied)
+            foreach (var modObject in activeMods)
+            {
+                activeModsListView.Items.Add(CreateModListViewItem(modObject, configErrors));
+            }
+            //all other mods are available
             var modDirectories = (new DirectoryInfo($"{Paths.ModPath}\\{Paths.ModDirectoryName}")).GetDirectories();
             foreach (var modInfo in modDirectories)
             {
-                var active = true;
-                var modObject = activeMods.Find(mod => mod.ModDirectoryName.Equals(modInfo.Name));
-                if (modObject == null)
+                if (activeMods.Exists(mod => mod.ModDirectoryName.Equals(modInfo.Name)))
                 {
-                    active = false;
-                    modObject = new Mod(modInfo.Name);
+                    continue;
                 }
-                if (modObject.ConfigError != null)
-                {
-                    configErrors.Add(modObject.ConfigError);
-                }
-                ListViewItem listViewItem = new ListViewItem(modObject.GetName(_language), "")
-                {
-                    Tag = modObject
-                };
-                listViewItem.ToolTipText = modObject.GetToolTipText(_language);
-                if (active)
-                {
-                    activeModsListView.Items.Add(listViewItem);
-                }
-                else
-                {
-                    availableModsListView.Items.Add(listViewItem);
-                }
+                availableModsListView.Items.Add(CreateModListViewItem(new Mod(modInfo.Name), configErrors));
             }
             _progressBarManipulator.Increment();
 
@@ -200,6 +187,19 @@ namespace DigglesModManager
             {
                 Helpers.ShowErrorMessage(configError);
             }
+        }
+
+        private ListViewItem CreateModListViewItem(Mod modObject, List<string> configErrors)
+        {
+            if (modObject.ConfigError != null)
+            {
+                configErrors.Add(modObject.ConfigError);
+            }
+            return new ListViewItem(modObject.GetName(_language), "")
+            {
+                Tag = modObject,
+                ToolTipText = modObject.GetToolTipText(_language)
+            };
         }
 
         private void Form1_Load(object sender, EventArgs e)
