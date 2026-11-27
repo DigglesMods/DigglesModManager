@@ -24,7 +24,6 @@ releaseRepository=$organization/DigglesModManager
 projectRoot=$(pwd)
 
 #all currently available mods (read from mod-names.txt)
-#TODO add RevisedPlanner to mod-names.txt as soon as its conflicts with BugFix are resolved
 IFS=$',' read -d '' -r -a repoNames < $scriptLocation/mod-names.txt
 
 #read all necessary files from packaged-files.txt

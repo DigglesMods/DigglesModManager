@@ -13,8 +13,7 @@ by `clone-all-mods.sh`, `get-all-statuses.sh` and `release.sh` at the moment.
 
 The file must only contain the comma-separated names (no comments, no line breaks).
 
-**TODO:** Add `RevisedPlanner` as soon as its conflicts with the BugFix mod are resolved. Before a release, make sure that
-all listed mods are at their latest version (the release script clones the current default branch of each mod).
+Before a release, make sure that all listed mods are at their latest version (the release script clones the current default branch of each mod).
 
 ## packaged-files.txt
 A comma-separated list of all files which have to be packaged inside a `DigglesModManager-VERSION.zip`. Since version 1.4 this is only the self-contained `DigglesModManager.exe` (no dlls) plus LICENSE and README.md.
