@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
 namespace DigglesModManager.Model
 {
@@ -10,56 +10,64 @@ namespace DigglesModManager.Model
         /// <summary>
         /// czech translation
         /// </summary>
-        [JsonProperty(PropertyName = "cz", Required = Required.Default)]
+        [JsonPropertyName("cz")]
         public string cz { get; set; }
 
         /// <summary>
         /// german translation
         /// </summary>
-        [JsonProperty(PropertyName = "de", Required = Required.Default)]
+        [JsonPropertyName("de")]
         public string de { get; set; }
 
         /// <summary>
         /// english translation [REQUIRED]
         /// </summary>
-        [JsonProperty(PropertyName = "en", Required = Required.Always)]
+        [JsonPropertyName("en"), JsonRequired]
         public string en { get; set; }
 
         /// <summary>
         /// spanish translation
         /// </summary>
-        [JsonProperty(PropertyName = "es", Required = Required.Default)]
+        [JsonPropertyName("es")]
         public string es { get; set; }
 
         /// <summary>
         /// french translation
         /// </summary>
-        [JsonProperty(PropertyName = "fr", Required = Required.Default)]
+        [JsonPropertyName("fr")]
         public string fr { get; set; }
 
         /// <summary>
         /// italian translation
         /// </summary>
-        [JsonProperty(PropertyName = "it", Required = Required.Default)]
+        [JsonPropertyName("it")]
         public string it { get; set; }
 
         /// <summary>
         /// dutch translation
         /// </summary>
-        [JsonProperty(PropertyName = "nl", Required = Required.Default)]
+        [JsonPropertyName("nl")]
         public string nl { get; set; }
 
         /// <summary>
         /// polish translation
         /// </summary>
-        [JsonProperty(PropertyName = "pl", Required = Required.Default)]
+        [JsonPropertyName("pl")]
         public string pl { get; set; }
 
         /// <summary>
         /// russian translation
         /// </summary>
-        [JsonProperty(PropertyName = "ru", Required = Required.Default)]
+        [JsonPropertyName("ru")]
         public string ru { get; set; }
+
+        /// <summary>
+        /// Constructor used for JSON deserialization
+        /// </summary>
+        [JsonConstructor]
+        public ModTranslationString()
+        {
+        }
 
         /// <summary>
         /// Constructor with intial englisch string

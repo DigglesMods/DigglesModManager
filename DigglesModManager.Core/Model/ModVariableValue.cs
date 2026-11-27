@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
 namespace DigglesModManager.Model
 {
@@ -8,7 +8,7 @@ namespace DigglesModManager.Model
         /// <summary>
         /// The value that is used for modding. [REQUIRED]
         /// </summary>
-        [JsonProperty(PropertyName = "value", Required = Required.Always)]
+        [JsonPropertyName("value"), JsonRequired]
         public object Value { get; set; }
 
         public string Name(string language)
@@ -19,7 +19,7 @@ namespace DigglesModManager.Model
         /// <summary>
         /// The human readanle name of the value. [REQUIRED]
         /// </summary>
-        [JsonProperty(PropertyName = "name", Required = Required.Always)]
+        [JsonPropertyName("name"), JsonRequired, JsonInclude]
         private ModTranslationString NameTranslation { get; set; }
 
     }

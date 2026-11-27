@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
 namespace DigglesModManager.Model
 {
@@ -10,13 +10,13 @@ namespace DigglesModManager.Model
         /// <summary>
         /// download link
         /// </summary>
-        [JsonProperty(PropertyName = "download", Required = Required.Default)]
+        [JsonPropertyName("download")]
         public string Download { get; set; }
 
         /// <summary>
         /// wiki link
         /// </summary>
-        [JsonProperty(PropertyName = "wiki", Required = Required.Default)]
+        [JsonPropertyName("wiki")]
         public string Wiki { get; set; }
     }
 }

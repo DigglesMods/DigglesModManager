@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Runtime.Versioning;
 
 // Allgemeine Informationen über eine Assembly werden über die folgenden 
 // Attribute gesteuert. Ändern Sie diese Attributwerte, um die Informationen zu ändern,
@@ -18,6 +19,9 @@ using System.Runtime.InteropServices;
 // COM zugreifen müssen, legen Sie das ComVisible-Attribut für diesen Typ auf "true" fest.
 [assembly: ComVisible(false)]
 
+// GenerateAssemblyInfo is false, so the target platform has to be declared here (Windows Forms is Windows only).
+[assembly: SupportedOSPlatform("windows")]
+
 // Die folgende GUID bestimmt die ID der Typbibliothek, wenn dieses Projekt für COM verfügbar gemacht wird
 [assembly: Guid("94926cc8-6db8-4ae8-af2b-8341156b5d2b")]
 
@@ -30,4 +34,4 @@ using System.Runtime.InteropServices;
 //
 // Sie können alle Werte angeben oder die standardmäßigen Build- und Revisionsnummern 
 // übernehmen, indem Sie "*" eingeben.
-[assembly: AssemblyVersion("1.3.1.*")]
+[assembly: AssemblyVersion("1.4.0.*")]

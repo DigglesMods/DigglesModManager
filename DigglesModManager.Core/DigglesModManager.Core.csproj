@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!--
+    Patch logic of the DigglesModManager without any UI (WinForms) dependency.
+    It can be used by other front ends (e.g. a command line tool) later on.
+  -->
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <RootNamespace>DigglesModManager</RootNamespace>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <IsTrimmable>false</IsTrimmable>
+    <!-- no separate .pdb next to the single file exe -->
+    <DebugType>embedded</DebugType>
+  </PropertyGroup>
+</Project>

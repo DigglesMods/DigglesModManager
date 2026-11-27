@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 using System;
 
 namespace DigglesModManager.Model
@@ -11,13 +11,13 @@ namespace DigglesModManager.Model
         /// <summary>
         /// type
         /// </summary>
-        [JsonProperty(PropertyName = "type", Required = Required.Default)]
+        [JsonPropertyName("type")]
         public ModMessageType Type { get; set; } = ModMessageType.Info;
 
         /// <summary>
         /// content
         /// </summary>
-        [JsonProperty(PropertyName = "content", Required = Required.Always)]
+        [JsonPropertyName("content"), JsonRequired]
         public ModTranslationString Content { get; set; }
 
         public int CompareTo(object obj)

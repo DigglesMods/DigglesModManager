@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 using System.Collections.Generic;
 using System.ComponentModel;
 
@@ -9,14 +9,14 @@ namespace DigglesModManager.Model
         /// <summary>
         /// The type of the directory condition. [REQUIRED]
         /// </summary>
-        [JsonProperty(PropertyName = "type", Required = Required.Always)]
+        [JsonPropertyName("type"), JsonRequired]
         public ModDirectoryConditionType Type { get; set; }
 
         /// <summary>
         /// ID of the variable or mod that has to be checked. [REQUIRED]
         /// (Type Mod: mod directory name; Type Variable: mod variable id)
         /// </summary>
-        [JsonProperty(PropertyName = "id", Required = Required.Always)]
+        [JsonPropertyName("id"), JsonRequired]
         public string Id { get; set; }
 
         /// <summary>
@@ -24,7 +24,7 @@ namespace DigglesModManager.Model
         /// (required for type "variable")
         /// </summary>
         [DefaultValue(null)]
-        [JsonProperty(PropertyName = "value", Required = Required.Default, DefaultValueHandling = DefaultValueHandling.Populate)]
+        [JsonPropertyName("value")]
         public object Value { get; set; }
 
         public bool IsTrue(Mod mod, List<Mod> activeMods)
