@@ -11,8 +11,13 @@ Run the given scripts with `./script.sh`. Some scripts may be executed from a pr
 A comma-separated list of all mod-repositories existing on github. At the moment it has to be edited manually. This text file is used
 by `clone-all-mods.sh`, `get-all-statuses.sh` and `release.sh` at the moment.
 
+The file must only contain the comma-separated names (no comments, no line breaks).
+
+**TODO:** Add `RevisedPlanner` as soon as its conflicts with the BugFix mod are resolved. Before a release, make sure that
+all listed mods are at their latest version (the release script clones the current default branch of each mod).
+
 ## packaged-files.txt
-A comma-separated list of all files which have to be packaged inside a `DigglesModManager-VERSION.zip`. This includes the binaries, .exe-files, dlls and so on.
+A comma-separated list of all files which have to be packaged inside a `DigglesModManager-VERSION.zip`. Since version 1.4 this is only the self-contained `DigglesModManager.exe` (no dlls) plus LICENSE and README.md.
 This text file is used by `release.sh` to build a release-package properly.
 
 ## clone-all-mods.sh
@@ -55,7 +60,7 @@ This script automates the release-process to make it less error-prone.
 
 ### Usage
 
-1. Build the DigglesModProject using Visual Studio in Release-mode (Solution configuration).
+1. Install the .NET 10 SDK. The script asks to build the release exe with `dotnet publish DigglesModManager.csproj -p:PublishProfile=SelfContained` (output: `bin/publish/self-contained`).
 2. Make sure there is a file `github.token` in the same directory as `release.sh`. It must contain a valid github-token for your account. This token is used to make the new release-package public on github. (https://help.github.com/articles/creating-an-access-token-for-command-line-use/)
 2. Use a linux-bash.
 3. Navigate to project-root of DigglesModManager. (cd XY)
@@ -64,7 +69,7 @@ This script automates the release-process to make it less error-prone.
 
 ### Troubleshooting
 
- - To reset the working files, completely delete the bin/Release folder and rebuild using Visual Studio (#1.)
+ - To reset the working files, completely delete the bin/publish folder and publish again (#1.)
  - The file `github.token` must not contain any other letters or line breaks except the one line with the github-token.
  - Any files which are read by `release.sh` must not contain only one line with comma-separated and trimmed strings.
  - You can revert the relese by visiting https://github.com/DigglesMods/DigglesModManager/releases, clicking the wrong release and click 'Delete'
@@ -91,8 +96,8 @@ What is the release-script doing?
   - Mods
     - ..
   - DigglesModManager.exe
-  - \*.dll..
-4. Adjust the version in Properties/AssemblyInfo.cs. The version consists of two numbers: The major and minor version: `[assembly: AssemblyVersion("major.minor.*")]` The `*` is a .NET-constant which functions as a placeholder for the build-number. The build-number is generated automatically by Visual Studio. Version 1.0 would look like this: `[assembly: AssemblyVersion("1.0.*")]`
+  - LICENSE, README.md
+4. Adjust the version in Properties/AssemblyInfo.cs. The version consists of three numbers: `[assembly: AssemblyVersion("major.minor.patch.*")]` The `*` is a .NET-constant which functions as a placeholder for the revision. It is generated automatically by the compiler. Version 1.4.0 would look like this: `[assembly: AssemblyVersion("1.4.0.*")]`
 5. Commit version change to version-control:
   ```bash
  git add Properties/AssemblyInfo.cs

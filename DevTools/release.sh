@@ -20,7 +20,11 @@ organization=DigglesMods
 #the github-repo to publish the release in
 releaseRepository=$organization/DigglesModManager
 
+#the project root (the script has to be called from there: DevTools/release.sh)
+projectRoot=$(pwd)
+
 #all currently available mods (read from mod-names.txt)
+#TODO add RevisedPlanner to mod-names.txt as soon as its conflicts with BugFix are resolved
 IFS=$',' read -d '' -r -a repoNames < $scriptLocation/mod-names.txt
 
 #read all necessary files from packaged-files.txt
@@ -29,9 +33,20 @@ IFS=$',' read -d '' -r -a necessaryFiles < $scriptLocation/packaged-files.txt
 read -p "Release version $version of DigglesModManager? (y/n) " -r
 if [[ $REPLY =~ ^[Yy]$ ]]
 then
-	workDir=$(pwd)/bin/Release
-	
-	echo "Please build the project with Release-Profile before continuing. There have to be several necessary files in $workDir. These include:"
+	#output directory of the publish profile Properties/PublishProfiles/SelfContained.pubxml
+	workDir=$projectRoot/bin/publish/self-contained
+
+	read -p "Build the self-contained release exe now with 'dotnet publish'? (y/n) " -r
+	if [[ $REPLY =~ ^[Yy]$ ]]
+	then
+		rm -rf "$workDir"
+		if ! dotnet publish "$projectRoot/DigglesModManager.csproj" -p:PublishProfile=SelfContained; then
+			echo "dotnet publish failed! Aborting.."
+			exit 1
+		fi
+	fi
+
+	echo "There have to be several necessary files in $workDir (dotnet publish DigglesModManager.csproj -p:PublishProfile=SelfContained). These include:"
 	for file in "${necessaryFiles[@]}"
 	do
 		echo "$workDir/$file"
@@ -46,8 +61,8 @@ then
 	then
 		echo "Copying..."
 		
-		cp LICENSE bin/Release/LICENSE
-		cp README.md bin/Release/README.md
+		cp LICENSE "$workDir/LICENSE"
+		cp README.md "$workDir/README.md"
 	
 		echo "Validating..."
 		
@@ -95,7 +110,8 @@ then
 		do
 			#skip if directory exists
 			cd $repo
-			rm -rf ".git"
+			#.github would be copied into the game directory by the mod manager
+			rm -rf ".git" ".github"
 			cd ..
 		done
 		
@@ -115,14 +131,14 @@ then
 		#TODO remove $modDir even if script crashes
 		echo "Removed mod directories."
 		
-		cd ../..
-				
+		cd "$projectRoot"
+
 		read -p "Adjust version number (current is $version)? (y/n) " -r
 		if [[ $REPLY =~ ^[Yy]$ ]]
 		then
-			proposal=$(echo $version | grep -o "[0-9]*$") #major
-			proposal=$(echo $version | grep -o "^[0-9]*").$(($proposal+1)) #major.(minor+1)
-			read -p "New version [x.y] Version '$proposal' is proposed: " -r
+			#increment the last part of the version (1.4.0 -> 1.4.1, 1.4 -> 1.5)
+			proposal="${version%.*}.$(( ${version##*.} + 1 ))"
+			read -p "New version [x.y.z] Version '$proposal' is proposed: " -r
 			if [ -z "$REPLY" ]; then
 				newVersion=$proposal
 			else

@@ -1,21 +1,40 @@
 name: Build Application
- 
-on: [push]
- 
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
 jobs:
   build:
- 
     runs-on: windows-latest
- 
+
     steps:
-    - uses: actions/checkout@v2
-      name: Checkout Code
-     
-    - name: setup-msbuild
-      uses: microsoft/setup-msbuild@v1
-     
-    - name: Restore NuGet Packages
-      run: nuget restore DigglesModManager.sln
- 
-    - name: Build the Application
-      run: msbuild DigglesModManager.sln
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '10.0.x'
+
+    - name: Build
+      run: dotnet build DigglesModManager.sln -c Release
+
+    - name: Publish (self-contained single file)
+      run: dotnet publish DigglesModManager.csproj -p:PublishProfile=SelfContained
+
+    - name: Publish (framework-dependent single file)
+      run: dotnet publish DigglesModManager.csproj -p:PublishProfile=FrameworkDependent
+
+    - name: Upload self-contained build
+      uses: actions/upload-artifact@v4
+      with:
+        name: DigglesModManager-self-contained
+        path: bin/publish/self-contained/
+
+    - name: Upload framework-dependent build
+      uses: actions/upload-artifact@v4
+      with:
+        name: DigglesModManager-framework-dependent
+        path: bin/publish/framework-dependent/
