@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -20,6 +21,11 @@ namespace DigglesModManager
         private readonly ModdingService _moddingService;
 
         private readonly ProgressBarManipulator _progressBarManipulator;
+
+        /// <summary>
+        /// All installed mods (active and available).
+        /// </summary>
+        private List<Mod> _installedMods = new List<Mod>();
 
         public FormMain()
         {
@@ -159,22 +165,31 @@ namespace DigglesModManager
 
             _moddingService.ReadModsFromFiles(activeMods, _progressBarManipulator);
 
-            //read mods
-            var configErrors = new List<string>();
-            //active mods in the saved order (it is the order in which the mods are applied)
-            foreach (var modObject in activeMods)
-            {
-                activeModsListView.Items.Add(CreateModListViewItem(modObject, configErrors));
-            }
-            //all other mods are available
+            //read mods: all other mods are available
+            var availableMods = new List<Mod>();
             var modDirectories = (new DirectoryInfo($"{Paths.ModPath}\\{Paths.ModDirectoryName}")).GetDirectories();
             foreach (var modInfo in modDirectories)
             {
-                if (activeMods.Exists(mod => mod.ModDirectoryName.Equals(modInfo.Name)))
+                if (!activeMods.Exists(mod => mod.ModDirectoryName.Equals(modInfo.Name)))
                 {
-                    continue;
+                    availableMods.Add(new Mod(modInfo.Name));
                 }
-                availableModsListView.Items.Add(CreateModListViewItem(new Mod(modInfo.Name), configErrors));
+            }
+            _installedMods = activeMods.Concat(availableMods).ToList();
+            foreach (var mod in _installedMods)
+            {
+                mod.DependencyMessages = ModDependencyResolver.GetDependencyMessages(mod, _installedMods);
+            }
+
+            var configErrors = new List<string>();
+            //active mods in the saved order (it is the order in which the mods are applied), adjusted to the dependencies
+            foreach (var modObject in SortByDependencies(activeMods))
+            {
+                activeModsListView.Items.Add(CreateModListViewItem(modObject, configErrors));
+            }
+            foreach (var modObject in availableMods)
+            {
+                availableModsListView.Items.Add(CreateModListViewItem(modObject, configErrors));
             }
             _progressBarManipulator.Increment();
 
@@ -187,6 +202,55 @@ namespace DigglesModManager
             {
                 Helpers.ShowErrorMessage(configError);
             }
+        }
+
+        /// <summary>
+        /// Sorts the mods so that each mod is applied after the mods it depends on.
+        /// </summary>
+        private static List<Mod> SortByDependencies(IList<Mod> mods)
+        {
+            var sorted = ModDependencyResolver.SortByDependencies(mods, out var circularMods);
+            if (circularMods.Count > 0)
+            {
+                Log.Warning($"Circular mod dependencies: {string.Join(", ", circularMods.Select(m => m.ModDirectoryName))}");
+            }
+            return sorted;
+        }
+
+        private static List<Mod> GetMods(ListView listView)
+        {
+            return listView.Items.Cast<ListViewItem>().Select(item => (Mod)item.Tag).ToList();
+        }
+
+        private ListViewItem FindItem(ListView listView, Mod mod)
+        {
+            return listView.Items.Cast<ListViewItem>().FirstOrDefault(item => item.Tag == mod);
+        }
+
+        /// <summary>
+        /// Sorts the active mod list according to the mod dependencies (the selection is kept).
+        /// </summary>
+        /// <returns>true, if the order was changed</returns>
+        private bool ApplyDependencyOrder()
+        {
+            var current = GetMods(activeModsListView);
+            var sorted = SortByDependencies(current);
+            if (current.SequenceEqual(sorted))
+            {
+                return false;
+            }
+            var items = sorted.Select(mod => FindItem(activeModsListView, mod)).ToList();
+            var selected = activeModsListView.SelectedItems.Count > 0 ? activeModsListView.SelectedItems[0] : null;
+            activeModsListView.BeginUpdate();
+            activeModsListView.Items.Clear();
+            activeModsListView.Items.AddRange(items.ToArray());
+            activeModsListView.EndUpdate();
+            if (selected != null)
+            {
+                selected.Selected = true;
+                selected.EnsureVisible();
+            }
+            return true;
         }
 
         private ListViewItem CreateModListViewItem(Mod modObject, List<string> configErrors)
@@ -258,8 +322,31 @@ namespace DigglesModManager
             if (selectedItems.Count > 0)
             {
                 var selectedItem = selectedItems[0];
+                var selectedMod = (Mod)selectedItem.Tag;
+                //required mods are activated, too
+                var requiredMods = ModDependencyResolver.GetRequiredMods(selectedMod, _installedMods, out var missingMods);
+                if (missingMods.Count > 0)
+                {
+                    Helpers.ShowErrorMessage(Resources.Dependencies_NotInstalled
+                        .Replace("MODS", string.Join("\n", missingMods.Select(id => $"- {id}")))
+                        .Replace("MOD", selectedMod.GetName(_language)));
+                    return;
+                }
+                foreach (var requiredMod in requiredMods)
+                {
+                    var requiredItem = FindItem(availableModsListView, requiredMod);
+                    if (requiredItem != null)
+                    {
+                        availableModsListView.Items.Remove(requiredItem);
+                        activeModsListView.Items.Add(requiredItem);
+                    }
+                }
                 availableModsListView.Items.Remove(selectedItem); //remove element from the left
                 activeModsListView.Items.Add(selectedItem); //add element on the right
+                activeModsListView.SelectedItems.Clear();
+                selectedItem.Selected = true;
+                ApplyDependencyOrder();
+                selectedItem.EnsureVisible();
                 UpdateModImages();
             }
         }
@@ -271,8 +358,25 @@ namespace DigglesModManager
             if (selectedItems.Count > 0)
             {
                 var selectedItem = selectedItems[0];
-                activeModsListView.Items.Remove(selectedItem); //remove element from the right
-                availableModsListView.Items.Add(selectedItem); //add element on the left
+                var selectedMod = (Mod)selectedItem.Tag;
+                //mods which require this mod are deactivated, too
+                var dependentMods = ModDependencyResolver.GetDependentMods(selectedMod, GetMods(activeModsListView));
+                if (dependentMods.Count > 0)
+                {
+                    var text = Resources.Dependencies_DeactivateDependents
+                        .Replace("MODS", string.Join("\n", dependentMods.Select(m => $"- {m.GetName(_language)}")))
+                        .Replace("MOD", selectedMod.GetName(_language));
+                    if (MessageBox.Show(text, Resources.Warning, MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes)
+                    {
+                        return;
+                    }
+                }
+                foreach (var mod in dependentMods.Append(selectedMod))
+                {
+                    var item = FindItem(activeModsListView, mod);
+                    activeModsListView.Items.Remove(item); //remove element from the right
+                    availableModsListView.Items.Add(item); //add element on the left
+                }
                 UpdateModImages();
             }
         }
@@ -285,6 +389,10 @@ namespace DigglesModManager
             {
                 var selectedItem = selectedItems[0];
                 MoveActiveModInList(selectedItem, -1);
+                if (ApplyDependencyOrder())
+                {
+                    SetMessage(Resources.Dependencies_OrderChanged, Color.Orange);
+                }
                 UpdateModImages();
             }
         }
@@ -297,6 +405,10 @@ namespace DigglesModManager
             {
                 var selectedItem = selectedItems[0];
                 MoveActiveModInList(selectedItem, 1);
+                if (ApplyDependencyOrder())
+                {
+                    SetMessage(Resources.Dependencies_OrderChanged, Color.Orange);
+                }
                 UpdateModImages();
             }
         }
@@ -360,6 +472,20 @@ namespace DigglesModManager
 
         private void button_mod_Click(object sender, EventArgs e)
         {
+            // check the mod dependencies (e.g. if the json file was edited manually)
+            ApplyDependencyOrder();
+            var currentActiveMods = GetMods(activeModsListView);
+            var modsWithMissingDependencies = currentActiveMods
+                .Select(mod => (mod, missing: ModDependencyResolver.GetMissingRequiredMods(mod, currentActiveMods)))
+                .Where(entry => entry.missing.Count > 0)
+                .Select(entry => $"- {entry.mod.GetName(_language)}: {string.Join(", ", entry.missing)}")
+                .ToList();
+            if (modsWithMissingDependencies.Count > 0)
+            {
+                SetMessage(Resources.Error, Color.Red);
+                Helpers.ShowErrorMessage(Resources.Dependencies_MissingActive.Replace("MODS", string.Join("\n", modsWithMissingDependencies)));
+                return;
+            }
             // set user interface into the modding state (disable buttons etc)
             setUIToModdingState(true);
             // Modding in second task to avoid UI freeze

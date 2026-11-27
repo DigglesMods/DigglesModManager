@@ -128,6 +128,42 @@ namespace DigglesModManager.Properties {
         }
 
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die The mod &quot;MOD&quot; cannot be activated, because it requires the following mods, which are not installed: ähnelt.
+        /// </summary>
+        internal static string Dependencies_NotInstalled {
+            get {
+                return ResourceManager.GetString("Dependencies_NotInstalled", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die The following active mods require &quot;MOD&quot; and will be deactivated, too: ähnelt.
+        /// </summary>
+        internal static string Dependencies_DeactivateDependents {
+            get {
+                return ResourceManager.GetString("Dependencies_DeactivateDependents", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die The order was adjusted to the mod dependencies. ähnelt.
+        /// </summary>
+        internal static string Dependencies_OrderChanged {
+            get {
+                return ResourceManager.GetString("Dependencies_OrderChanged", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die The following mods require mods which are not active or not installed: ähnelt.
+        /// </summary>
+        internal static string Dependencies_MissingActive {
+            get {
+                return ResourceManager.GetString("Dependencies_MissingActive", resourceCulture);
+            }
+        }
+
+        /// <summary>
         ///   Sucht eine lokalisierte Ressource vom Typ System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap ErrorIcon {
