@@ -20,6 +20,12 @@ namespace DigglesModManager.Service
         public static string ChangeFilePrefix = "change_";
         public static string CopyFileSuffix = "_copy";
 
+        /// <summary>
+        /// Type of restore file entries for directories created by mods. They are deleted at restore, if they are empty.
+        /// (Older versions of the mod manager ignore this type.)
+        /// </summary>
+        public const string DirectoryType = "dir";
+
         public void ReadModsFromFiles(List<Mod> activeMods, IProgressReporter progressBarManipulator)
         {
             progressBarManipulator.Increment();
@@ -590,7 +596,8 @@ namespace DigglesModManager.Service
                 if (rightGameDir == null)
                 {
                     rightGameDir = gameDirectory.CreateSubdirectory(modDir.Name);
-                    //TODO merke neues verzeichnis fuer wiederherstellung
+                    //remember the new directory to remove it at restore (if it is empty then)
+                    RestoreFile.Append(Paths.ExePath, $"{Paths.ExePath}\\{Paths.RestoreFileName}", DirectoryType, rightGameDir.FullName);
                 }
                 //same procedure for subdirectrory
                 var subReturnValue = LetsMod(mod, modDir, rightGameDir, activeMods, progressBarManipulator);
@@ -623,10 +630,18 @@ namespace DigglesModManager.Service
                 return errors;
             }
 
+            var createdDirectories = new List<string>();
             foreach (var entry in RestoreFile.Read(Paths.ExePath, restoreFilePath))
             {
                 var type = entry.Type;
                 var filename = entry.FullPath;
+
+                if (type == DirectoryType)
+                {
+                    //directories are removed after all files are restored
+                    createdDirectories.Add(filename);
+                    continue;
+                }
 
                 void TryRun(Action action)
                 {
@@ -662,6 +677,24 @@ namespace DigglesModManager.Service
                     TryRun(() => File.Move(filename + CopyFileSuffix, filename));
                 }
             }
+
+            //delete directories created by mods, if they are empty now (deepest first)
+            foreach (var directory in createdDirectories.Distinct().OrderByDescending(d => d.Length))
+            {
+                try
+                {
+                    if (Directory.Exists(directory) && !Directory.EnumerateFileSystemEntries(directory).Any())
+                    {
+                        Directory.Delete(directory);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    //not critical: only an empty directory remains
+                    Log.Warning($"Could not delete directory \"{directory}\": {ex.Message}");
+                }
+            }
+
             //delete restore file
             File.Delete(restoreFilePath);
             return errors;

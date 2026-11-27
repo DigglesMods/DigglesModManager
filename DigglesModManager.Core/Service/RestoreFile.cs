@@ -9,7 +9,8 @@ namespace DigglesModManager.Service
     /// </summary>
     /// <remarks>
     /// Each line has the format <c>type||path</c>. type is "res" (restore the original from "path_copy") or
-    /// "del" (delete the file added by a mod).
+    /// "del" (delete the file added by a mod). Since version 1.4 "dir" marks a directory created by a mod,
+    /// which is deleted at restore if it is empty.
     /// Since version 1.4 the paths are written relative to the game directory. Older versions wrote absolute paths
     /// (e.g. <c>res||D:\Games\Wiggles\Data\messages.txt</c>), which break if the game directory was moved or copied
     /// or if Wine maps the drives differently. Absolute paths are still supported while reading.
