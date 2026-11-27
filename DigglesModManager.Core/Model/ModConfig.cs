@@ -51,6 +51,12 @@ namespace DigglesModManager.Model
         public List<ModSettingsVariable> SettingsVariables { get; set; } = new List<ModSettingsVariable>();
 
         /// <summary>
+        /// Other mods this mod depends on (required or optional).
+        /// </summary>
+        [JsonPropertyName("dependencies")]
+        public List<ModDependency> Dependencies { get; set; } = new List<ModDependency>();
+
+        /// <summary>
         /// A list of directories, that are handled in a different way.
         /// </summary>
         [JsonPropertyName("directories")]

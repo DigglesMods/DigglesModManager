@@ -28,6 +28,24 @@ Wine prefix as the game.
    - **Plain Wine:** `cd` into the game directory and run `wine DigglesModManager.exe`.
 3. Start the game as usual.
 
+## Mod dependencies (for mod developers)
+Since version 1.4 a mod can declare other mods it depends on in its `config.json`. The id is the directory name of
+the other mod (like in `$if:mod:`):
+
+```json
+"dependencies": [
+    { "id": "BugFix" },
+    { "id": "DigglesHDmod", "required": false }
+]
+```
+
+- **required** (default): the other mod is activated together with this mod, and deactivating it also deactivates this
+  mod (after a confirmation). If it is not installed, this mod cannot be activated.
+- **optional** (`"required": false`): nothing is activated, but if the other mod is active, it is applied first.
+
+In both cases the mod manager keeps this mod below the mods it depends on in the list of active mods (this is the order
+in which the mods are applied). Older versions of the mod manager ignore the field.
+
 ## Building
 The mod manager is a Windows Forms application for .NET 10. The patch logic is located in the project
 `DigglesModManager.Core` (without any UI dependency).

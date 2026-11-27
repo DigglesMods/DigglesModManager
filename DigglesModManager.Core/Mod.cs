@@ -107,11 +107,16 @@ namespace DigglesModManager
             }
         }
 
+        /// <summary>
+        /// Messages about the dependencies of this mod (see <see cref="Service.ModDependencyResolver.GetDependencyMessages"/>).
+        /// </summary>
+        public List<ModMessage> DependencyMessages { get; set; } = new List<ModMessage>();
+
         // Returns the mod messages.
         public List<ModMessage> GetMessages()
         {
-            var messages = new List<ModMessage>(Config.Messages);
-            //TODO add incompatibility warnings & errors
+            var messages = new List<ModMessage>(Config.Messages ?? new List<ModMessage>());
+            messages.AddRange(DependencyMessages);
             messages.Sort();
             return messages;
         }

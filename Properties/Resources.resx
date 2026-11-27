@@ -192,4 +192,21 @@ Please put the file 'FILENAME' in the Diggles-Directory!</value>
   <data name="ArrowUp" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Icons\ArrowUp.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="Dependencies_NotInstalled" xml:space="preserve">
+    <value>The mod "MOD" cannot be activated, because it requires the following mods, which are not installed:
+MODS</value>
+  </data>
+  <data name="Dependencies_DeactivateDependents" xml:space="preserve">
+    <value>The following active mods require "MOD" and will be deactivated, too:
+MODS
+
+Continue?</value>
+  </data>
+  <data name="Dependencies_OrderChanged" xml:space="preserve">
+    <value>The order was adjusted to the mod dependencies.</value>
+  </data>
+  <data name="Dependencies_MissingActive" xml:space="preserve">
+    <value>The following mods require mods which are not active or not installed:
+MODS</value>
+  </data>
 </root>
