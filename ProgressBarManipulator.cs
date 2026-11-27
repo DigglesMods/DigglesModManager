@@ -3,7 +3,7 @@ using System.Windows.Forms;
 
 namespace DigglesModManager
 {
-    public class ProgressBarManipulator
+    public class ProgressBarManipulator : IProgressReporter
     {
         private readonly Form _form;
         private readonly ToolStripProgressBar _modProgressStatusBar;
@@ -24,6 +24,11 @@ namespace DigglesModManager
             _modProgressStatusBar.Maximum = max;
             _modProgressStatusBar.Visible = true;
             return true;
+        }
+
+        void IProgressReporter.Increment(int increment)
+        {
+            Increment(increment);
         }
 
         public bool Increment(int increment = 1)

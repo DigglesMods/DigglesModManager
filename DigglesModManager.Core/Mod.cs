@@ -1,15 +1,11 @@
 ﻿using DigglesModManager.Model;
-using DigglesModManager.Properties;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
-using System.Windows.Forms;
 
 namespace DigglesModManager
 {
-    public class Mod : IToolTipDisplayer, IComparable
+    public class Mod : IComparable
     {
         public string ModDirectoryName { get; private set; }
 
@@ -21,6 +17,11 @@ namespace DigglesModManager
         public string Author { get; private set; }
 
         public int FileCount { get; private set; }
+
+        /// <summary>
+        /// Error message, if the config file of the mod could not be read. null otherwise.
+        /// </summary>
+        public string ConfigError { get; private set; }
 
         public Mod(string modDirectory) : this(modDirectory, new Dictionary<string, object>())
         {
@@ -73,8 +74,7 @@ namespace DigglesModManager
         {
             try
             {
-                var json = File.ReadAllText(modFile.FullName, Encoding.Default);
-                Config = JsonConvert.DeserializeObject<ModConfig>(json);
+                Config = JsonHelper.ReadFile<ModConfig>(modFile.FullName);
 
                 foreach (var modSettingsVariable in Config.SettingsVariables)
                 {
@@ -101,7 +101,9 @@ namespace DigglesModManager
             }
             catch (Exception ex)
             {
-                ShowErrorMessage($"Could not parse config-file of '{ModDirectoryName}'!\nError is {ex}");
+                Config = null;
+                ConfigError = $"Could not parse config-file of '{ModDirectoryName}'!\nError is {ex}";
+                Log.Error(ConfigError);
             }
         }
 
@@ -114,10 +116,21 @@ namespace DigglesModManager
             return messages;
         }
 
+        /// <summary>
+        /// The language used by <see cref="ToString"/>.
+        /// </summary>
+        public static string DisplayLanguage { get; set; } = "en";
+
+        // Returns the display name of this mod in the given language.
+        public string GetName(string language)
+        {
+            return Config.Name.getString(language);
+        }
+
         // Returns the display text of this item.
         public override string ToString()
         {
-            return Config.Name.getString(FormMain._language);
+            return GetName(DisplayLanguage);
         }
 
         // Returns the mod author.
@@ -135,25 +148,25 @@ namespace DigglesModManager
         }
 
         // Returns the mod messages as listed string with an initial \n.
-        private string GetMessagesString()
+        private string GetMessagesString(string language)
         {
             var result = "";
             foreach (var message in GetMessages())
             {
-                result += $"\n- {message.Type}: {message.Content.getString(FormMain._language)}";
+                result += $"\n- {message.Type}: {message.Content.getString(language)}";
             }
             return result;
         }
 
         // Returns the tooltip text of this mod.
-        public string GetToolTipText()
+        public string GetToolTipText(string language)
         {
             var text = ToolTipText;
-            if (!string.IsNullOrWhiteSpace(Config.Description.getString(FormMain._language)))
+            if (!string.IsNullOrWhiteSpace(Config.Description.getString(language)))
             {
-                text = Config.Description.getString(FormMain._language);
+                text = Config.Description.getString(language);
             }
-            var messages = GetMessagesString();
+            var messages = GetMessagesString(language);
             if (!string.IsNullOrWhiteSpace(messages))
             {
                 if (!string.IsNullOrWhiteSpace(text)) text += "\n\n";
@@ -163,15 +176,15 @@ namespace DigglesModManager
         }
 
         // Returns the description of this mod.
-        public string GetDescription()
+        public string GetDescription(string language)
         {
-            var text = ToString();
-            if (!string.IsNullOrWhiteSpace(Config.Description.getString(FormMain._language)))
+            var text = GetName(language);
+            if (!string.IsNullOrWhiteSpace(Config.Description.getString(language)))
             {
                 text += "\n\n";
-                text += Config.Description.getString(FormMain._language);
+                text += Config.Description.getString(language);
             }
-            var messages = GetMessagesString();
+            var messages = GetMessagesString(language);
             if (!string.IsNullOrWhiteSpace(messages))
             {
                 text += "\n\n";
@@ -193,12 +206,12 @@ namespace DigglesModManager
                 return false;
 
             var element = (Mod)obj;
-            return ToString().Equals(element.ToString());
+            return ModDirectoryName.Equals(element.ModDirectoryName);
         }
 
         public override int GetHashCode()
         {
-            return ToString().GetHashCode();
+            return ModDirectoryName.GetHashCode();
         }
 
         public int CompareTo(object obj)
@@ -208,11 +221,6 @@ namespace DigglesModManager
 
             var element = (Mod)obj;
             return string.Compare(ToString(), element.ToString(), StringComparison.Ordinal);
-        }
-
-        private static void ShowErrorMessage(string message)
-        {
-            MessageBox.Show(message, Resources.Error);
         }
 
     }

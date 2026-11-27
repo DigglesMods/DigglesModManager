@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 using System.Collections.Generic;
 
 namespace DigglesModManager.Model
@@ -8,10 +8,10 @@ namespace DigglesModManager.Model
     /// </summary>
     public class AppSettings
     {
-        [JsonProperty(PropertyName = "language")]
+        [JsonPropertyName("language")]
         public string Language { get; set; }
 
-        [JsonProperty(PropertyName = "activeMods")]
+        [JsonPropertyName("activeMods")]
         public Dictionary<string, Dictionary<string, object>> ActiveMods { get; set; } = new Dictionary<string, Dictionary<string, object>>();
     }
 }

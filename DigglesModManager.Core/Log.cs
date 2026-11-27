@@ -1,20 +1,24 @@
-﻿using System;
+using System;
 using System.IO;
-using System.Text;
 
 namespace DigglesModManager
 {
-    class Log
+    public static class Log
     {
         private const string ERROR = "ERROR";
         private const string WARNING = "WARNING";
 
+        private static readonly object _lock = new object();
+
         private static void LogToErrorFile(string text)
         {
-            var writer = new StreamWriter($"{Paths.ExePath}\\{Paths.ErrorLogFileName}", true, Encoding.Default);
-            writer.WriteLine($"{DateTime.Now} - {text}");
-            writer.Flush();
-            writer.Close();
+            lock (_lock)
+            {
+                using (var writer = new StreamWriter($"{Paths.ExePath}\\{Paths.ErrorLogFileName}", true, GameEncoding.Log))
+                {
+                    writer.WriteLine($"{DateTime.Now} - {text}");
+                }
+            }
         }
 
         private static void LogToErrorFile(string type, string message, FileInfo fileInfo, int line)

@@ -88,7 +88,7 @@
             this.installModButton.Name = "installModButton";
             this.installModButton.Size = new System.Drawing.Size(47, 37);
             this.installModButton.TabIndex = 2;
-            this.installModButton.Text = "▶";
+            this.installModButton.Image = global::DigglesModManager.Properties.Resources.ArrowRight;
             this.installModButton.UseVisualStyleBackColor = true;
             this.installModButton.Click += new System.EventHandler(this.button_right_Click);
             // 
@@ -101,7 +101,7 @@
             this.uninstallModButton.Name = "uninstallModButton";
             this.uninstallModButton.Size = new System.Drawing.Size(47, 37);
             this.uninstallModButton.TabIndex = 3;
-            this.uninstallModButton.Text = "◀";
+            this.uninstallModButton.Image = global::DigglesModManager.Properties.Resources.ArrowLeft;
             this.uninstallModButton.UseVisualStyleBackColor = true;
             this.uninstallModButton.Click += new System.EventHandler(this.button_left_Click);
             // 
@@ -140,10 +140,9 @@
             this.moveUpButton.Location = new System.Drawing.Point(651, 104);
             this.moveUpButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.moveUpButton.Name = "moveUpButton";
-            this.moveUpButton.Padding = new System.Windows.Forms.Padding(2, 0, 0, 2);
             this.moveUpButton.Size = new System.Drawing.Size(47, 37);
             this.moveUpButton.TabIndex = 8;
-            this.moveUpButton.Text = "▲";
+            this.moveUpButton.Image = global::DigglesModManager.Properties.Resources.ArrowUp;
             this.moveUpButton.UseVisualStyleBackColor = true;
             this.moveUpButton.Click += new System.EventHandler(this.button_up_Click);
             // 
@@ -154,10 +153,9 @@
             this.moveDownButton.Location = new System.Drawing.Point(651, 148);
             this.moveDownButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.moveDownButton.Name = "moveDownButton";
-            this.moveDownButton.Padding = new System.Windows.Forms.Padding(2, 0, 0, 2);
             this.moveDownButton.Size = new System.Drawing.Size(47, 37);
             this.moveDownButton.TabIndex = 9;
-            this.moveDownButton.Text = "▼";
+            this.moveDownButton.Image = global::DigglesModManager.Properties.Resources.ArrowDown;
             this.moveDownButton.UseVisualStyleBackColor = true;
             this.moveDownButton.Click += new System.EventHandler(this.button_down_Click);
             // 

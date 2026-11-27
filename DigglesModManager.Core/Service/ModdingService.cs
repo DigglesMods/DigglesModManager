@@ -1,10 +1,8 @@
 ﻿using DigglesModManager.Model;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 
 namespace DigglesModManager.Service
 {
@@ -22,7 +20,13 @@ namespace DigglesModManager.Service
         public static string ChangeFilePrefix = "change_";
         public static string CopyFileSuffix = "_copy";
 
-        public void ReadModsFromFiles(List<Mod> activeMods, ProgressBarManipulator progressBarManipulator)
+        /// <summary>
+        /// Type of restore file entries for directories created by mods. They are deleted at restore, if they are empty.
+        /// (Older versions of the mod manager ignore this type.)
+        /// </summary>
+        public const string DirectoryType = "dir";
+
+        public void ReadModsFromFiles(List<Mod> activeMods, IProgressReporter progressBarManipulator)
         {
             progressBarManipulator.Increment();
             //check if mod directory exists
@@ -34,27 +38,47 @@ namespace DigglesModManager.Service
             progressBarManipulator.Increment();
 
             //read last active mods
-            var appSettingsFilePath = $"{Paths.ExePath}\\{Paths.AppSettingsName}";
-            if (File.Exists(appSettingsFilePath))
+            var appSettings = ReadAppSettings();
+            if (appSettings != null)
             {
-                var json = File.ReadAllText(appSettingsFilePath, Encoding.Default);
-                var appSettings = JsonConvert.DeserializeObject<AppSettings>(json);
                 foreach (var pair in appSettings.ActiveMods)
                     if (Directory.Exists($"{Paths.ModPath}\\{Paths.ModDirectoryName}\\{pair.Key}"))
                     {
-                        activeMods.Add(new Mod(pair.Key, pair.Value));
+                        activeMods.Add(new Mod(pair.Key, pair.Value ?? new Dictionary<string, object>()));
                     }
             }
             progressBarManipulator.Increment();
         }
 
+        /// <summary>
+        /// Reads the settings of the last session (language, active mods). Returns null if no settings exist.
+        /// </summary>
+        public AppSettings ReadAppSettings()
+        {
+            var appSettingsFilePath = $"{Paths.ExePath}\\{Paths.AppSettingsName}";
+            if (!File.Exists(appSettingsFilePath))
+            {
+                return null;
+            }
+            try
+            {
+                var appSettings = JsonHelper.ReadFile<AppSettings>(appSettingsFilePath);
+                if (appSettings != null && appSettings.ActiveMods == null)
+                {
+                    appSettings.ActiveMods = new Dictionary<string, Dictionary<string, object>>();
+                }
+                return appSettings;
+            }
+            catch (Exception ex)
+            {
+                Log.Error($"Could not read {appSettingsFilePath}: {ex}");
+                return null;
+            }
+        }
+
         public void RememberForRestore(FileInfo file, string type)
         {
-            //remember
-            var writer = new StreamWriter($"{Paths.ExePath}\\{Paths.RestoreFileName}", true, Encoding.Default);
-            writer.WriteLine($"{type}||{file.FullName}");
-            writer.Flush();
-            writer.Close();
+            RestoreFile.Append(Paths.ExePath, $"{Paths.ExePath}\\{Paths.RestoreFileName}", type, file.FullName);
         }
 
         public void SaveActiveMods(string language, List<Mod> activeMods)
@@ -74,8 +98,7 @@ namespace DigglesModManager.Service
                     appSettings.ActiveMods.Add(mod.ModDirectoryName, variables);
                 }
 
-                var json = JsonConvert.SerializeObject(appSettings, Formatting.Indented);
-                File.WriteAllText(appSettingsFilePath, json, Encoding.UTF8); //overwrites any existing files, if present
+                JsonHelper.WriteFile(appSettingsFilePath, appSettings); //overwrites any existing files, if present
             }
             else
             {
@@ -83,7 +106,7 @@ namespace DigglesModManager.Service
             }
         }
 
-        public int LetsMod(Mod mod, DirectoryInfo modDirectory, DirectoryInfo gameDirectory, List<Mod> activeMods, ProgressBarManipulator progressBarManipulator)
+        public int LetsMod(Mod mod, DirectoryInfo modDirectory, DirectoryInfo gameDirectory, List<Mod> activeMods, IProgressReporter progressBarManipulator)
         {
             var modFiles = modDirectory.GetFiles();
             var gameFiles = gameDirectory.GetFiles();
@@ -113,7 +136,7 @@ namespace DigglesModManager.Service
                 //skip some files in root directory
                 if (modDirectory.Name.Equals(mod.ModDirectoryName))
                 {
-                    if (filename.Equals(Paths.ModConfigName) || filename.Equals("LICENSE") || filename.Equals("README.md"))
+                    if (filename.Equals(Paths.ModConfigName) || filename.Equals("LICENSE") || filename.Equals("README.md") || filename.Equals("CHANGELOG.md"))
                     {
                         progressBarManipulator.Increment();
                         continue;
@@ -164,14 +187,21 @@ namespace DigglesModManager.Service
                     Console.WriteLine($"Copy file: {modFile.FullName} --> {gameDirectory.FullName}\\{filename}");
                     newModFile = modFile.CopyTo($"{gameDirectory.FullName}\\{filename}", true);
 
-                    //replace variables
-                    var fileContent = File.ReadAllText(newModFile.FullName, Encoding.Default);
-                    foreach (var modVar in mod.Config.SettingsVariables)
+                    //replace variables (only rewrite the file if something changed to keep e.g. binary files untouched)
+                    if (mod.Config.SettingsVariables.Count > 0)
                     {
-                        fileContent = fileContent.Replace($"$print:{modVar.ID}", modVar.Value.ToString());
+                        var originalContent = File.ReadAllText(newModFile.FullName, GameEncoding.Ansi);
+                        var fileContent = originalContent;
+                        foreach (var modVar in mod.Config.SettingsVariables)
+                        {
+                            fileContent = fileContent.Replace($"$print:{modVar.ID}", modVar.Value.ToString());
+                        }
+                        if (!fileContent.Equals(originalContent, StringComparison.Ordinal))
+                        {
+                            Console.WriteLine($"Replace content for {newModFile.FullName}");
+                            File.WriteAllText(newModFile.FullName, fileContent, GameEncoding.Ansi);
+                        }
                     }
-                    Console.WriteLine($"Replace content for {newModFile.FullName}");
-                    File.WriteAllText(newModFile.FullName, fileContent, Encoding.Default);
                 }
                 else if (mode == "change" && rightGameFile != null) //file change mode
                 {
@@ -179,9 +209,9 @@ namespace DigglesModManager.Service
                     type = "res";
                     newModFile = rightGameFile;
 
-                    var origFileContent = File.ReadAllText(newModFile.FullName, Encoding.Default);
+                    var origFileContent = File.ReadAllText(newModFile.FullName, GameEncoding.Ansi);
 
-                    var reader = new StreamReader(modFile.FullName, Encoding.Default);
+                    var reader = new StreamReader(modFile.FullName, GameEncoding.Ansi);
                     string line;
                     var started = false;
                     var ifStack = new Stack<bool>();
@@ -430,7 +460,16 @@ namespace DigglesModManager.Service
                                     //replace old value with new value
                                     Console.WriteLine($"Replace content for {newModFile.FullName}");
 
-                                    origFileContent = origFileContent.Replace(oldValue, newValue);
+                                    if (origFileContent.Contains(oldValue))
+                                    {
+                                        origFileContent = origFileContent.Replace(oldValue, newValue);
+                                    }
+                                    else
+                                    {
+                                        //Only a log entry and no warning state: some blocks are only meant for other
+                                        //game versions or languages and are not found intentionally.
+                                        Log.Warning($"Text to be changed not found in \"{newModFile.FullName}\" (block ends here; nothing was changed by this block)", modFile, lineNumber);
+                                    }
 
                                 }
                             }
@@ -462,7 +501,7 @@ namespace DigglesModManager.Service
                     //write content to file
                     Console.WriteLine($"Write to file: {newModFile.FullName} --> {gameDirectory.FullName}\\{filename}");
 
-                    File.WriteAllText(newModFile.FullName, origFileContent, Encoding.Default);
+                    File.WriteAllText(newModFile.FullName, origFileContent, GameEncoding.Ansi);
                 }
 
                 //remember
@@ -557,7 +596,8 @@ namespace DigglesModManager.Service
                 if (rightGameDir == null)
                 {
                     rightGameDir = gameDirectory.CreateSubdirectory(modDir.Name);
-                    //TODO merke neues verzeichnis fuer wiederherstellung
+                    //remember the new directory to remove it at restore (if it is empty then)
+                    RestoreFile.Append(Paths.ExePath, $"{Paths.ExePath}\\{Paths.RestoreFileName}", DirectoryType, rightGameDir.FullName);
                 }
                 //same procedure for subdirectrory
                 var subReturnValue = LetsMod(mod, modDir, rightGameDir, activeMods, progressBarManipulator);
@@ -577,64 +617,87 @@ namespace DigglesModManager.Service
             return returnValue;
         }
 
-        public void Restore()
+        /// <summary>
+        /// Restores the original game files using the restore file (restore.dm).
+        /// </summary>
+        /// <returns>A list of errors that occurred (empty if successful).</returns>
+        public List<string> Restore()
         {
-            if (File.Exists($"{Paths.ExePath}\\{Paths.RestoreFileName}"))
+            var errors = new List<string>();
+            var restoreFilePath = $"{Paths.ExePath}\\{Paths.RestoreFileName}";
+            if (!File.Exists(restoreFilePath))
             {
-                var reader = new StreamReader($"{Paths.ExePath}\\{Paths.RestoreFileName}", Encoding.Default);
-                string line;
-                while ((line = reader.ReadLine()) != null)
+                return errors;
+            }
+
+            var createdDirectories = new List<string>();
+            foreach (var entry in RestoreFile.Read(Paths.ExePath, restoreFilePath))
+            {
+                var type = entry.Type;
+                var filename = entry.FullPath;
+
+                if (type == DirectoryType)
                 {
-                    var parts = line.Split("||".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
-                    var type = parts[0];
-                    var filename = parts[1];
+                    //directories are removed after all files are restored
+                    createdDirectories.Add(filename);
+                    continue;
+                }
 
-                    //delete file if type is "del" or type is "res" and a copy exists
-                    if (File.Exists(filename) && (type == "del" || (type == "res" && File.Exists(filename + CopyFileSuffix))))
+                void TryRun(Action action)
+                {
+                    try
                     {
-                        //delete mod file
-                        try
-                        {
-                            File.Delete(filename);
-                        }
-                        catch (Exception ex)
-                        {
-                            Helpers.ShowErrorMessage($"Error occurred: {ex}");
-                        }
+                        action();
                     }
-
-                    //delete copy if two mods added the same NEW file
-                    if (type == "del" && File.Exists(filename + CopyFileSuffix))
+                    catch (Exception ex)
                     {
-                        //delete mod file copy
-                        try
-                        {
-                            File.Delete(filename + CopyFileSuffix);
-                        }
-                        catch (Exception ex)
-                        {
-                            Helpers.ShowErrorMessage($"Error occurred: {ex}");
-                        }
-                    }
-
-                    //restore file if type is res
-                    if (type == "res" && File.Exists(filename + CopyFileSuffix))
-                    {
-                        //restore game file
-                        try
-                        {
-                            File.Move(filename + CopyFileSuffix, filename);
-                        }
-                        catch (Exception ex)
-                        {
-                            Helpers.ShowErrorMessage($"Error occurred: {ex}");
-                        }
+                        Log.Error($"Restore of \"{filename}\" failed: {ex}");
+                        errors.Add($"Error occurred: {ex}");
                     }
                 }
-                reader.Close();
-                //delete restore file
-                File.Delete($"{Paths.ExePath}\\{Paths.RestoreFileName}");
+
+                //delete file if type is "del" or type is "res" and a copy exists
+                if (File.Exists(filename) && (type == "del" || (type == "res" && File.Exists(filename + CopyFileSuffix))))
+                {
+                    //delete mod file
+                    TryRun(() => File.Delete(filename));
+                }
+
+                //delete copy if two mods added the same NEW file
+                if (type == "del" && File.Exists(filename + CopyFileSuffix))
+                {
+                    //delete mod file copy
+                    TryRun(() => File.Delete(filename + CopyFileSuffix));
+                }
+
+                //restore file if type is res
+                if (type == "res" && File.Exists(filename + CopyFileSuffix))
+                {
+                    //restore game file
+                    TryRun(() => File.Move(filename + CopyFileSuffix, filename));
+                }
             }
+
+            //delete directories created by mods, if they are empty now (deepest first)
+            foreach (var directory in createdDirectories.Distinct().OrderByDescending(d => d.Length))
+            {
+                try
+                {
+                    if (Directory.Exists(directory) && !Directory.EnumerateFileSystemEntries(directory).Any())
+                    {
+                        Directory.Delete(directory);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    //not critical: only an empty directory remains
+                    Log.Warning($"Could not delete directory \"{directory}\": {ex.Message}");
+                }
+            }
+
+            //delete restore file
+            File.Delete(restoreFilePath);
+            return errors;
         }
     }
 }

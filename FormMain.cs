@@ -1,12 +1,10 @@
 ﻿using DigglesModManager.Model;
 using DigglesModManager.Properties;
 using DigglesModManager.Service;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -50,29 +48,20 @@ namespace DigglesModManager
             languageMenuItems.Add("pl", polishToolStripMenuItem);
             languageMenuItems.Add("ru", russianToolStripMenuItem);
 
-            //get language
-            var appSettingsFilePath = $"{Paths.ExePath}\\{Paths.AppSettingsName}";
-            if (File.Exists(appSettingsFilePath))
-            {
-                var json = File.ReadAllText(appSettingsFilePath, Encoding.Default);
-                var appSettings = JsonConvert.DeserializeObject<AppSettings>(json);
-                _language = appSettings.Language;
-            }
-            setCheckOfLanguageInMenu(true);
+            // check, if the exe is in the correct directory
+            var correctDirectory = Paths.DetectGameDirectory();
 
             _moddingService = new ModdingService();
             _progressBarManipulator = new ProgressBarManipulator(this, modProgressStatusBar);
 
-            // check, if the exe is in the correct directory
-            var correctDirectory = false;
-            foreach (var digglesExe in Paths.DigglesExecutableNames)
+            //get language
+            var appSettings = correctDirectory ? _moddingService.ReadAppSettings() : null;
+            if (!string.IsNullOrEmpty(appSettings?.Language))
             {
-                if (File.Exists($"{Paths.ExePath}\\{digglesExe}"))
-                {
-                    correctDirectory = true;
-                    break;
-                }
+                _language = appSettings.Language;
             }
+            Mod.DisplayLanguage = _language;
+            setCheckOfLanguageInMenu(true);
 
             //Only start, when exe is in the correct directory
             if (correctDirectory)
@@ -171,29 +160,21 @@ namespace DigglesModManager
             _moddingService.ReadModsFromFiles(activeMods, _progressBarManipulator);
 
             //read mods
+            var configErrors = new List<string>();
+            //active mods in the saved order (it is the order in which the mods are applied)
+            foreach (var modObject in activeMods)
+            {
+                activeModsListView.Items.Add(CreateModListViewItem(modObject, configErrors));
+            }
+            //all other mods are available
             var modDirectories = (new DirectoryInfo($"{Paths.ModPath}\\{Paths.ModDirectoryName}")).GetDirectories();
             foreach (var modInfo in modDirectories)
             {
-                var active = true;
-                var modObject = activeMods.Find(mod => mod.ModDirectoryName.Equals(modInfo.Name));
-                if (modObject == null)
+                if (activeMods.Exists(mod => mod.ModDirectoryName.Equals(modInfo.Name)))
                 {
-                    active = false;
-                    modObject = new Mod(modInfo.Name);
+                    continue;
                 }
-                ListViewItem listViewItem = new ListViewItem(modObject.ToString(), "")
-                {
-                    Tag = modObject
-                };
-                listViewItem.ToolTipText = modObject.GetToolTipText();
-                if (active)
-                {
-                    activeModsListView.Items.Add(listViewItem);
-                }
-                else
-                {
-                    availableModsListView.Items.Add(listViewItem);
-                }
+                availableModsListView.Items.Add(CreateModListViewItem(new Mod(modInfo.Name), configErrors));
             }
             _progressBarManipulator.Increment();
 
@@ -201,6 +182,24 @@ namespace DigglesModManager
             _progressBarManipulator.Finish();
 
             UpdateModImages();
+
+            foreach (var configError in configErrors)
+            {
+                Helpers.ShowErrorMessage(configError);
+            }
+        }
+
+        private ListViewItem CreateModListViewItem(Mod modObject, List<string> configErrors)
+        {
+            if (modObject.ConfigError != null)
+            {
+                configErrors.Add(modObject.ConfigError);
+            }
+            return new ListViewItem(modObject.GetName(_language), "")
+            {
+                Tag = modObject,
+                ToolTipText = modObject.GetToolTipText(_language)
+            };
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -217,7 +216,7 @@ namespace DigglesModManager
                 {
                     var selectedMod = (selectedItems[0].Tag as Mod);
                     //change content of description box
-                    descriptionBox.Text = selectedMod.GetDescription();
+                    descriptionBox.Text = selectedMod.GetDescription(_language);
                 }
                 else
                 {
@@ -243,7 +242,7 @@ namespace DigglesModManager
                     modSettingsMenuButton.Enabled = hasSettings;
 
                     //change content of description box
-                    descriptionBox.Text = selectedMod.GetDescription();
+                    descriptionBox.Text = selectedMod.GetDescription(_language);
                 }
                 else
                 {
@@ -380,8 +379,12 @@ namespace DigglesModManager
                 _progressBarManipulator.Reset(fileCount + 3);
                 _progressBarManipulator.Increment();
 
-                _moddingService.Restore();
+                var restoreErrors = _moddingService.Restore();
                 _progressBarManipulator.Increment();
+                if (restoreErrors.Count > 0)
+                {
+                    Invoke(() => Helpers.ShowErrorMessage(string.Join("\n\n", restoreErrors)));
+                }
 
                 var warning = false;
                 var error = false;
@@ -444,6 +447,7 @@ namespace DigglesModManager
         {
             setCheckOfLanguageInMenu(false);
             _language = language;
+            Mod.DisplayLanguage = language;
             setCheckOfLanguageInMenu(true);
             ReadMods();
         }

@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 using System.ComponentModel;
 
 namespace DigglesModManager.Model
@@ -8,13 +8,13 @@ namespace DigglesModManager.Model
         /// <summary>
         /// The type of the directory. [REQUIRED]
         /// </summary>
-        [JsonProperty(PropertyName = "type", Required = Required.Always)]
+        [JsonPropertyName("type"), JsonRequired]
         public ModDirectoryType Type { get; set; }
 
         /// <summary>
         /// Path of directory relative to mod root. [REQUIRED]
         /// </summary>
-        [JsonProperty(PropertyName = "path", Required = Required.Always)]
+        [JsonPropertyName("path"), JsonRequired]
         public string Path
         {
             get
@@ -34,7 +34,7 @@ namespace DigglesModManager.Model
         /// Condition that has to be true to add this directory.
         /// </summary>
         [DefaultValue(null)]
-        [JsonProperty(PropertyName = "condition", Required = Required.Default, DefaultValueHandling = DefaultValueHandling.Populate)]
+        [JsonPropertyName("condition")]
         public ModDirectoryCondition Condition { get; set; }
 
     }
