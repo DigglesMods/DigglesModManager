@@ -133,8 +133,65 @@ namespace DigglesModManager.Service
             return result;
         }
 
+        private static IEnumerable<ModIncompatibility> IncompatibilitiesOf(Mod mod)
+        {
+            return mod.Config?.Incompatibilities?.Where(i => !string.IsNullOrWhiteSpace(i?.Id)) ?? Enumerable.Empty<ModIncompatibility>();
+        }
+
         /// <summary>
-        /// Messages about the dependencies of a mod, which are shown in the mod manager.
+        /// Returns the incompatibility between two mods or null. It is enough if one of both mods declares it.
+        /// If both mods declare it, the stricter type wins.
+        /// </summary>
+        public static ModIncompatibility GetIncompatibility(Mod a, Mod b)
+        {
+            if (a == b || IsSameMod(a.ModDirectoryName, b.ModDirectoryName))
+            {
+                return null;
+            }
+            return IncompatibilitiesOf(a).Where(i => IsSameMod(i.Id, b.ModDirectoryName))
+                .Concat(IncompatibilitiesOf(b).Where(i => IsSameMod(i.Id, a.ModDirectoryName)))
+                .OrderBy(i => i.Type) // Error before Warning
+                .FirstOrDefault();
+        }
+
+        /// <summary>
+        /// Checks if two mods are incompatible (with the given type, or with any type if null).
+        /// </summary>
+        public static bool AreIncompatible(Mod a, Mod b, ModIncompatibilityType? type = null)
+        {
+            var incompatibility = GetIncompatibility(a, b);
+            return incompatibility != null && (type == null || incompatibility.Type == type);
+        }
+
+        /// <summary>
+        /// Returns the mods of the given list that are incompatible with the given mod (with the given type, or with any type if null).
+        /// </summary>
+        public static List<Mod> GetIncompatibleMods(Mod mod, IEnumerable<Mod> mods, ModIncompatibilityType? type = null)
+        {
+            return mods.Where(other => AreIncompatible(mod, other, type)).ToList();
+        }
+
+        /// <summary>
+        /// Returns all pairs of incompatible mods in the given list (with the given type, or with any type if null).
+        /// </summary>
+        public static List<(Mod, Mod)> GetIncompatiblePairs(IList<Mod> mods, ModIncompatibilityType? type = null)
+        {
+            var pairs = new List<(Mod, Mod)>();
+            for (var i = 0; i < mods.Count; i++)
+            {
+                for (var j = i + 1; j < mods.Count; j++)
+                {
+                    if (AreIncompatible(mods[i], mods[j], type))
+                    {
+                        pairs.Add((mods[i], mods[j]));
+                    }
+                }
+            }
+            return pairs;
+        }
+
+        /// <summary>
+        /// Messages about the dependencies and incompatibilities of a mod, which are shown in the mod manager.
         /// </summary>
         /// <param name="mod">the mod</param>
         /// <param name="installedMods">all installed mods (to show their names and detect missing mods)</param>
@@ -177,6 +234,36 @@ namespace DigglesModManager.Service
                     };
                 }
                 messages.Add(new ModMessage { Type = type, Content = text });
+            }
+            // incompatibilities declared by this mod or by the other mod
+            foreach (var other in installed)
+            {
+                var incompatibility = GetIncompatibility(mod, other);
+                if (incompatibility == null)
+                {
+                    continue;
+                }
+                ModTranslationString text;
+                if (incompatibility.Type == ModIncompatibilityType.Error)
+                {
+                    text = new ModTranslationString($"Cannot be used together with the mod \"{other}\".")
+                    {
+                        de = $"Kann nicht zusammen mit der Mod \"{other}\" verwendet werden."
+                    };
+                }
+                else
+                {
+                    text = new ModTranslationString($"Not fully compatible with the mod \"{other}\": if both are active, the changes of the mod higher in the list win.")
+                    {
+                        de = $"Nicht vollständig kompatibel mit der Mod \"{other}\": Sind beide aktiv, gewinnen die Änderungen der Mod, die weiter oben steht."
+                    };
+                }
+                if (incompatibility.Reason != null)
+                {
+                    text.en += $" {incompatibility.Reason.getString("en")}";
+                    text.de += $" {incompatibility.Reason.getString("de")}";
+                }
+                messages.Add(new ModMessage { Type = ModMessageType.Warning, Content = text });
             }
             return messages;
         }

@@ -46,6 +46,23 @@ the other mod (like in `$if:mod:`):
 In both cases the mod manager keeps this mod below the mods it depends on in the list of active mods (this is the order
 in which the mods are applied). Older versions of the mod manager ignore the field.
 
+## Mod incompatibilities (for mod developers)
+A mod can also declare mods it is not (fully) compatible with. It is enough if one of both mods declares it:
+
+```json
+"incompatibilities": [
+    { "id": "CommandF9", "reason": { "en": "Both mods change the F9 key.", "de": "Beide Mods ändern die F9-Taste." } },
+    { "id": "OtherMod", "type": "warning" }
+]
+```
+
+- **error** (default): both mods cannot be active at the same time. The mod cannot be activated while the other mod is
+  active, and "Let's Mod" is not possible.
+- **warning**: both mods can be active, but the user is warned when activating them. Where both mods change the same
+  code, the changes of the mod that is higher in the list of active mods win.
+
+The optional `reason` is shown to the user. Older versions of the mod manager ignore the field.
+
 ## Building
 The mod manager is a Windows Forms application for .NET 10. The patch logic is located in the project
 `DigglesModManager.Core` (without any UI dependency).
