@@ -209,4 +209,20 @@ Continue?</value>
     <value>The following mods require mods which are not active or not installed:
 MODS</value>
   </data>
+  <data name="Incompatibilities_NotPossible" xml:space="preserve">
+    <value>The mod "MOD" cannot be activated, because the mods it requires are incompatible with each other or with this mod:
+MODS</value>
+  </data>
+  <data name="Incompatibilities_Active" xml:space="preserve">
+    <value>The following active mods cannot be used together:
+MODS</value>
+  </data>
+  <data name="Incompatibilities_ErrorActive" xml:space="preserve">
+    <value>The mod "MOD" cannot be used together with the following active mods. Please deactivate them first:
+MODS</value>
+  </data>
+  <data name="Incompatibilities_WarningActive" xml:space="preserve">
+    <value>The mod "MOD" is not fully compatible with the following active mods. Where both mods change the same code, the changes of the mod higher in the list win:
+MODS</value>
+  </data>
 </root>

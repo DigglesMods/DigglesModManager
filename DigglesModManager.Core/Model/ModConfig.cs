@@ -57,6 +57,12 @@ namespace DigglesModManager.Model
         public List<ModDependency> Dependencies { get; set; } = new List<ModDependency>();
 
         /// <summary>
+        /// Other mods that cannot be used together with this mod (applies in both directions).
+        /// </summary>
+        [JsonPropertyName("incompatibilities")]
+        public List<ModIncompatibility> Incompatibilities { get; set; } = new List<ModIncompatibility>();
+
+        /// <summary>
         /// A list of directories, that are handled in a different way.
         /// </summary>
         [JsonPropertyName("directories")]

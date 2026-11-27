@@ -332,6 +332,38 @@ namespace DigglesModManager
                         .Replace("MOD", selectedMod.GetName(_language)));
                     return;
                 }
+                //incompatibilities ("error") between the mods to be activated (e.g. a required mod is incompatible)
+                var modsToActivate = requiredMods.Append(selectedMod).ToList();
+                var internalConflicts = ModDependencyResolver.GetIncompatiblePairs(modsToActivate, ModIncompatibilityType.Error);
+                if (internalConflicts.Count > 0)
+                {
+                    Helpers.ShowErrorMessage(Resources.Incompatibilities_NotPossible
+                        .Replace("MODS", FormatPairs(internalConflicts))
+                        .Replace("MOD", selectedMod.GetName(_language)));
+                    return;
+                }
+                //incompatible active mods ("error"): the mod cannot be activated
+                var activeMods = GetMods(activeModsListView).Except(modsToActivate).ToList();
+                var conflictingMods = activeMods
+                    .Where(active => modsToActivate.Any(mod => ModDependencyResolver.AreIncompatible(mod, active, ModIncompatibilityType.Error)))
+                    .ToList();
+                if (conflictingMods.Count > 0)
+                {
+                    Helpers.ShowErrorMessage(Resources.Incompatibilities_ErrorActive
+                        .Replace("MODS", string.Join("\n", conflictingMods.Select(m => $"- {m.GetName(_language)}")))
+                        .Replace("MOD", selectedMod.GetName(_language)));
+                    return;
+                }
+                //not fully compatible active mods ("warning"): the mod is activated, but the user is warned
+                var warningMods = activeMods
+                    .Where(active => modsToActivate.Any(mod => ModDependencyResolver.AreIncompatible(mod, active, ModIncompatibilityType.Warning)))
+                    .ToList();
+                if (warningMods.Count > 0)
+                {
+                    Helpers.ShowMessage(Resources.Incompatibilities_WarningActive
+                        .Replace("MODS", string.Join("\n", warningMods.Select(m => $"- {m.GetName(_language)}")))
+                        .Replace("MOD", selectedMod.GetName(_language)), Resources.Warning);
+                }
                 foreach (var requiredMod in requiredMods)
                 {
                     var requiredItem = FindItem(availableModsListView, requiredMod);
@@ -371,14 +403,30 @@ namespace DigglesModManager
                         return;
                     }
                 }
-                foreach (var mod in dependentMods.Append(selectedMod))
+                DeactivateMods(dependentMods.Append(selectedMod));
+                UpdateModImages();
+            }
+        }
+
+        /// <summary>
+        /// Moves the given mods from the active to the available mods.
+        /// </summary>
+        private void DeactivateMods(IEnumerable<Mod> mods)
+        {
+            foreach (var mod in mods)
+            {
+                var item = FindItem(activeModsListView, mod);
+                if (item != null)
                 {
-                    var item = FindItem(activeModsListView, mod);
                     activeModsListView.Items.Remove(item); //remove element from the right
                     availableModsListView.Items.Add(item); //add element on the left
                 }
-                UpdateModImages();
             }
+        }
+
+        private string FormatPairs(IEnumerable<(Mod, Mod)> pairs)
+        {
+            return string.Join("\n", pairs.Select(pair => $"- {pair.Item1.GetName(_language)} / {pair.Item2.GetName(_language)}"));
         }
 
         private void button_up_Click(object sender, EventArgs e)
@@ -484,6 +532,14 @@ namespace DigglesModManager
             {
                 SetMessage(Resources.Error, Color.Red);
                 Helpers.ShowErrorMessage(Resources.Dependencies_MissingActive.Replace("MODS", string.Join("\n", modsWithMissingDependencies)));
+                return;
+            }
+            // check the incompatibilities
+            var incompatibleMods = ModDependencyResolver.GetIncompatiblePairs(currentActiveMods, ModIncompatibilityType.Error);
+            if (incompatibleMods.Count > 0)
+            {
+                SetMessage(Resources.Error, Color.Red);
+                Helpers.ShowErrorMessage(Resources.Incompatibilities_Active.Replace("MODS", FormatPairs(incompatibleMods)));
                 return;
             }
             // set user interface into the modding state (disable buttons etc)

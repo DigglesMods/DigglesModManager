@@ -164,6 +164,42 @@ namespace DigglesModManager.Properties {
         }
 
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die The mod &quot;MOD&quot; cannot be activated, because the mods it requires are incompatible with each other or with this mod: ähnelt.
+        /// </summary>
+        internal static string Incompatibilities_NotPossible {
+            get {
+                return ResourceManager.GetString("Incompatibilities_NotPossible", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die The following active mods cannot be used together: ähnelt.
+        /// </summary>
+        internal static string Incompatibilities_Active {
+            get {
+                return ResourceManager.GetString("Incompatibilities_Active", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die The mod &quot;MOD&quot; cannot be used together with the following active mods. Please deactivate them first: ähnelt.
+        /// </summary>
+        internal static string Incompatibilities_ErrorActive {
+            get {
+                return ResourceManager.GetString("Incompatibilities_ErrorActive", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die The mod &quot;MOD&quot; is not fully compatible with the following active mods. Where both mods change the same code, the changes of the mod higher in the list win: ähnelt.
+        /// </summary>
+        internal static string Incompatibilities_WarningActive {
+            get {
+                return ResourceManager.GetString("Incompatibilities_WarningActive", resourceCulture);
+            }
+        }
+
+        /// <summary>
         ///   Sucht eine lokalisierte Ressource vom Typ System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap ErrorIcon {
