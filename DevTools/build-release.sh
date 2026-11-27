@@ -40,7 +40,7 @@ done
 
 # mods (current state of the default branch of each mod)
 IFS=',' read -r -a modNames <<< "$(tr -d '\r\n' < "$devTools/mod-names.txt")"
-echo "### Included mods" > "$out/included-mods.md"
+echo "### Included mod versions" > "$out/included-mods.md"
 for mod in "${modNames[@]}"; do
 	git clone --quiet --depth 1 "https://github.com/$organization/$mod.git" "$package/Mods/$mod"
 	# .github would be copied into the game directory by the mod manager
