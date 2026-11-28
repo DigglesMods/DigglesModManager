@@ -8,7 +8,8 @@ namespace DigglesModManager
     {
         public static void OpenWebPage(string uri)
         {
-            Process.Start(new ProcessStartInfo(uri));
+            // .NET (Core) defaults UseShellExecute to false, which would try to run the URL as an executable
+            Process.Start(new ProcessStartInfo(uri) { UseShellExecute = true });
         }
 
         public static void ExitApplication()
